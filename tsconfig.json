@@ -1,0 +1,3 @@
+{
+  "extends": "@byte-quest/config/tsconfig.base.json"
+}
