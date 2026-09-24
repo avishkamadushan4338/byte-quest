@@ -10,6 +10,7 @@ import { createContext } from "../../../context";
 
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
+    // eslint-disable-next-line promise/prefer-await-to-callbacks
     onError((error) => {
       console.error(error);
     }),
@@ -23,27 +24,32 @@ const apiHandler = new OpenAPIHandler(appRouter, {
     }),
   ],
   interceptors: [
+    // eslint-disable-next-line promise/prefer-await-to-callbacks
     onError((error) => {
       console.error(error);
     }),
   ],
 });
 
-async function handle({ request }: { request: Request }) {
+const handle = async ({ request }: { request: Request }) => {
   const rpcResult = await rpcHandler.handle(request, {
     prefix: "/api/rpc",
     context: await createContext({ req: request }),
   });
-  if (rpcResult.response) return rpcResult.response;
+  if (rpcResult.response) {
+    return rpcResult.response;
+  }
 
   const apiResult = await apiHandler.handle(request, {
     prefix: "/api/rpc/api-reference",
     context: await createContext({ req: request }),
   });
-  if (apiResult.response) return apiResult.response;
+  if (apiResult.response) {
+    return apiResult.response;
+  }
 
   return new Response("Not found", { status: 404 });
-}
+};
 
 export const Route = createFileRoute("/api/rpc/$")({
   server: {

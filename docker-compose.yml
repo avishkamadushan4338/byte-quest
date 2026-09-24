@@ -1,6 +1,24 @@
 name: byte-quest
 
 services:
+  pg:
+    image: postgres:17-alpine
+    ports:
+      - "4000:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
   web:
     build:
       context: .
@@ -8,21 +26,25 @@ services:
       secrets:
         - web_env
     init: true
+    depends_on:
+      pg:
+        condition: service_healthy
     ports:
-      - "3001:3001"
+      - "4001:4001"
     env_file:
       - path: apps/web/.env
         required: false
     environment:
-      BETTER_AUTH_URL: http://localhost:3001
-      CORS_ORIGIN: http://localhost:3001
+      BETTER_AUTH_URL: http://localhost:4001
+      CORS_ORIGIN: http://localhost:4001
+      DATABASE_URL: postgresql://postgres:password@pg:5432/postgres
     healthcheck:
       test:
         [
           "CMD",
           "node",
           "-e",
-          "fetch('http://localhost:3001/').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+          "fetch('http://localhost:4001/').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
         ]
       interval: 10s
       timeout: 5s
@@ -34,3 +56,6 @@ services:
 secrets:
   web_env:
     file: apps/web/.env
+
+volumes:
+  pg_data:
