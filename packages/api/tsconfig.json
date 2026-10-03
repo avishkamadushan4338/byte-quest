@@ -6,7 +6,8 @@
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "outDir": "dist",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["node", "bun"]
   },
   "include": ["src/**/*.ts"],
   "references": [{ "path": "../db" }, { "path": "../auth" }]

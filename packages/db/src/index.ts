@@ -7,3 +7,5 @@ export const createDb = (env: DatabaseConfig) =>
   drizzle(env.DATABASE_URL, { relations });
 
 export type Database = ReturnType<typeof createDb>;
+
+export * from "./schema";

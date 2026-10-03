@@ -3,10 +3,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { orpc } from "@/utils/orpc";
 
-export const Route = createFileRoute("/_auth/dashboard")({
-  component: RouteComponent,
-});
-
 const RouteComponent = () => {
   const { session } = Route.useRouteContext();
 
@@ -20,3 +16,7 @@ const RouteComponent = () => {
     </div>
   );
 };
+
+export const Route = createFileRoute("/_auth/dashboard")({
+  component: RouteComponent,
+});

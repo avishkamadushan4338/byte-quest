@@ -8,6 +8,7 @@ export default defineConfig({
   ignorePatterns: [
     ...core.ignorePatterns,
     "packages/ui/**",
+    "packages/db/src/index.ts",
     "packages/db/src/schema/index.ts",
   ],
 });

@@ -30,6 +30,7 @@
     "dev": "bun run db:start && bun run db:migrate && nx run-many -t dev",
     "build": "nx run-many -t build",
     "check-types": "nx run-many -t check-types",
+    "test": "nx run-many -t test",
     "dev:web": "bun run db:start && bun run db:migrate && nx run-many -t dev --projects=web",
     "db:push": "nx run-many -t db:push --projects=@byte-quest/db",
     "db:studio": "nx run-many -t db:studio --projects=@byte-quest/db",

@@ -28,6 +28,7 @@
     "@tanstack/react-start": "^1.168.49",
     "@varlock/vite-integration": "1.5.1",
     "better-auth": "catalog:",
+    "drizzle-orm": "catalog:",
     "lucide-react": "catalog:",
     "nitro": "3.0.260903-beta",
     "react": "catalog:",

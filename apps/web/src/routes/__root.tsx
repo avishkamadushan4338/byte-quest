@@ -20,6 +20,24 @@ export interface RouterAppContext {
   queryClient: QueryClient;
 }
 
+const RootDocument = () => (
+  <html lang="en" className="dark">
+    <head>
+      <HeadContent />
+    </head>
+    <body>
+      <div className="grid h-svh grid-rows-[auto_1fr]">
+        <Header />
+        <Outlet />
+      </div>
+      <Toaster richColors theme="dark" />
+      <TanStackRouterDevtools position="bottom-left" />
+      <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+      <Scripts />
+    </body>
+  </html>
+);
+
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   head: () => ({
     meta: [
@@ -44,21 +62,3 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
   component: RootDocument,
 });
-
-const RootDocument = () => (
-  <html lang="en" className="dark">
-    <head>
-      <HeadContent />
-    </head>
-    <body>
-      <div className="grid h-svh grid-rows-[auto_1fr]">
-        <Header />
-        <Outlet />
-      </div>
-      <Toaster richColors theme="dark" />
-      <TanStackRouterDevtools position="bottom-left" />
-      <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
-      <Scripts />
-    </body>
-  </html>
-);
