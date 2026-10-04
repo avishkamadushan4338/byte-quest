@@ -48,12 +48,14 @@ Open [http://localhost:4001](http://localhost:4001) in your browser to see the f
 React web apps in this stack share custom components through `packages/ui`.
 
 - Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Base UI primitives (Button, Input, Field, Menu, Dialog) live in `packages/ui/src/primitives`
-- Presentational components (Container, Section, Card, Badge, Marquee, Brand) live in `packages/ui/src/components`
+- Base UI primitives (Button, Input, Textarea, Field, Select, Combobox, Checkbox, Radio, Switch, Tabs, Tooltip, Popover, Accordion, Dialog, AlertDialog, Progress, Skeleton, Avatar, OTPField, Menu) live in `packages/ui/src/primitives`
+- Composed components (Container, Section, SectionHeader, Kicker, Card, Badge, Breadcrumb, PageHero, StatStrip, HairlineGrid, DataList, Table, Callout, EmptyState, Steps, Checklist, ProgressMeter, Brand, Marquee) live in `packages/ui/src/components`
+- `packages/ui/src/components/fields.tsx` exposes ready-made form fields — `TextField`, `TextareaField`, `SelectField`, `ComboboxField`, `CheckboxField`, `RadioCardField`, `OptionToggleField`, `SwitchField`
 - Import shared components directly from their package paths:
 
 ```tsx
 import { Button } from "@byte-quest/ui/primitives/button";
+import { SelectField } from "@byte-quest/ui/components/fields";
 import { Section } from "@byte-quest/ui/components/section";
 ```
 
@@ -96,6 +98,19 @@ byte-quest/
 │   ├── auth/        # Authentication configuration & logic
 │   └── db/          # Database schema & queries
 ```
+
+## Routes
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Marketing homepage |
+| `/about`, `/programme`, `/journey`, `/mentors`, `/partners`, `/volunteers` | Programme pages |
+| `/register` | Seven-step team registration wizard |
+| `/privacy`, `/terms`, `/code-of-conduct`, `/submission-guidelines` | Policies and guidelines |
+| `/auth/login` | Email one-time-code sign in |
+| `/onboarding` | Student profile completion (requires a session) |
+| `/dashboard` | Team, join requests and submission (requires a session) |
+| `/admin` | Users, schools, teams and submission review (admin only) |
 
 ## Available Scripts
 

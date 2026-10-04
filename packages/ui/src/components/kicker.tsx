@@ -1,13 +1,14 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@byte-quest/ui/lib/utils";
 
-type KickerTone = "teal" | "volt" | "lime" | "gold" | "faint";
+type KickerTone = "teal" | "volt" | "lime" | "gold" | "mint" | "faint";
 
 const toneClasses = {
   teal: "text-teal",
   volt: "text-volt",
   lime: "text-lime",
   gold: "text-gold",
+  mint: "text-mint",
   faint: "text-faint",
 } satisfies Record<KickerTone, string>;
 

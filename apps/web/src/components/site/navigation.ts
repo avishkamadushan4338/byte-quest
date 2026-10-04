@@ -4,39 +4,46 @@ export interface NavLink {
 }
 
 export const primaryNavLinks: NavLink[] = [
-  { label: "Programme", href: "/#programme" },
-  { label: "Journey", href: "/#journey" },
+  { label: "Programme", href: "/programme" },
+  { label: "Journey", href: "/journey" },
+  { label: "Divisions", href: "/programme#divisions" },
   { label: "Projects", href: "/#projects" },
-  { label: "Schools", href: "/#schools" },
-  { label: "Awards", href: "/#awards" },
-  { label: "Timeline", href: "/#timeline" },
-  { label: "About", href: "/#about" },
+  { label: "Mentors", href: "/mentors" },
+  { label: "Partners", href: "/partners" },
+  { label: "About", href: "/about" },
 ];
 
 export const menuLinks: NavLink[] = [
-  { label: "Programme", href: "/#programme" },
-  { label: "Journey", href: "/#journey" },
-  { label: "Divisions", href: "/#divisions" },
+  { label: "Programme", href: "/programme" },
+  { label: "Journey", href: "/journey" },
+  { label: "Divisions", href: "/programme#divisions" },
   { label: "Projects", href: "/#projects" },
   { label: "Schools", href: "/#schools" },
+  { label: "Mentors", href: "/mentors" },
   { label: "Awards", href: "/#awards" },
   { label: "Timeline", href: "/#timeline" },
-  { label: "About", href: "/#about" },
-  { label: "Register", href: "/auth/login" },
+  { label: "Partners", href: "/partners" },
+  { label: "Volunteer", href: "/volunteers" },
+  { label: "Register", href: "/register" },
 ];
 
 export const footerNavLinks: NavLink[] = [
-  { label: "Programme", href: "/#programme" },
-  { label: "Journey", href: "/#journey" },
+  { label: "Programme", href: "/programme" },
+  { label: "Journey", href: "/journey" },
   { label: "Projects", href: "/#projects" },
-  { label: "Awards", href: "/#awards" },
-  { label: "Timeline", href: "/#timeline" },
-  { label: "Register", href: "/auth/login" },
+  { label: "Mentors", href: "/mentors" },
+  { label: "Partners", href: "/partners" },
+  { label: "Volunteer", href: "/volunteers" },
+  { label: "About", href: "/about" },
+  { label: "Register", href: "/register" },
 ];
 
 export const footerGuidelineLinks: NavLink[] = [
-  { label: "Privacy", href: "/#contact" },
-  { label: "Terms", href: "/#contact" },
-  { label: "Code of Conduct", href: "/#contact" },
-  { label: "Submission Guidelines", href: "/#contact" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "Code of Conduct", href: "/code-of-conduct" },
+  { label: "Submission Guidelines", href: "/submission-guidelines" },
 ];
+
+export const isInternalHref = (href: string) =>
+  href.startsWith("/") && !href.startsWith("/#");

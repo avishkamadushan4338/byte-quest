@@ -2,7 +2,11 @@ import { Brand } from "@byte-quest/ui/components/brand";
 import { Container } from "@byte-quest/ui/components/container";
 import { Link } from "@tanstack/react-router";
 
-import { footerGuidelineLinks, footerNavLinks } from "./navigation";
+import {
+  footerGuidelineLinks,
+  footerNavLinks,
+  isInternalHref,
+} from "./navigation";
 
 const CREST_SRC = "/assets/crest.png";
 
@@ -10,9 +14,6 @@ const columns = [
   { title: "Navigation", links: footerNavLinks },
   { title: "Guidelines", links: footerGuidelineLinks },
 ];
-
-const isRouteLink = (href: string) =>
-  href.startsWith("/") && !href.startsWith("/#");
 
 export const SiteFooter = () => (
   <footer
@@ -47,7 +48,7 @@ export const SiteFooter = () => (
             </div>
             <div className="mt-4 grid gap-2.5">
               {column.links.map((link) =>
-                isRouteLink(link.href) ? (
+                isInternalHref(link.href) ? (
                   <Link
                     className="text-muted hover:text-volt text-[14px] transition-colors"
                     key={link.label}

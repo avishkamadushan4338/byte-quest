@@ -11,7 +11,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { menuLinks, primaryNavLinks } from "./navigation";
+import { isInternalHref, menuLinks, primaryNavLinks } from "./navigation";
 
 const CREST_SRC = "/assets/crest.png";
 
@@ -45,21 +45,31 @@ export const SiteHeader = () => {
         </Link>
 
         <div className="hidden gap-7 text-[13.5px] font-medium min-[1100px]:flex">
-          {primaryNavLinks.map((link) => (
-            <a
-              className="text-muted hover:text-fg whitespace-nowrap transition-colors"
-              href={link.href}
-              key={link.label}
-            >
-              {link.label}
-            </a>
-          ))}
+          {primaryNavLinks.map((link) =>
+            isInternalHref(link.href) ? (
+              <Link
+                className="text-muted hover:text-fg whitespace-nowrap transition-colors"
+                key={link.label}
+                to={link.href}
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <a
+                className="text-muted hover:text-fg whitespace-nowrap transition-colors"
+                href={link.href}
+                key={link.label}
+              >
+                {link.label}
+              </a>
+            )
+          )}
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
           <Button
             nativeButton={false}
-            render={<Link to="/auth/login" />}
+            render={<Link to="/register" />}
             size="sm"
           >
             Register Now
@@ -81,19 +91,33 @@ export const SiteHeader = () => {
                 className="grid flex-1 content-center gap-1 md:grid-cols-2"
                 style={{ columnGap: "48px" }}
               >
-                {menuLinks.map((link, index) => (
-                  <a
-                    className="border-line-soft font-display text-fg hover:text-volt flex items-baseline gap-4 border-b py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em] transition-colors"
-                    href={link.href}
-                    key={link.label}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <span className="text-teal font-mono text-[11px] tracking-[0.1em]">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    {link.label}
-                  </a>
-                ))}
+                {menuLinks.map((link, index) =>
+                  isInternalHref(link.href) ? (
+                    <Link
+                      className="border-line-soft font-display text-fg hover:text-volt flex items-baseline gap-4 border-b py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em] transition-colors"
+                      key={link.label}
+                      onClick={() => setMenuOpen(false)}
+                      to={link.href}
+                    >
+                      <span className="text-teal font-mono text-[11px] tracking-[0.1em]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a
+                      className="border-line-soft font-display text-fg hover:text-volt flex items-baseline gap-4 border-b py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em] transition-colors"
+                      href={link.href}
+                      key={link.label}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <span className="text-teal font-mono text-[11px] tracking-[0.1em]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {link.label}
+                    </a>
+                  )
+                )}
               </div>
               <div className="text-muted-2 flex flex-wrap justify-between gap-3 font-mono text-[11px] tracking-[0.08em]">
                 <span>LEARN. BUILD. INNOVATE. INSPIRE.</span>
