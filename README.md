@@ -41,18 +41,20 @@ Then, run the development server:
 bun run dev
 ```
 
-Open [http://localhost:3001](http://localhost:3001) in your browser to see the fullstack application.
+Open [http://localhost:4001](http://localhost:4001) in your browser to see the fullstack application.
 
 ## UI Customization
 
 React web apps in this stack share custom components through `packages/ui`.
 
 - Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Add or update reusable components in `packages/ui/src/components`
+- Base UI primitives (Button, Input, Field, Menu, Dialog) live in `packages/ui/src/primitives`
+- Presentational components (Container, Section, Card, Badge, Marquee, Brand) live in `packages/ui/src/components`
 - Import shared components directly from their package paths:
 
 ```tsx
-import { Button } from "@byte-quest/ui/components/button";
+import { Button } from "@byte-quest/ui/primitives/button";
+import { Section } from "@byte-quest/ui/components/section";
 ```
 
 Keep shared components presentational and reusable. Put app-specific behavior in components under `apps/web/src/components`.
@@ -89,7 +91,7 @@ byte-quest/
 ├── apps/
 │   └── web/         # Fullstack application (React + TanStack Start)
 ├── packages/
-│   ├── ui/          # Shared custom components and styles
+│   ├── ui/          # Design system: primitives, components, and styles
 │   ├── api/         # API layer / business logic
 │   ├── auth/        # Authentication configuration & logic
 │   └── db/          # Database schema & queries

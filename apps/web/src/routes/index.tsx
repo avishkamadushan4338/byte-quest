@@ -1,53 +1,32 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { orpc } from "@/utils/orpc";
+import { Awards } from "@/components/home/awards";
+import { CallToAction } from "@/components/home/call-to-action";
+import { Divisions } from "@/components/home/divisions";
+import { Hero } from "@/components/home/hero";
+import { Impact } from "@/components/home/impact";
+import { Journey } from "@/components/home/journey";
+import { Moments } from "@/components/home/moments";
+import { Projects } from "@/components/home/projects";
+import { Schools } from "@/components/home/schools";
+import { Timeline } from "@/components/home/timeline";
+import { WhatIs } from "@/components/home/what-is";
 
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
-
-const healthLabel = (query: { isLoading: boolean; data: unknown }) => {
-  if (query.isLoading) {
-    return "Checking...";
-  }
-  return query.data ? "Connected" : "Disconnected";
-};
-
-const HomeComponent = () => {
-  const healthCheck = useQuery(orpc.healthCheck.queryOptions());
-
-  return (
-    <div className="container mx-auto max-w-3xl px-4 py-2">
-      <pre className="overflow-x-auto font-mono text-sm">{TITLE_TEXT}</pre>
-      <div className="grid gap-6">
-        <section className="rounded-lg border p-4">
-          <h2 className="mb-2 font-medium">API Status</h2>
-          <div className="flex items-center gap-2">
-            <div
-              className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
-            />
-            <span className="text-muted-foreground text-sm">
-              {healthLabel(healthCheck)}
-            </span>
-          </div>
-        </section>
-      </div>
-    </div>
-  );
-};
+const HomeComponent = () => (
+  <main className="bg-ink overflow-x-hidden">
+    <Hero />
+    <WhatIs />
+    <Journey />
+    <Moments />
+    <Divisions />
+    <Impact />
+    <Projects />
+    <Schools />
+    <Awards />
+    <Timeline />
+    <CallToAction />
+  </main>
+);
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
