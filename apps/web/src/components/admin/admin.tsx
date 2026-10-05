@@ -10,6 +10,7 @@ import { useState } from "react";
 
 import { PageHero } from "@/components/site/page-hero";
 
+import { ApplicationsPanel } from "./applications-panel";
 import type { AdminTab } from "./data";
 import { adminCopy, adminHero, adminTabs } from "./data";
 import { SchoolsPanel } from "./schools-panel";
@@ -18,7 +19,7 @@ import { TeamsPanel } from "./teams-panel";
 import { UsersPanel } from "./users-panel";
 
 export const Admin = () => {
-  const [tab, setTab] = useState<AdminTab>("users");
+  const [tab, setTab] = useState<AdminTab>("applications");
 
   return (
     <main className="bg-ink overflow-x-hidden">
@@ -45,6 +46,10 @@ export const Admin = () => {
                 </TabsTab>
               ))}
             </TabsList>
+
+            <TabsPanel value="applications">
+              <ApplicationsPanel />
+            </TabsPanel>
 
             <TabsPanel value="users">
               <UsersPanel />

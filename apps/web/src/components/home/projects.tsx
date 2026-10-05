@@ -21,8 +21,7 @@ export const Projects = () => {
             </h2>
           </div>
           <Button
-            className="font-mono text-[13px] tracking-[0.04em]"
-            render={<a aria-label="Explore all projects" href="#projects" />}
+            render={<Link aria-label="Explore all projects" to="/projects" />}
             variant="outline"
           >
             Explore all projects →

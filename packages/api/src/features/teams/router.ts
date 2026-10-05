@@ -11,6 +11,7 @@ import { z } from "zod";
 
 import { adminProcedure, protectedProcedure } from "../../index";
 import { inferDivision } from "../access/router";
+import { findOrCreateSchool } from "../schools/router";
 
 const MIN_MEMBERS = 3;
 const MAX_MEMBERS = 5;
@@ -59,6 +60,77 @@ const countMembers = async (db: Database, teamId: string) => {
 
 export const teamsRouter = {
   teams: {
+    /**
+     * Register a team from the public wizard. Only the team leader or the
+     * school's MIC may do this. Resolves (or registers) the school, then
+     * creates the team with the caller as its leader — the same rules as
+     * `create`, exposed as one call because the wizard has no school id.
+     */
+    register: protectedProcedure
+      .input(
+        z.object({
+          teamName: z.string().min(1, "Team name is required"),
+          division: z.enum(["primary", "secondary"]),
+          school: z.object({
+            name: z.string().min(1, "School name is required"),
+            city: z.string().min(1, "District or city is required"),
+          }),
+        })
+      )
+      .output(teamOutputSchema.extend({ schoolName: z.string() }))
+      .handler(async ({ context, input }) => {
+        const { role } = context.profile;
+        if (role !== "leader" && role !== "mic" && role !== "admin") {
+          throw new Error(
+            "Only the team leader or the school's MIC can register a team"
+          );
+        }
+        if (inferDivision(context.profile.grade) !== input.division) {
+          throw new Error(
+            `Grade ${context.profile.grade} does not match the ${input.division} division (primary 6-9, secondary 10-13)`
+          );
+        }
+
+        const resolved = await findOrCreateSchool(context.db, input.school);
+
+        const [existingTeam] = await context.db
+          .select({ id: team.id })
+          .from(team)
+          .where(
+            and(
+              eq(team.schoolId, resolved.id),
+              eq(team.division, input.division)
+            )
+          );
+        if (existingTeam) {
+          throw new Error(`This school already has a ${input.division} team`);
+        }
+
+        const [created] = await context.db
+          .insert(team)
+          .values({
+            name: input.teamName,
+            division: input.division,
+            schoolId: resolved.id,
+          })
+          .returning();
+        if (!created) {
+          throw new Error("Failed to create team");
+        }
+
+        await context.db.insert(teamMember).values({
+          teamId: created.id,
+          userId: context.profile.userId,
+          teamRole: "leader",
+          grade: context.profile.grade,
+          fullName: context.profile.fullName,
+          nationalId: context.profile.nationalId,
+          birthday: context.profile.birthday,
+        });
+
+        return { ...created, memberCount: 1, schoolName: resolved.name };
+      }),
+
     /**
      * Create a team. Creator becomes leader; their grade must match the
      * division: primary grades 6-9, secondary grades 10-13.

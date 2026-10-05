@@ -9,7 +9,22 @@ import {
 
 import { user } from "../auth";
 
-export const userRoleEnum = pgEnum("user_role", ["admin", "student"]);
+/**
+ * Programme role driving route access and permissions.
+ *
+ * - `admin`   organising committee; full oversight. Never self-assigned — an
+ *             existing admin must approve an admin application.
+ * - `mic`     Master-In-Charge, the teacher in charge for a school. Allowed to
+ *             register a team on the school's behalf.
+ * - `leader`  team leader; allowed to register their own team.
+ * - `student` ordinary team member.
+ */
+export const userRoleEnum = pgEnum("user_role", [
+  "admin",
+  "mic",
+  "leader",
+  "student",
+]);
 
 /**
  * Application-level profile attached 1:1 to a Better-Auth user.

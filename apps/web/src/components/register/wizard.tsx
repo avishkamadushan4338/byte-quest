@@ -4,13 +4,18 @@ import { Container } from "@byte-quest/ui/components/container";
 import { Section } from "@byte-quest/ui/components/section";
 import { ProgressMeter, Steps } from "@byte-quest/ui/components/steps";
 import { Button } from "@byte-quest/ui/primitives/button";
+import { useRouter } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { PageHero } from "@/components/site/page-hero";
+import { authClient } from "@/lib/auth-client";
+import { orpc } from "@/utils/orpc";
 
 import type {
+  AccountDetails,
+  AccountErrors,
   Division,
   MemberDetails,
   RegisterErrors,
@@ -35,6 +40,7 @@ import {
   stepOrder,
   validationCopy,
 } from "./data";
+import { StepAccount } from "./step-account";
 import { StepConfirmation } from "./step-confirmation";
 import { StepDivision } from "./step-division";
 import { StepReview } from "./step-review";
@@ -45,13 +51,56 @@ import { StepTeam } from "./step-team";
 
 const PHONE_PATTERN = /^(?:\+94|0)\d{9}$/u;
 const EMAIL_PATTERN = /^[^@\s@]+@[^\s@]+\.[^@\s@]+$/u;
+const USERNAME_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/u;
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const REFERENCE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const MIN_PASSWORD_LENGTH = 8;
 
 const isPhone = (value: string) =>
   PHONE_PATTERN.test(value.replaceAll(/[\s-]/gu, ""));
 
 const isGradeAllowed = (division: Division | null, grade: string) =>
   division !== null && divisionGrades[division].includes(grade);
+
+/** The API names the divisions differently to the wizard. */
+const divisionToApi = (division: Division) =>
+  division === "junior" ? "primary" : "secondary";
+
+const validateAccount = (account: AccountDetails): AccountErrors => {
+  const errors: AccountErrors = {};
+
+  if (account.role === null) {
+    errors.role = validationCopy.registrantRole;
+  }
+  if (account.fullName.trim().length === 0) {
+    errors.fullName = validationCopy.required;
+  }
+  if (!EMAIL_PATTERN.test(account.email.trim())) {
+    errors.email = validationCopy.email;
+  }
+  if (account.username.trim().length < 3) {
+    errors.username = validationCopy.usernameLength;
+  } else if (!USERNAME_PATTERN.test(account.username.trim())) {
+    errors.username = validationCopy.username;
+  }
+  if (account.password.length < MIN_PASSWORD_LENGTH) {
+    errors.password = validationCopy.password;
+  }
+  if (account.nationalId.trim().length === 0) {
+    errors.nationalId = validationCopy.required;
+  }
+  if (!DATE_PATTERN.test(account.birthday.trim())) {
+    errors.birthday = validationCopy.birthday;
+  }
+  if (account.grade === null) {
+    errors.grade = validationCopy.required;
+  }
+
+  return errors;
+};
+
+const messageFor = (error: unknown, fallback: string) =>
+  error instanceof Error && error.message ? error.message : fallback;
 
 const createReference = () => {
   const year = String(new Date().getFullYear()).slice(-2);
@@ -142,40 +191,48 @@ const validateTeacher = (teacher: TeacherDetails): TeacherErrors => {
 
 const validateStep = (step: number, state: RegisterState): RegisterErrors => {
   const errors: RegisterErrors = {};
+  const key = stepOrder[step];
 
-  if (step === 0) {
+  if (key === "account") {
+    const account = validateAccount(state.account);
+    if (Object.keys(account).length > 0) {
+      errors.account = account;
+    }
+  }
+
+  if (key === "school") {
     const school = validateSchool(state.school);
     if (Object.keys(school).length > 0) {
       errors.school = school;
     }
   }
 
-  if (step === 1 && state.division === null) {
+  if (key === "division" && state.division === null) {
     errors.division = validationCopy.division;
   }
 
-  if (step === 2) {
+  if (key === "team") {
     const team = validateTeam(state.team);
     if (Object.keys(team).length > 0) {
       errors.team = team;
     }
   }
 
-  if (step === 3) {
+  if (key === "students") {
     const students = validateStudents(state.students, state.division);
     if (Object.keys(students).length > 0) {
       errors.students = students;
     }
   }
 
-  if (step === 4) {
+  if (key === "teacher") {
     const teacher = validateTeacher(state.teacher);
     if (Object.keys(teacher).length > 0) {
       errors.teacher = teacher;
     }
   }
 
-  if (step === 5 && !state.consent) {
+  if (key === "review" && !state.consent) {
     errors.consent = validationCopy.consent;
   }
 
@@ -183,17 +240,28 @@ const validateStep = (step: number, state: RegisterState): RegisterErrors => {
 };
 
 export const Register = () => {
+  const router = useRouter();
   const [state, setState] = useState<RegisterState>(initialRegisterState);
   const [step, setStep] = useState(0);
   const [maxStep, setMaxStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<RegisterErrors>({});
   const [reference, setReference] = useState("");
+  const [pending, setPending] = useState(false);
 
   const currentKey = stepOrder[step];
   const content = registerSteps[currentKey];
   const isConfirmation = currentKey === "confirmation";
   const reviewStep = stepOrder.indexOf("review");
+  const accountStep = stepOrder.indexOf("account");
+
+  const handleAccountChange = (patch: Partial<AccountDetails>) => {
+    setState((current) => ({
+      ...current,
+      account: { ...current.account, ...patch },
+    }));
+    setErrors((current) => ({ ...current, account: undefined }));
+  };
 
   const handleSchoolChange = (patch: Partial<SchoolDetails>) => {
     setState((current) => ({
@@ -257,13 +325,102 @@ export const Register = () => {
     setErrors((current) => ({ ...current, consent: undefined }));
   };
 
-  const handleNext = () => {
+  /** Create the leader's or MIC's account, then sign them in. */
+  const createAccount = async (): Promise<boolean> => {
+    const { account } = state;
+    if (account.role === null || account.grade === null) {
+      return false;
+    }
+
+    setPending(true);
+    try {
+      await orpc.access.register.call({
+        fullName: account.fullName.trim(),
+        email: account.email.trim(),
+        username: account.username.trim(),
+        password: account.password,
+        nationalId: account.nationalId.trim(),
+        birthday: account.birthday.trim(),
+        grade: account.grade,
+        role: account.role,
+      });
+    } catch (error) {
+      setPending(false);
+      setErrors({
+        account: {
+          username: messageFor(
+            error,
+            "We could not create that account. Try a different username."
+          ),
+        },
+      });
+      toast.error(messageFor(error, "We could not create your account"));
+      return false;
+    }
+    setPending(false);
+
+    const { error } = await authClient.signIn.username({
+      username: account.username.trim(),
+      password: account.password,
+    });
+    if (error) {
+      toast.error("Account created, but sign-in failed. Please sign in.");
+      await router.navigate({ to: "/auth/login" });
+      return false;
+    }
+    return true;
+  };
+
+  /** Create the school (if new) and the team, with the caller as leader. */
+  const submitTeam = async (): Promise<boolean> => {
+    if (state.division === null) {
+      return false;
+    }
+
+    setPending(true);
+    try {
+      await orpc.teams.register.call({
+        teamName: state.team.name.trim(),
+        division: divisionToApi(state.division),
+        school: {
+          name: state.school.name.trim(),
+          city: state.school.district.trim(),
+        },
+      });
+    } catch (error) {
+      setPending(false);
+      setErrors({
+        team: { name: messageFor(error, "We could not register that team") },
+      });
+      toast.error(messageFor(error, "We could not register that team"));
+      return false;
+    }
+    setPending(false);
+    return true;
+  };
+
+  const handleNext = async () => {
     const nextErrors = validateStep(step, state);
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       toast.error(validationCopy.incomplete);
       return;
+    }
+
+    if (currentKey === "account") {
+      const ok = await createAccount();
+      if (!ok) {
+        return;
+      }
+      toast.success("Account created");
+    }
+
+    if (currentKey === "review") {
+      const ok = await submitTeam();
+      if (!ok) {
+        return;
+      }
     }
 
     const nextStep = Math.min(step + 1, stepOrder.length - 1);
@@ -311,7 +468,24 @@ export const Register = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const advanceLabel = (() => {
+    if (step === reviewStep) {
+      return registerAside.submitLabel;
+    }
+    if (step === accountStep) {
+      return registerAside.createAccountLabel;
+    }
+    return registerAside.continueLabel;
+  })();
+
   const panels: Record<StepKey, ReactNode> = {
+    account: (
+      <StepAccount
+        account={state.account}
+        errors={errors.account ?? {}}
+        onChange={handleAccountChange}
+      />
+    ),
     school: (
       <StepSchool
         errors={errors}
@@ -434,16 +608,18 @@ export const Register = () => {
                 {submitted ? null : (
                   <div className="border-line-soft mt-7 flex items-center justify-between gap-3 border-t pt-5">
                     <Button
-                      disabled={step === 0}
+                      disabled={pending || step === 0}
                       onClick={handleBack}
                       variant="ghost"
                     >
                       {registerAside.backLabel}
                     </Button>
-                    <Button onClick={handleNext}>
-                      {step === reviewStep
-                        ? registerAside.submitLabel
-                        : registerAside.continueLabel}
+                    <Button
+                      aria-busy={pending}
+                      disabled={pending}
+                      onClick={handleNext}
+                    >
+                      {advanceLabel}
                     </Button>
                   </div>
                 )}

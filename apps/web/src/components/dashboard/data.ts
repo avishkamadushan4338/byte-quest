@@ -10,7 +10,8 @@ export type NoTeamView = "choose" | "join";
 
 export interface DashboardMe {
   userId: string;
-  role: "admin" | "student";
+  username: string | null;
+  role: "admin" | "mic" | "leader" | "student";
   fullName: string;
   nationalId: string;
   birthday: string;

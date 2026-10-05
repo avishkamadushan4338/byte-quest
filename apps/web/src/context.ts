@@ -23,6 +23,7 @@ export const createContext = async ({
   }
 
   return {
+    auth,
     db,
     session,
     profile,

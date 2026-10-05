@@ -2,27 +2,24 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import type { Database } from "@byte-quest/db";
 import * as schema from "@byte-quest/db/schema/auth";
 import { betterAuth } from "better-auth";
-import { emailOTP } from "better-auth/plugins";
+import { username } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 
-export type OtpType =
-  | "sign-in"
-  | "email-verification"
-  | "forget-password"
-  | "change-email";
+/**
+ * Sign-in handles allow letters, digits, dots, underscores and hyphens, and
+ * must start alphanumeric. Hyphens matter: generated MIC handles embed them,
+ * and better-auth's built-in validator rejects them at sign-in — which would
+ * create rows that look valid but can never log in.
+ */
+export const USERNAME_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/u;
 
-export interface OtpMessage {
-  email: string;
-  otp: string;
-  type: OtpType;
-}
+export const USERNAME_MIN_LENGTH = 3;
+export const USERNAME_MAX_LENGTH = 32;
 
-export type OtpSender = (message: OtpMessage) => Promise<void>;
-
-const logOtpToConsole: OtpSender = ({ email, otp, type }) => {
-  console.info(`[byte-quest] OTP ${type} for ${email}: ${otp}`);
-  return Promise.resolve();
-};
+export const isValidUsername = (value: string) =>
+  value.length >= USERNAME_MIN_LENGTH &&
+  value.length <= USERNAME_MAX_LENGTH &&
+  USERNAME_PATTERN.test(value);
 
 export interface AuthConfig {
   BETTER_AUTH_URL: string;
@@ -30,7 +27,8 @@ export interface AuthConfig {
 }
 
 export interface AuthOptions {
-  sendVerificationOTP?: OtpSender;
+  /** Lower bound for password length; defaults to Better Auth's minimum. */
+  minPasswordLength?: number;
 }
 
 export const createAuth = (
@@ -44,17 +42,36 @@ export const createAuth = (
       schema,
     }),
     trustedOrigins: [env.BETTER_AUTH_URL],
-    emailAndPassword: { enabled: false },
+    emailAndPassword: {
+      enabled: true,
+      autoSignIn: true,
+      minPasswordLength: options.minPasswordLength ?? 8,
+      requireEmailVerification: false,
+    },
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL,
+    session: {
+      expiresIn: 60 * 60 * 24 * 7,
+      updateAge: 60 * 60 * 24,
+    },
+    user: {
+      additionalFields: {
+        displayUsername: {
+          type: "string",
+          required: false,
+          input: false,
+        },
+      },
+    },
     plugins: [
       tanstackStartCookies(),
-      emailOTP({
-        sendVerificationOTP: options.sendVerificationOTP ?? logOtpToConsole,
-        storeOTP: "hashed",
-        allowedAttempts: 5,
+      username({
+        usernameValidator: isValidUsername,
+        minUsernameLength: USERNAME_MIN_LENGTH,
+        maxUsernameLength: USERNAME_MAX_LENGTH,
       }),
     ],
   });
 
 export type Session = ReturnType<typeof createAuth>["$Infer"]["Session"];
+export type Auth = ReturnType<typeof createAuth>;

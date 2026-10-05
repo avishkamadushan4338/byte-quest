@@ -24,20 +24,41 @@ export interface Objective {
   description: string;
 }
 
-export interface ParticipationStat {
-  label: string;
-  value: string;
-  hint: string;
-  tone: AccentTone;
+export interface EligibilityDivision {
+  kicker: string;
+  title: string;
+  grades: string;
+  color: string;
+  line: string;
+  glow: string;
+  shadow: string;
+  background: string;
+  chipBackground: string;
+  chipLine: string;
+  gradeClass: string;
+  challenge: string;
+  platforms: string[];
 }
 
-export type GainTone = "volt" | "gold" | "teal" | "mint";
+export interface EligibilitySpec {
+  value: string;
+  kicker: string;
+  description: string;
+  color: string;
+}
 
 export interface Gain {
   id: string;
+  n: string;
   title: string;
   description: string;
-  tone: GainTone;
+  color: string;
+  tint: string;
+  line: string;
+  shadow: string;
+  strokeClass: string;
+  hoverBorder: string;
+  hoverShadow: string;
 }
 
 export const aboutBreadcrumb: BreadcrumbItem[] = [
@@ -113,70 +134,150 @@ export const objectives: Objective[] = [
 export const objectivesLead =
   "To give school students a structured path from curiosity to creation — and a national stage to show what they build.";
 
-export const participationStats: ParticipationStat[] = [
+export const eligibilityLead =
+  "Every student in Grades 6–13 has a place. Teams compete within the division that matches their grades.";
+
+export const eligibilityDivisions: EligibilityDivision[] = [
   {
-    label: "JUNIOR DIVISION",
-    value: "Grades 6–8",
-    hint: "Scratch and MIT App Inventor.",
-    tone: "mint",
+    kicker: "DIVISION A",
+    title: "Junior",
+    grades: "6–8",
+    color: "#B9F5D0",
+    line: "rgba(185,245,208,0.16)",
+    glow: "rgba(0,169,154,0.3)",
+    shadow: "rgba(0,169,154,0.5)",
+    background: "linear-gradient(160deg,#0B2C22,#030F0B 70%)",
+    chipBackground: "rgba(185,245,208,0.05)",
+    chipLine: "rgba(185,245,208,0.2)",
+    gradeClass: "bg-[linear-gradient(180deg,#F2F7F4,#B9F5D0)]",
+    challenge:
+      "Create a game or application that makes learning fun or solves a daily problem.",
+    platforms: ["Scratch", "MIT App Inventor"],
   },
   {
-    label: "SENIOR DIVISION",
-    value: "Grades 9–13",
-    hint: "Web, mobile, Python, AI, IoT, robotics and desktop.",
-    tone: "volt",
+    kicker: "DIVISION B",
+    title: "Senior",
+    grades: "9–13",
+    color: "#52FF3D",
+    line: "rgba(82,255,61,0.2)",
+    glow: "rgba(82,255,61,0.22)",
+    shadow: "rgba(82,255,61,0.45)",
+    background: "linear-gradient(160deg,#07200F,#020807 70%)",
+    chipBackground: "rgba(82,255,61,0.05)",
+    chipLine: "rgba(82,255,61,0.25)",
+    gradeClass: "bg-[linear-gradient(180deg,#F2F7F4,#52FF3D)]",
+    challenge:
+      "Innovate for the Sustainable Development Goals with real-world technology.",
+    platforms: ["Web", "Mobile", "Python", "AI", "IoT", "Robotics", "Desktop"],
   },
+];
+
+export const eligibilitySpecs: EligibilitySpec[] = [
   {
-    label: "TEAM SIZE",
     value: "3–5",
-    hint: "Students per team.",
-    tone: "teal",
+    kicker: "TEAM SIZE",
+    description: "Students per team, registered through their school.",
+    color: "#00A99A",
   },
   {
-    label: "DURATION",
-    value: "12 weeks",
-    hint: "Three phases, two hackathons and a Grand Final.",
-    tone: "gold",
+    value: "12",
+    kicker: "WEEKS",
+    description: "Three phases and two hackathons.",
+    color: "#B7F000",
+  },
+  {
+    value: "01",
+    kicker: "GRAND FINAL",
+    description: "The Innovation Expo in week 12.",
+    color: "#F0D875",
   },
 ];
 
 export const gains: Gain[] = [
   {
     id: "technical-skills",
+    n: "01",
     title: "Technical skills",
     description:
       "Hands-on experience building real software and hardware projects.",
-    tone: "volt",
+    color: "#00A99A",
+    tint: "rgba(0,169,154,0.10)",
+    line: "rgba(0,169,154,0.4)",
+    shadow: "rgba(0,169,154,0.45)",
+    strokeClass: "[-webkit-text-stroke:1px_rgba(0,169,154,0.14)]",
+    hoverBorder: "hover:border-[rgba(0,169,154,0.4)]",
+    hoverShadow:
+      "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_60px_-36px_rgba(0,169,154,0.45)]",
   },
   {
     id: "design-thinking",
+    n: "02",
     title: "Design thinking",
     description: "Identify problems and design solutions around people.",
-    tone: "teal",
+    color: "#52FF3D",
+    tint: "rgba(82,255,61,0.10)",
+    line: "rgba(82,255,61,0.4)",
+    shadow: "rgba(82,255,61,0.45)",
+    strokeClass: "[-webkit-text-stroke:1px_rgba(82,255,61,0.14)]",
+    hoverBorder: "hover:border-[rgba(82,255,61,0.4)]",
+    hoverShadow:
+      "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_60px_-36px_rgba(82,255,61,0.45)]",
   },
   {
     id: "mentorship",
+    n: "03",
     title: "Mentorship",
     description: "Feedback from experienced mentors at every phase.",
-    tone: "gold",
+    color: "#B7F000",
+    tint: "rgba(183,240,0,0.10)",
+    line: "rgba(183,240,0,0.4)",
+    shadow: "rgba(183,240,0,0.45)",
+    strokeClass: "[-webkit-text-stroke:1px_rgba(183,240,0,0.14)]",
+    hoverBorder: "hover:border-[rgba(183,240,0,0.4)]",
+    hoverShadow:
+      "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_60px_-36px_rgba(183,240,0,0.45)]",
   },
   {
     id: "presentation",
+    n: "04",
     title: "Presentation",
     description: "Pitch, demo and defend ideas in front of judges.",
-    tone: "volt",
+    color: "#B9F5D0",
+    tint: "rgba(185,245,208,0.10)",
+    line: "rgba(185,245,208,0.4)",
+    shadow: "rgba(185,245,208,0.45)",
+    strokeClass: "[-webkit-text-stroke:1px_rgba(185,245,208,0.14)]",
+    hoverBorder: "hover:border-[rgba(185,245,208,0.4)]",
+    hoverShadow:
+      "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_60px_-36px_rgba(185,245,208,0.45)]",
   },
   {
     id: "entrepreneurship",
+    n: "05",
     title: "Entrepreneurship",
     description: "Understand impact and how ideas become ventures.",
-    tone: "mint",
+    color: "#00A99A",
+    tint: "rgba(0,169,154,0.10)",
+    line: "rgba(0,169,154,0.4)",
+    shadow: "rgba(0,169,154,0.45)",
+    strokeClass: "[-webkit-text-stroke:1px_rgba(0,169,154,0.14)]",
+    hoverBorder: "hover:border-[rgba(0,169,154,0.4)]",
+    hoverShadow:
+      "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_60px_-36px_rgba(0,169,154,0.45)]",
   },
   {
     id: "recognition",
+    n: "06",
     title: "Recognition",
     description: "Awards and a showcase at the Innovation Expo.",
-    tone: "teal",
+    color: "#F0D875",
+    tint: "rgba(212,175,55,0.10)",
+    line: "rgba(212,175,55,0.4)",
+    shadow: "rgba(212,175,55,0.45)",
+    strokeClass: "[-webkit-text-stroke:1px_rgba(212,175,55,0.14)]",
+    hoverBorder: "hover:border-[rgba(212,175,55,0.4)]",
+    hoverShadow:
+      "hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_60px_-36px_rgba(212,175,55,0.45)]",
   },
 ];
 

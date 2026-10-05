@@ -1,8 +1,14 @@
+import type { Database } from "@byte-quest/db";
 import { school, team } from "@byte-quest/db";
-import { asc, eq, sql } from "drizzle-orm";
+import { asc, eq, ilike, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { adminProcedure, publicProcedure } from "../../index";
+
+export interface SchoolLookup {
+  name: string;
+  city: string;
+}
 
 const schoolOutputSchema = z.object({
   id: z.string(),
@@ -14,6 +20,40 @@ const schoolWithSlotsSchema = schoolOutputSchema.extend({
   primarySlotsUsed: z.number(),
   secondarySlotsUsed: z.number(),
 });
+
+/**
+ * Resolve a school by name for team registration: exact match first, then a
+ * case-insensitive "contains" match, otherwise insert. Schools self-register
+ * through the MIC, so this is deliberately reachable without admin rights.
+ */
+export const findOrCreateSchool = async (db: Database, input: SchoolLookup) => {
+  const name = input.name.trim();
+  const city = input.city.trim();
+
+  const [exact] = await db
+    .select({ id: school.id, name: school.name, city: school.city })
+    .from(school)
+    .where(eq(school.name, name))
+    .limit(1);
+  if (exact) {
+    return exact;
+  }
+
+  const [partial] = await db
+    .select({ id: school.id, name: school.name, city: school.city })
+    .from(school)
+    .where(ilike(school.name, `%${name}%`))
+    .limit(1);
+  if (partial) {
+    return partial;
+  }
+
+  const [created] = await db.insert(school).values({ name, city }).returning();
+  if (!created) {
+    throw new Error("Failed to register school");
+  }
+  return created;
+};
 
 export const schoolsRouter = {
   schools: {

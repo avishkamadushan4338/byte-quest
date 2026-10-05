@@ -1,8 +1,13 @@
 import type { BadgeTone } from "@byte-quest/ui/components/badge";
 
-export type AdminTab = "users" | "schools" | "teams" | "submissions";
+export type AdminTab =
+  | "users"
+  | "schools"
+  | "teams"
+  | "submissions"
+  | "applications";
 
-export type UserRole = "admin" | "student";
+export type UserRole = "admin" | "mic" | "leader" | "student";
 
 export type Division = "primary" | "secondary";
 
@@ -45,6 +50,7 @@ export const adminCopy = {
 };
 
 export const adminTabs: { label: string; value: AdminTab }[] = [
+  { label: "Applications", value: "applications" },
   { label: "Users", value: "users" },
   { label: "Schools", value: "schools" },
   { label: "Teams", value: "teams" },
@@ -53,11 +59,15 @@ export const adminTabs: { label: string; value: AdminTab }[] = [
 
 export const roleBadgeTones: Record<UserRole, BadgeTone> = {
   admin: "volt",
+  mic: "gold",
+  leader: "teal",
   student: "neutral",
 };
 
 export const roleLabels: Record<UserRole, string> = {
   admin: "Admin",
+  mic: "MIC",
+  leader: "Team Leader",
   student: "Student",
 };
 

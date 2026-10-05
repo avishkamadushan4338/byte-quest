@@ -104,13 +104,23 @@ byte-quest/
 | Route | Purpose |
 | --- | --- |
 | `/` | Marketing homepage |
-| `/about`, `/programme`, `/journey`, `/mentors`, `/partners`, `/volunteers` | Programme pages |
-| `/register` | Seven-step team registration wizard |
+| `/about`, `/programme`, `/journey`, `/projects`, `/mentors`, `/partners`, `/volunteers` | Programme pages |
+| `/register` | Team registration — team leader or MIC only |
 | `/privacy`, `/terms`, `/code-of-conduct`, `/submission-guidelines` | Policies and guidelines |
-| `/auth/login` | Email one-time-code sign in |
+| `/auth/login` | Username and password sign in |
+| `/apply-admin` | Application for organising committee access |
 | `/onboarding` | Student profile completion (requires a session) |
 | `/dashboard` | Team, join requests and submission (requires a session) |
-| `/admin` | Users, schools, teams and submission review (admin only) |
+| `/admin` | Applications, users, schools, teams and submission review (admin only) |
+
+## Accounts and roles
+
+Sign in uses a username and password (`better-auth` `username` plugin). There is no open signup beyond these two paths:
+
+- `/register` — team leaders and MICs (teachers in charge) create an account and register their team. Ordinary students do not register a team; they sign in and ask to join.
+- `/apply-admin` — anyone can apply for organising committee access. An existing admin approves or rejects; approval provisions the account and returns a one-time password once.
+
+Roles live on `user_profile.role`: `admin`, `mic`, `leader`, `student`.
 
 ## Available Scripts
 
