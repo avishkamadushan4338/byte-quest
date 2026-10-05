@@ -9,12 +9,27 @@ import {
 import { and, count, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { adminProcedure, protectedProcedure } from "../../index";
+import {
+  adminProcedure,
+  protectedProcedure,
+  publicProcedure,
+} from "../../index";
 import { inferDivision } from "../access/router";
 import { findOrCreateSchool } from "../schools/router";
 
 const MIN_MEMBERS = 3;
 const MAX_MEMBERS = 5;
+
+/**
+ * Grades allowed per division for the public registration form. Junior
+ * (primary) is grades 6-8, senior (secondary) is grades 9-13 — this is the
+ * division boundary shown to schools, distinct from `inferDivision`'s
+ * registrant-grade inference used by the authenticated self-service flow.
+ */
+const DIVISION_GRADES: Record<"primary" | "secondary", string[]> = {
+  primary: ["6", "7", "8"],
+  secondary: ["9", "10", "11", "12", "13"],
+};
 
 /** Every specialty must be covered by at least one member. */
 const REQUIRED_SPECIALTIES: MemberSpecialty[] = [
@@ -32,7 +47,8 @@ export const teamOutputSchema = z.object({
 });
 
 const memberOutputSchema = z.object({
-  userId: z.string(),
+  id: z.string(),
+  userId: z.string().nullable(),
   fullName: z.string(),
   grade: z.string(),
   teamRole: z.enum(["leader", "developer"]),
@@ -61,37 +77,68 @@ const countMembers = async (db: Database, teamId: string) => {
 export const teamsRouter = {
   teams: {
     /**
-     * Register a team from the public wizard. Only the team leader or the
-     * school's MIC may do this. Resolves (or registers) the school, then
-     * creates the team with the caller as its leader — the same rules as
-     * `create`, exposed as one call because the wizard has no school id.
+     * Register a team from the public wizard. No account or session is
+     * required — the school's MIC or principal submits the full roster
+     * directly. Resolves (or registers) the school, enforces the
+     * one-team-per-division-per-school rule, then inserts the team and every
+     * member in one go (members have no `userId`; they are not accounts).
      */
-    register: protectedProcedure
+    register: publicProcedure
       .input(
         z.object({
           teamName: z.string().min(1, "Team name is required"),
           division: z.enum(["primary", "secondary"]),
+          idea: z.string().trim().optional(),
           school: z.object({
             name: z.string().min(1, "School name is required"),
+            province: z.string().min(1, "Province is required"),
             city: z.string().min(1, "District or city is required"),
+            address: z.string().optional(),
           }),
+          members: z
+            .array(
+              z.object({
+                fullName: z.string().min(1, "Full name is required"),
+                grade: z.string().min(1, "Grade is required"),
+                className: z.string().min(1, "Class is required"),
+                admissionNumber: z
+                  .string()
+                  .min(1, "Admission number is required"),
+              })
+            )
+            .min(MIN_MEMBERS, `A team needs at least ${MIN_MEMBERS} members`)
+            .max(MAX_MEMBERS, `A team can have at most ${MAX_MEMBERS} members`),
+          leaderIndex: z.number().int().min(0),
+          teacher: z.object({
+            name: z.string().min(1, "Teacher name is required"),
+            designation: z.string().min(1, "Designation is required"),
+            phone: z.string().min(1, "Phone is required"),
+            email: z.email("Enter a valid email"),
+          }),
+          principal: z.string().optional(),
         })
       )
       .output(teamOutputSchema.extend({ schoolName: z.string() }))
       .handler(async ({ context, input }) => {
-        const { role } = context.profile;
-        if (role !== "leader" && role !== "mic" && role !== "admin") {
-          throw new Error(
-            "Only the team leader or the school's MIC can register a team"
-          );
-        }
-        if (inferDivision(context.profile.grade) !== input.division) {
-          throw new Error(
-            `Grade ${context.profile.grade} does not match the ${input.division} division (primary 6-9, secondary 10-13)`
-          );
+        if (input.leaderIndex >= input.members.length) {
+          throw new Error("Team leader must be one of the registered members");
         }
 
-        const resolved = await findOrCreateSchool(context.db, input.school);
+        const allowedGrades = DIVISION_GRADES[input.division];
+        for (const member of input.members) {
+          if (!allowedGrades.includes(member.grade)) {
+            throw new Error(
+              `${member.fullName || "A member"}'s grade (${member.grade}) does not match the ${input.division} division`
+            );
+          }
+        }
+
+        const resolved = await findOrCreateSchool(context.db, {
+          name: input.school.name,
+          city: input.school.city,
+          province: input.school.province,
+          address: input.school.address,
+        });
 
         const [existingTeam] = await context.db
           .select({ id: team.id })
@@ -112,23 +159,36 @@ export const teamsRouter = {
             name: input.teamName,
             division: input.division,
             schoolId: resolved.id,
+            idea: input.idea?.trim() || null,
+            teacherName: input.teacher.name.trim(),
+            teacherDesignation: input.teacher.designation.trim(),
+            teacherPhone: input.teacher.phone.trim(),
+            teacherEmail: input.teacher.email.trim(),
+            principalName: input.principal?.trim() || null,
           })
           .returning();
         if (!created) {
           throw new Error("Failed to create team");
         }
 
-        await context.db.insert(teamMember).values({
-          teamId: created.id,
-          userId: context.profile.userId,
-          teamRole: "leader",
-          grade: context.profile.grade,
-          fullName: context.profile.fullName,
-          nationalId: context.profile.nationalId,
-          birthday: context.profile.birthday,
-        });
+        await context.db.insert(teamMember).values(
+          input.members.map((member, index) => ({
+            teamId: created.id,
+            teamRole: (index === input.leaderIndex ? "leader" : "developer") as
+              | "leader"
+              | "developer",
+            grade: member.grade,
+            fullName: member.fullName.trim(),
+            className: member.className.trim(),
+            admissionNumber: member.admissionNumber.trim(),
+          }))
+        );
 
-        return { ...created, memberCount: 1, schoolName: resolved.name };
+        return {
+          ...created,
+          memberCount: input.members.length,
+          schoolName: resolved.name,
+        };
       }),
 
     /**
@@ -196,6 +256,7 @@ export const teamsRouter = {
       .handler(({ context, input }) =>
         context.db
           .select({
+            id: teamMember.id,
             userId: teamMember.userId,
             fullName: teamMember.fullName,
             grade: teamMember.grade,
@@ -456,6 +517,12 @@ export const teamsRouter = {
             schoolName: z.string(),
             minMembers: z.number(),
             maxMembers: z.number(),
+            idea: z.string().nullable(),
+            teacherName: z.string().nullable(),
+            teacherDesignation: z.string().nullable(),
+            teacherPhone: z.string().nullable(),
+            teacherEmail: z.string().nullable(),
+            principalName: z.string().nullable(),
           })
         )
       )
@@ -470,6 +537,12 @@ export const teamsRouter = {
             memberCount: sql<number>`count(${teamMember.id})`.mapWith(Number),
             minMembers: sql<number>`3`.mapWith(Number),
             maxMembers: sql<number>`5`.mapWith(Number),
+            idea: team.idea,
+            teacherName: team.teacherName,
+            teacherDesignation: team.teacherDesignation,
+            teacherPhone: team.teacherPhone,
+            teacherEmail: team.teacherEmail,
+            principalName: team.principalName,
           })
           .from(team)
           .innerJoin(school, eq(team.schoolId, school.id))

@@ -122,7 +122,7 @@ export const TeamPanel = ({ me, onChanged, team }: TeamPanelProps) => {
             </TableHead>
             <TableBody>
               {members.map((member) => (
-                <TableRow key={member.userId}>
+                <TableRow key={member.id}>
                   <TableCell className="text-fg font-medium">
                     {member.fullName}
                   </TableCell>

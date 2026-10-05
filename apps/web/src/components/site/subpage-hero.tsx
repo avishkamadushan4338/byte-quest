@@ -1,11 +1,9 @@
 import { cn } from "@byte-quest/ui/lib/utils";
-import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
 type HeroTone = "teal" | "gold";
 
 interface SubpageHeroProps {
-  crumb: string;
   kicker: string;
   title: ReactNode;
   lead?: ReactNode;
@@ -32,7 +30,6 @@ export const HeaderSpacer = () => (
 );
 
 export const SubpageHero = ({
-  crumb,
   kicker,
   title,
   lead,
@@ -53,21 +50,9 @@ export const SubpageHero = ({
       style={{ background: toneGlow[tone] }}
     >
       <div className="mx-auto max-w-[1280px]">
-        <nav
-          aria-label="Breadcrumb"
-          className="text-faint flex gap-2 font-mono text-[11px] tracking-[0.12em]"
-        >
-          <Link className="text-muted-2 hover:text-volt" to="/">
-            HOME
-          </Link>
-          <span>/</span>
-          <span aria-current="page" className={toneText[tone]}>
-            {crumb}
-          </span>
-        </nav>
         <div
           className={cn(
-            "mt-7 grid items-end gap-x-[72px] gap-y-6",
+            "grid items-end gap-x-[72px] gap-y-6",
             narrow
               ? "[grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))]"
               : "[grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr))]",

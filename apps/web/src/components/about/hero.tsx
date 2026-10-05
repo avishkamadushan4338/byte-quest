@@ -22,7 +22,6 @@ export const Hero = () => (
       </div>
     }
     className="overflow-hidden pt-[clamp(56px,8vw,112px)] pb-[clamp(48px,6vw,80px)]"
-    crumb="ABOUT"
     gridClassName="gap-y-10"
     kicker="ABOUT BYTE QUEST"
     title={

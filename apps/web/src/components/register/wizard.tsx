@@ -1,15 +1,11 @@
-import { useRouter } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { SubpageHero } from "@/components/site/subpage-hero";
-import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/utils/orpc";
 
 import type {
-  AccountDetails,
-  AccountErrors,
   Division,
   MemberDetails,
   RegisterErrors,
@@ -34,7 +30,6 @@ import {
   validationCopy,
 } from "./data";
 import { RegisterStepper } from "./register-stepper";
-import { StepAccount } from "./step-account";
 import { StepConfirmation } from "./step-confirmation";
 import { StepDivision } from "./step-division";
 import { StepReview } from "./step-review";
@@ -45,10 +40,7 @@ import { StepTeam } from "./step-team";
 
 const PHONE_PATTERN = /^(?:\+94|0)\d{9}$/u;
 const EMAIL_PATTERN = /^[^@\s@]+@[^\s@]+\.[^@\s@]+$/u;
-const USERNAME_PATTERN = /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/u;
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const REFERENCE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-const MIN_PASSWORD_LENGTH = 8;
 
 const isPhone = (value: string) =>
   PHONE_PATTERN.test(value.replaceAll(/[\s-]/gu, ""));
@@ -59,39 +51,6 @@ const isGradeAllowed = (division: Division | null, grade: string) =>
 /** The API names the divisions differently to the wizard. */
 const divisionToApi = (division: Division) =>
   division === "junior" ? "primary" : "secondary";
-
-const validateAccount = (account: AccountDetails): AccountErrors => {
-  const errors: AccountErrors = {};
-
-  if (account.role === null) {
-    errors.role = validationCopy.registrantRole;
-  }
-  if (account.fullName.trim().length === 0) {
-    errors.fullName = validationCopy.required;
-  }
-  if (!EMAIL_PATTERN.test(account.email.trim())) {
-    errors.email = validationCopy.email;
-  }
-  if (account.username.trim().length < 3) {
-    errors.username = validationCopy.usernameLength;
-  } else if (!USERNAME_PATTERN.test(account.username.trim())) {
-    errors.username = validationCopy.username;
-  }
-  if (account.password.length < MIN_PASSWORD_LENGTH) {
-    errors.password = validationCopy.password;
-  }
-  if (account.nationalId.trim().length === 0) {
-    errors.nationalId = validationCopy.required;
-  }
-  if (!DATE_PATTERN.test(account.birthday.trim())) {
-    errors.birthday = validationCopy.birthday;
-  }
-  if (account.grade === null) {
-    errors.grade = validationCopy.required;
-  }
-
-  return errors;
-};
 
 const messageFor = (error: unknown, fallback: string) =>
   error instanceof Error && error.message ? error.message : fallback;
@@ -193,13 +152,6 @@ const validateStep = (step: number, state: RegisterState): RegisterErrors => {
   const errors: RegisterErrors = {};
   const key = stepOrder[step];
 
-  if (key === "account") {
-    const account = validateAccount(state.account);
-    if (Object.keys(account).length > 0) {
-      errors.account = account;
-    }
-  }
-
   if (key === "school") {
     const school = validateSchool(state.school);
     if (Object.keys(school).length > 0) {
@@ -240,7 +192,6 @@ const validateStep = (step: number, state: RegisterState): RegisterErrors => {
 };
 
 export const Register = () => {
-  const router = useRouter();
   const [state, setState] = useState<RegisterState>(initialRegisterState);
   const [step, setStep] = useState(0);
   const [maxStep, setMaxStep] = useState(0);
@@ -253,15 +204,6 @@ export const Register = () => {
   const content = registerSteps[currentKey];
   const isConfirmation = currentKey === "confirmation";
   const reviewStep = stepOrder.indexOf("review");
-  const accountStep = stepOrder.indexOf("account");
-
-  const handleAccountChange = (patch: Partial<AccountDetails>) => {
-    setState((current) => ({
-      ...current,
-      account: { ...current.account, ...patch },
-    }));
-    setErrors((current) => ({ ...current, account: undefined }));
-  };
 
   const handleSchoolChange = (patch: Partial<SchoolDetails>) => {
     setState((current) => ({
@@ -325,53 +267,11 @@ export const Register = () => {
     setErrors((current) => ({ ...current, consent: undefined }));
   };
 
-  /** Create the leader's or MIC's account, then sign them in. */
-  const createAccount = async (): Promise<boolean> => {
-    const { account } = state;
-    if (account.role === null || account.grade === null) {
-      return false;
-    }
-
-    setPending(true);
-    try {
-      await orpc.access.register.call({
-        fullName: account.fullName.trim(),
-        email: account.email.trim(),
-        username: account.username.trim(),
-        password: account.password,
-        nationalId: account.nationalId.trim(),
-        birthday: account.birthday.trim(),
-        grade: account.grade,
-        role: account.role,
-      });
-    } catch (error) {
-      setPending(false);
-      setErrors({
-        account: {
-          username: messageFor(
-            error,
-            "We could not create that account. Try a different username."
-          ),
-        },
-      });
-      toast.error(messageFor(error, "We could not create your account"));
-      return false;
-    }
-    setPending(false);
-
-    const { error } = await authClient.signIn.username({
-      username: account.username.trim(),
-      password: account.password,
-    });
-    if (error) {
-      toast.error("Account created, but sign-in failed. Please sign in.");
-      await router.navigate({ to: "/auth/login" });
-      return false;
-    }
-    return true;
-  };
-
-  /** Create the school (if new) and the team, with the caller as leader. */
+  /**
+   * Submit the full registration: school, team, every student on the
+   * roster and the teacher/principal contact. No account is created --
+   * the school's MIC or principal submits this directly.
+   */
   const submitTeam = async (): Promise<boolean> => {
     if (state.division === null) {
       return false;
@@ -382,10 +282,27 @@ export const Register = () => {
       await orpc.teams.register.call({
         teamName: state.team.name.trim(),
         division: divisionToApi(state.division),
+        idea: state.team.idea.trim() || undefined,
         school: {
           name: state.school.name.trim(),
+          province: state.school.province ?? "",
           city: state.school.district.trim(),
+          address: state.school.address.trim() || undefined,
         },
+        members: state.students.map((member) => ({
+          fullName: member.fullName.trim(),
+          grade: member.grade ?? "",
+          className: member.className.trim(),
+          admissionNumber: member.admissionNumber.trim(),
+        })),
+        leaderIndex: state.leaderIndex,
+        teacher: {
+          name: state.teacher.name.trim(),
+          designation: state.teacher.designation.trim(),
+          phone: state.teacher.phone.trim(),
+          email: state.teacher.email.trim(),
+        },
+        principal: state.teacher.principal.trim() || undefined,
       });
     } catch (error) {
       setPending(false);
@@ -406,14 +323,6 @@ export const Register = () => {
       setErrors(nextErrors);
       toast.error(validationCopy.incomplete);
       return;
-    }
-
-    if (currentKey === "account") {
-      const ok = await createAccount();
-      if (!ok) {
-        return;
-      }
-      toast.success("Account created");
     }
 
     if (currentKey === "review") {
@@ -472,20 +381,10 @@ export const Register = () => {
     if (step === reviewStep) {
       return registerAside.submitLabel;
     }
-    if (step === accountStep) {
-      return registerAside.createAccountLabel;
-    }
     return registerAside.continueLabel;
   })();
 
   const panels: Record<StepKey, ReactNode> = {
-    account: (
-      <StepAccount
-        account={state.account}
-        errors={errors.account ?? {}}
-        onChange={handleAccountChange}
-      />
-    ),
     school: (
       <StepSchool
         errors={errors}
@@ -562,7 +461,6 @@ export const Register = () => {
           </div>
         }
         className="pt-[clamp(48px,6vw,80px)] pb-[clamp(28px,4vw,44px)] [&_h1]:mt-4 [&_h1]:text-[clamp(40px,5.5vw,76px)]"
-        crumb="REGISTER"
         gridClassName="mt-6 gap-y-5"
         kicker={registerHero.kicker}
         title={registerHero.title}

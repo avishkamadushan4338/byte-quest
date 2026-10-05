@@ -8,12 +8,16 @@ import { adminProcedure, publicProcedure } from "../../index";
 export interface SchoolLookup {
   name: string;
   city: string;
+  province?: string;
+  address?: string;
 }
 
 const schoolOutputSchema = z.object({
   id: z.string(),
   name: z.string(),
   city: z.string(),
+  province: z.string().nullable(),
+  address: z.string().nullable(),
 });
 
 const schoolWithSlotsSchema = schoolOutputSchema.extend({
@@ -29,9 +33,17 @@ const schoolWithSlotsSchema = schoolOutputSchema.extend({
 export const findOrCreateSchool = async (db: Database, input: SchoolLookup) => {
   const name = input.name.trim();
   const city = input.city.trim();
+  const province = input.province?.trim() || null;
+  const address = input.address?.trim() || null;
 
   const [exact] = await db
-    .select({ id: school.id, name: school.name, city: school.city })
+    .select({
+      id: school.id,
+      name: school.name,
+      city: school.city,
+      province: school.province,
+      address: school.address,
+    })
     .from(school)
     .where(eq(school.name, name))
     .limit(1);
@@ -40,7 +52,13 @@ export const findOrCreateSchool = async (db: Database, input: SchoolLookup) => {
   }
 
   const [partial] = await db
-    .select({ id: school.id, name: school.name, city: school.city })
+    .select({
+      id: school.id,
+      name: school.name,
+      city: school.city,
+      province: school.province,
+      address: school.address,
+    })
     .from(school)
     .where(ilike(school.name, `%${name}%`))
     .limit(1);
@@ -48,7 +66,10 @@ export const findOrCreateSchool = async (db: Database, input: SchoolLookup) => {
     return partial;
   }
 
-  const [created] = await db.insert(school).values({ name, city }).returning();
+  const [created] = await db
+    .insert(school)
+    .values({ name, city, province, address })
+    .returning();
   if (!created) {
     throw new Error("Failed to register school");
   }
@@ -66,6 +87,8 @@ export const schoolsRouter = {
             id: school.id,
             name: school.name,
             city: school.city,
+            province: school.province,
+            address: school.address,
           })
           .from(school)
           .orderBy(asc(school.name))
@@ -81,6 +104,8 @@ export const schoolsRouter = {
             id: school.id,
             name: school.name,
             city: school.city,
+            province: school.province,
+            address: school.address,
             primarySlotsUsed:
               sql<number>`count(*) filter (where ${team.division} = 'primary')`.mapWith(
                 Number
@@ -102,7 +127,14 @@ export const schoolsRouter = {
 
     /** Admin: register a school. */
     create: adminProcedure
-      .input(z.object({ name: z.string().min(1), city: z.string().min(1) }))
+      .input(
+        z.object({
+          name: z.string().min(1),
+          city: z.string().min(1),
+          province: z.string().optional(),
+          address: z.string().optional(),
+        })
+      )
       .output(schoolOutputSchema)
       .handler(async ({ context, input }) => {
         const [created] = await context.db
@@ -122,6 +154,8 @@ export const schoolsRouter = {
           id: z.string(),
           name: z.string().min(1).optional(),
           city: z.string().min(1).optional(),
+          province: z.string().optional(),
+          address: z.string().optional(),
         })
       )
       .output(schoolOutputSchema)

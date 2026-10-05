@@ -104,10 +104,6 @@ export const AdminApplication = () => {
     return (
       <>
         <PageHero
-          breadcrumb={[
-            { label: "Home", to: "/" },
-            { label: "Admin application" },
-          ]}
           id="apply-admin"
           kicker={adminApplyCopy.kicker}
           kickerTone="gold"
@@ -155,10 +151,6 @@ export const AdminApplication = () => {
   return (
     <>
       <PageHero
-        breadcrumb={[
-          { label: "Home", to: "/" },
-          { label: "Admin application" },
-        ]}
         id="apply-admin"
         kicker={adminApplyCopy.kicker}
         kickerTone="gold"

@@ -28,7 +28,6 @@ export const PolicyPage = ({ meta }: { meta: PolicyMeta }) => (
           <span className="text-muted text-[13px]">{meta.updated}</span>
         </div>
       }
-      breadcrumb={[{ label: "Home", to: "/" }, { label: meta.title }]}
       id={meta.slug}
       kicker={meta.kicker}
       lead={meta.lede}

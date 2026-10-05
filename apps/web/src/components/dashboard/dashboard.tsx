@@ -113,7 +113,6 @@ export const Dashboard = ({ me, submission, team }: DashboardProps) => {
     <main className="bg-ink overflow-x-hidden">
       <PageHero
         aside={<StatStrip items={stats} />}
-        breadcrumb={[{ label: "Home", to: "/" }, { label: "Dashboard" }]}
         id="dashboard"
         kicker={dashboardHero.kicker}
         kickerTone="volt"

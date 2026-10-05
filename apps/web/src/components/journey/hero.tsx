@@ -5,7 +5,6 @@ import { journeyFacts } from "./data";
 
 export const JourneyHero = () => (
   <SubpageHero
-    crumb="JOURNEY"
     kicker="THE BYTE QUEST JOURNEY"
     lead="A three-month innovation and coding accelerator in three phases, with two hackathons and a Grand Final along the way. Official dates will be announced."
     title="Twelve weeks from idea to impact."

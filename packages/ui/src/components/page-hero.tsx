@@ -1,27 +1,19 @@
 import { cn } from "@byte-quest/ui/lib/utils";
-import type { ComponentType, ReactNode } from "react";
+import type { ReactNode } from "react";
 
-import { Breadcrumb, type BreadcrumbItem } from "@byte-quest/ui/components/breadcrumb";
 import { Container } from "@byte-quest/ui/components/container";
 import { Kicker, type KickerTone } from "@byte-quest/ui/components/kicker";
 import { Section, type SectionTone } from "@byte-quest/ui/components/section";
 
 type PageHeroProps = {
   id?: string;
-  breadcrumb: BreadcrumbItem[];
   kicker: ReactNode;
   kickerTone?: KickerTone;
   title: ReactNode;
   lead?: ReactNode;
-  breadcrumbTone?: "teal" | "gold" | "volt";
   aside?: ReactNode;
   asideTone?: SectionTone;
   glow?: "teal" | "gold";
-  linkComponent?: ComponentType<{
-  to: string;
-  className?: string;
-  children: ReactNode;
-}>;
   className?: string;
   children?: ReactNode;
 };
@@ -33,16 +25,13 @@ const glowBackgrounds = {
 
 function PageHero({
   id,
-  breadcrumb,
   kicker,
   kickerTone = "teal",
   title,
   lead,
-  breadcrumbTone = "teal",
   aside,
   asideTone,
   glow = "teal",
-  linkComponent,
   className,
   children,
 }: PageHeroProps) {
@@ -54,12 +43,7 @@ function PageHero({
       tone={asideTone ?? "base"}
     >
       <Container>
-        <Breadcrumb
-          items={breadcrumb}
-          linkComponent={linkComponent}
-          tone={breadcrumbTone}
-        />
-        <div className="mt-8 grid items-end gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))] lg:gap-x-[72px]">
+        <div className="grid items-end gap-6 [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))] lg:gap-x-[72px]">
           <div>
             <Kicker tone={kickerTone}>{kicker}</Kicker>
             <h1 className="mt-4 text-[clamp(40px,6.5vw,88px)] leading-[0.92] tracking-[-0.045em]">

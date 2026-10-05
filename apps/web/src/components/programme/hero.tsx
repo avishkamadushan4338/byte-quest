@@ -28,7 +28,6 @@ export const Hero = () => (
         </div>
       </div>
     }
-    crumb="PROGRAMME"
     kicker="THE PROGRAMME"
     title="An innovation accelerator for schools."
   >

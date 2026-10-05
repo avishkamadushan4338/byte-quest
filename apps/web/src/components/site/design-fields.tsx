@@ -1,4 +1,16 @@
 import { cn } from "@byte-quest/ui/lib/utils";
+import {
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxPopup,
+  ComboboxPortal,
+  ComboboxPositioner,
+  ComboboxRoot,
+  ComboboxTrigger,
+} from "@byte-quest/ui/primitives/combobox";
+import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 type Requirement = "required" | "optional";
@@ -43,6 +55,14 @@ export interface FieldOption {
 interface SelectFieldProps extends ControlProps {
   options: FieldOption[];
   hideArrow?: boolean;
+}
+
+interface ComboboxFieldProps extends ControlProps {
+  options: FieldOption[];
+  /** Lets free text pass through when it matches no option (e.g. a school not in the catalog). */
+  allowFreeText?: boolean;
+  emptyMessage?: string;
+  maxResults?: number;
 }
 
 const requirementLabels = {
@@ -197,6 +217,115 @@ export const SelectField = ({
     </select>
   </FieldShell>
 );
+
+/**
+ * Searchable dropdown built on the unstyled Combobox primitive --
+ * deliberately not the native `<select>`, so long option lists (e.g. the
+ * national school directory) stay filterable and keyboard-navigable without
+ * a browser-native popup. With `allowFreeText`, typed text that matches no
+ * option is kept as-is (for entries outside the known catalog); otherwise
+ * the field clears on blur unless it exactly matches an option label.
+ */
+export const ComboboxField = ({
+  id,
+  label,
+  value,
+  onValueChange,
+  requirement,
+  error,
+  hint,
+  placeholder,
+  surface = "ink",
+  options,
+  allowFreeText = false,
+  emptyMessage = "No matches",
+  maxResults = 40,
+}: ComboboxFieldProps) => {
+  const [query, setQuery] = useState(value);
+  const [prevValue, setPrevValue] = useState(value);
+
+  // The committed value can change from outside (e.g. picking a school fills
+  // province/district too). Resync the visible query during render rather
+  // than in an effect, per React's "adjusting state on prop change" pattern.
+  if (value !== prevValue) {
+    setPrevValue(value);
+    setQuery(value);
+  }
+
+  const filteredLabels = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    const pool = query
+      ? options.filter((option) => option.label.toLowerCase().includes(needle))
+      : options;
+    return pool.slice(0, maxResults).map((option) => option.label);
+  }, [options, query, maxResults]);
+
+  const commitFreeText = (text: string) => {
+    if (allowFreeText) {
+      onValueChange(text);
+      return;
+    }
+    const match = options.find(
+      (option) => option.label.toLowerCase() === text.trim().toLowerCase()
+    );
+    onValueChange(match ? match.value : "");
+    setQuery(match ? match.label : "");
+  };
+
+  return (
+    <FieldShell
+      error={error}
+      hint={hint}
+      id={id}
+      label={label}
+      requirement={requirement}
+    >
+      <ComboboxRoot
+        inputValue={query}
+        items={filteredLabels}
+        onInputValueChange={(text) => {
+          setQuery(text);
+          if (allowFreeText) {
+            onValueChange(text);
+          }
+        }}
+        onValueChange={(selected) => {
+          if (typeof selected === "string") {
+            const match = options.find((option) => option.label === selected);
+            const nextValue = match ? match.value : selected;
+            onValueChange(nextValue);
+            setQuery(match ? match.label : selected);
+          }
+        }}
+      >
+        <div className="relative">
+          <ComboboxInput
+            aria-invalid={Boolean(error)}
+            className={cn(controlClass(surface, error), "h-auto pr-10")}
+            id={id}
+            onBlur={(event) => commitFreeText(event.target.value)}
+            placeholder={placeholder}
+          />
+          <ComboboxTrigger />
+        </div>
+        <ComboboxPortal>
+          <ComboboxPositioner sideOffset={6}>
+            <ComboboxPopup>
+              <ComboboxEmpty>{emptyMessage}</ComboboxEmpty>
+              <ComboboxList>
+                {(item: string) => (
+                  <ComboboxItem key={item} value={item}>
+                    {item}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxPopup>
+          </ComboboxPositioner>
+        </ComboboxPortal>
+      </ComboboxRoot>
+    </FieldShell>
+  );
+};
 
 export const fieldGridClass =
   "grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-x-4 gap-y-3.5";

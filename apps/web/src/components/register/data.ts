@@ -2,15 +2,7 @@ import type { FieldOption } from "@/components/site/design-fields";
 
 export type Division = "junior" | "senior";
 
-/**
- * Only these two may register a team: the team leader, or the school's MIC
- * (teacher in charge) acting on the school's behalf. Mirrors the
- * `canRegisterTeam` check on `access`.
- */
-export type RegistrantRole = "leader" | "mic";
-
 export type StepKey =
-  | "account"
   | "school"
   | "division"
   | "team"
@@ -18,17 +10,6 @@ export type StepKey =
   | "teacher"
   | "review"
   | "confirmation";
-
-export interface AccountDetails {
-  role: RegistrantRole | null;
-  fullName: string;
-  email: string;
-  username: string;
-  password: string;
-  nationalId: string;
-  birthday: string;
-  grade: string | null;
-}
 
 export interface SchoolDetails {
   name: string;
@@ -59,7 +40,6 @@ export interface TeacherDetails {
 }
 
 export interface RegisterState {
-  account: AccountDetails;
   school: SchoolDetails;
   division: Division | null;
   team: TeamDetails;
@@ -67,17 +47,6 @@ export interface RegisterState {
   leaderIndex: number;
   teacher: TeacherDetails;
   consent: boolean;
-}
-
-export interface AccountErrors {
-  role?: string;
-  fullName?: string;
-  email?: string;
-  username?: string;
-  password?: string;
-  nationalId?: string;
-  birthday?: string;
-  grade?: string;
 }
 
 export interface SchoolErrors {
@@ -105,7 +74,6 @@ export interface TeacherErrors {
 }
 
 export interface RegisterErrors {
-  account?: AccountErrors;
   school?: SchoolErrors;
   division?: string;
   team?: TeamErrors;
@@ -141,20 +109,6 @@ export interface NextStepItem {
   text: string;
 }
 
-export interface RegistrantRoleOption {
-  value: RegistrantRole;
-  badge: string;
-  title: string;
-  description: string;
-  color: string;
-}
-
-const ACCOUNT_GRADES = ["6", "7", "8", "9", "10", "11", "12", "13"];
-
-export const gradeOptionsForAccount: FieldOption[] = ACCOUNT_GRADES.map(
-  (grade) => ({ label: `Grade ${grade}`, value: grade })
-);
-
 export const registerHero = {
   kicker: "TEAM REGISTRATION",
   title: "Register your team.",
@@ -178,58 +132,51 @@ export const registerHero = {
 } satisfies { kicker: string; title: string; pills: HeroPill[] };
 
 export const registerSteps = {
-  account: {
-    label: "Your account",
-    eyebrow: "01 / YOUR ACCOUNT",
-    title: "Team leader or MIC?",
-    body: "Only the team leader or the school's MIC (teacher in charge) registers a team. Ordinary students join afterwards.",
-  },
   school: {
     label: "School",
-    eyebrow: "02 / SCHOOL",
+    eyebrow: "01 / SCHOOL",
     title: "Which school are you representing?",
     body: "Teams register through their school.",
   },
   division: {
     label: "Division",
-    eyebrow: "03 / DIVISION",
+    eyebrow: "02 / DIVISION",
     title: "Choose your division.",
     body: "Every member of the team must be in the grades for that division.",
   },
   team: {
     label: "Team",
-    eyebrow: "04 / TEAM",
+    eyebrow: "03 / TEAM",
     title: "Name your team.",
     body: "You can refine your project idea later in the programme.",
   },
   students: {
     label: "Students",
-    eyebrow: "05 / STUDENTS",
+    eyebrow: "04 / STUDENTS",
     title: "Add your team members.",
     body: "Select one member as team leader. Student details are kept private.",
   },
   teacher: {
     label: "Teacher contact",
-    eyebrow: "06 / TEACHER & SCHOOL CONTACT",
+    eyebrow: "05 / TEACHER & SCHOOL CONTACT",
     title: "Who is the teacher in charge?",
     body: "All programme communication goes through the school contact.",
   },
   review: {
     label: "Review",
-    eyebrow: "07 / REVIEW",
+    eyebrow: "06 / REVIEW",
     title: "Check everything before you submit.",
     body: "Use Edit to go back to any section.",
   },
   confirmation: {
     label: "Confirmation",
-    eyebrow: "08 / CONFIRMATION",
+    eyebrow: "07 / CONFIRMATION",
     title: "Registration received.",
     body: "Welcome to the quest, {teamName}. A confirmation will be sent to the teacher in charge.",
   },
 } satisfies Record<StepKey, StepContent>;
 
 export const stepOrder: StepKey[] = [
-  "account",
   "school",
   "division",
   "team",
@@ -244,44 +191,9 @@ export const stepList = stepOrder.map((key) => ({
 }));
 
 export const registerAside = {
-  backLabel: "← Back",
-  continueLabel: "Continue →",
-  createAccountLabel: "Create my account →",
-  submitLabel: "Submit registration →",
-};
-
-export const accountRoles: RegistrantRoleOption[] = [
-  {
-    value: "leader",
-    badge: "TEAM LEADER",
-    title: "Team leader",
-    description: "I lead my team and will register it on our school's behalf.",
-    color: "#52FF3D",
-  },
-  {
-    value: "mic",
-    badge: "MASTER-IN-CHARGE",
-    title: "MIC (teacher in charge)",
-    description:
-      "I am the teacher in charge and register the team for my school.",
-    color: "#F0D875",
-  },
-];
-
-export const accountCopy = {
-  usernameHint:
-    "Letters, digits, dots, underscores or hyphens. This is how you sign in.",
-  passwordHint: "At least 8 characters.",
-  birthdayHint: "Use the YYYY-MM-DD format.",
-  studentsTitle: "Students don't register here.",
-  studentsNote:
-    "Students do not register their own team. They sign in and ask to join yours.",
-  gradeOptions: gradeOptionsForAccount,
-};
-
-export const registrantRoleLabels: Record<RegistrantRole, string> = {
-  leader: "Team Leader",
-  mic: "MIC (Teacher in charge)",
+  backLabel: "\u2190 Back",
+  continueLabel: "Continue \u2192",
+  submitLabel: "Submit registration \u2192",
 };
 
 export const validationCopy = {
@@ -292,12 +204,6 @@ export const validationCopy = {
   email: "Enter a valid email",
   consent: "Please confirm to submit.",
   incomplete: "Please complete the highlighted fields",
-  registrantRole: "Only a team leader or a MIC can register a team.",
-  username:
-    "Use letters, digits, dots, underscores or hyphens, starting with a letter or digit.",
-  usernameLength: "Username must be at least 3 characters.",
-  password: "Password must be at least 8 characters.",
-  birthday: "Use the YYYY-MM-DD format.",
 };
 
 export const consentCopy =
@@ -418,16 +324,6 @@ export const createEmptyMember = (): MemberDetails => ({
 });
 
 export const initialRegisterState: RegisterState = {
-  account: {
-    role: null,
-    fullName: "",
-    email: "",
-    username: "",
-    password: "",
-    nationalId: "",
-    birthday: "",
-    grade: null,
-  },
   school: { name: "", province: null, district: "", address: "" },
   division: null,
   team: { name: "", size: "3", idea: "" },

@@ -1,5 +1,6 @@
 import { BrandLockup } from "@byte-quest/ui/components/brand";
 import { useScrolled } from "@byte-quest/ui/hooks/use-scrolled";
+import { cn } from "@byte-quest/ui/lib/utils";
 import {
   DialogClose,
   DialogContent,
@@ -67,11 +68,21 @@ export const SiteHeader = () => {
           </Link>
           <DialogRoot onOpenChange={setMenuOpen} open={menuOpen}>
             <DialogTrigger
-              aria-label="Open menu"
-              className="flex size-10 cursor-pointer flex-col items-center justify-center gap-[5px] rounded-full border border-[rgba(185,245,208,0.2)] bg-transparent"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              className="flex size-10 shrink-0 cursor-pointer flex-col items-center justify-center gap-[5px] rounded-full border border-[rgba(185,245,208,0.2)] bg-transparent min-[1100px]:hidden"
             >
-              <span className="bg-fg h-[1.5px] w-[15px]" />
-              <span className="bg-fg h-[1.5px] w-[15px]" />
+              <span
+                className={cn(
+                  "bg-fg h-[1.5px] w-[15px] transition-transform duration-300 ease-in-out",
+                  menuOpen && "translate-y-[3.25px] rotate-45"
+                )}
+              />
+              <span
+                className={cn(
+                  "bg-fg h-[1.5px] w-[15px] transition-transform duration-300 ease-in-out",
+                  menuOpen && "-translate-y-[3.25px] -rotate-45"
+                )}
+              />
             </DialogTrigger>
             <DialogContent className="px-[clamp(20px,5vw,64px)] py-6 sm:px-[clamp(20px,5vw,64px)] sm:py-6">
               <div className="flex items-center justify-between">

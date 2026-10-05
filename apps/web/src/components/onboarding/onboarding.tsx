@@ -98,7 +98,6 @@ export const Onboarding = () => {
   return (
     <main className="bg-ink overflow-x-hidden">
       <PageHero
-        breadcrumb={[{ label: "Home", to: "/" }, { label: "Profile" }]}
         id="onboarding"
         kicker={onboardingHero.kicker}
         kickerTone="volt"

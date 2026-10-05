@@ -8,6 +8,8 @@ export const school = pgTable("school", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   city: text("city").notNull(),
+  province: text("province"),
+  address: text("address"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

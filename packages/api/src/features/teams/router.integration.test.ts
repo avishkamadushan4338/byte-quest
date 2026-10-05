@@ -65,6 +65,32 @@ const ctxFor = (userId: string, grade: string) =>
     profile: { userId, grade },
   });
 
+const member = (grade: string, suffix: string) => ({
+  fullName: `Student ${suffix}`,
+  grade,
+  className: `10${suffix}`,
+  admissionNumber: `ADM-${suffix}`,
+});
+
+const basePayload = (overrides: Partial<Record<string, unknown>> = {}) => ({
+  teamName: "Byte Falcons",
+  division: "primary" as const,
+  school: {
+    name: `Register School ${randomUUID()}`,
+    province: "Southern",
+    city: "Galle",
+  },
+  members: [member("6", "A"), member("7", "B"), member("8", "C")],
+  leaderIndex: 0,
+  teacher: {
+    name: "Jane MIC",
+    designation: "ICT Teacher",
+    phone: "0712345678",
+    email: "jane@school.lk",
+  },
+  ...overrides,
+});
+
 describe("teams.create (division + one-team-per-school rules)", () => {
   test("leader creates a primary team and becomes its only member", async () => {
     const leader = await seedStudent("8");
@@ -424,5 +450,147 @@ describe("teams join flow (request → approve → membership)", () => {
     expect(row?.memberCount).toBe(1);
     expect(row?.minMembers).toBe(3);
     expect(row?.maxMembers).toBe(5);
+  });
+});
+
+describe("teams.register (public, no-auth school registration)", () => {
+  test("registers a team with no session and inserts every member", async () => {
+    const noAuthContext = makeContext(testDb.db);
+
+    const result = await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload(),
+    });
+
+    expect(result.name).toBe("Byte Falcons");
+    expect(result.memberCount).toBe(3);
+
+    const members = await testDb.db
+      .select()
+      .from(teamMember)
+      .where(eq(teamMember.teamId, result.id));
+    expect(members).toHaveLength(3);
+    expect(members.every((m) => m.userId === null)).toBe(true);
+    const leader = members.find((m) => m.teamRole === "leader");
+    expect(leader?.fullName).toBe("Student A");
+    expect(leader?.admissionNumber).toBe("ADM-A");
+  });
+
+  test("rejects a member whose grade does not match the division", async () => {
+    const noAuthContext = makeContext(testDb.db);
+
+    await expect(
+      call(teamsRouter.teams.register, {
+        context: noAuthContext,
+        input: basePayload({
+          members: [member("6", "A"), member("12", "B"), member("8", "C")],
+        }),
+      })
+    ).rejects.toThrow("does not match");
+  });
+
+  test("rejects a leaderIndex outside the member list", async () => {
+    const noAuthContext = makeContext(testDb.db);
+
+    await expect(
+      call(teamsRouter.teams.register, {
+        context: noAuthContext,
+        input: basePayload({ leaderIndex: 3 }),
+      })
+    ).rejects.toThrow("must be one of the registered members");
+  });
+
+  test("rejects fewer than 3 members", async () => {
+    const noAuthContext = makeContext(testDb.db);
+
+    await expect(
+      call(teamsRouter.teams.register, {
+        context: noAuthContext,
+        input: basePayload({ members: [member("6", "A"), member("7", "B")] }),
+      })
+    ).rejects.toThrow();
+  });
+
+  test("a school cannot register two teams in the same division", async () => {
+    const noAuthContext = makeContext(testDb.db);
+    const schoolInput = {
+      name: `Capped School ${randomUUID()}`,
+      province: "Western",
+      city: "Colombo",
+    };
+
+    await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload({ school: schoolInput }),
+    });
+
+    await expect(
+      call(teamsRouter.teams.register, {
+        context: noAuthContext,
+        input: basePayload({
+          teamName: "Second Team",
+          school: schoolInput,
+        }),
+      })
+    ).rejects.toThrow("already has a primary team");
+  });
+
+  test("a school can register one junior and one senior team", async () => {
+    const noAuthContext = makeContext(testDb.db);
+    const schoolInput = {
+      name: `Two Division School ${randomUUID()}`,
+      province: "Central",
+      city: "Kandy",
+    };
+
+    const primary = await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload({ school: schoolInput }),
+    });
+
+    const secondary = await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload({
+        teamName: "Senior Team",
+        division: "secondary" as const,
+        school: schoolInput,
+        members: [member("9", "D"), member("10", "E"), member("11", "F")],
+      }),
+    });
+
+    expect(primary.division).toBe("primary");
+    expect(secondary.division).toBe("secondary");
+    expect(primary.schoolId).toBe(secondary.schoolId);
+  });
+
+  test("reuses an existing school by exact name match", async () => {
+    const noAuthContext = makeContext(testDb.db);
+    const schoolInput = {
+      name: `Reused School ${randomUUID()}`,
+      province: "Uva",
+      city: "Badulla",
+    };
+
+    const first = await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload({ school: schoolInput }),
+    });
+    const second = await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload({
+        teamName: "Senior Reuse",
+        division: "secondary" as const,
+        school: schoolInput,
+        members: [member("9", "D"), member("10", "E"), member("11", "F")],
+      }),
+    });
+
+    expect(first.schoolId).toBe(second.schoolId);
+
+    const schools = await testDb.db
+      .select()
+      .from(school)
+      .where(eq(school.name, schoolInput.name));
+    expect(schools).toHaveLength(1);
   });
 });

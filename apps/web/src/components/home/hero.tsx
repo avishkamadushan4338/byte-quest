@@ -10,7 +10,7 @@ const CREST_SRC = "/assets/crest.png";
 
 export const Hero = () => (
   <section
-    className="relative flex min-h-[max(100vh,860px)] items-center overflow-hidden px-[clamp(20px,5vw,64px)] pt-[120px] pb-14"
+    className="relative flex min-h-[max(100vh,860px)] items-center overflow-hidden px-[clamp(20px,5vw,64px)] pt-[160px] pb-14"
     id="top"
     style={{
       background:
@@ -21,7 +21,7 @@ export const Hero = () => (
 
     <div
       aria-hidden="true"
-      className="absolute bottom-0 left-[-16%] z-[1] aspect-[1024/1536] h-[82%] opacity-42 min-[980px]:left-[clamp(-40px,-1vw,20px)] min-[980px]:h-[min(calc(100%_-_86px),1240px)] min-[980px]:opacity-100"
+      className="absolute bottom-0 left-[-16%] z-[1] aspect-[1024/1536] h-[min(78%,calc(100%_-_110px))] opacity-42 min-[980px]:left-[clamp(-40px,-1vw,20px)] min-[980px]:h-[min(calc(100%_-_160px),1240px)] min-[980px]:opacity-100"
     >
       <div
         className="absolute top-[40%] left-1/2 aspect-square w-[180%] -translate-x-1/2 -translate-y-1/2 rounded-full"

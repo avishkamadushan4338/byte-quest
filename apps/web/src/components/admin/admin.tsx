@@ -24,7 +24,6 @@ export const Admin = () => {
   return (
     <main className="bg-ink overflow-x-hidden">
       <PageHero
-        breadcrumb={[{ label: "Home", to: "/" }, { label: "Admin" }]}
         glow="gold"
         id="admin"
         kicker={adminHero.kicker}

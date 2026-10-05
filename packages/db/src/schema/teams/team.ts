@@ -45,6 +45,12 @@ export const team = pgTable(
     schoolId: uuid("school_id")
       .notNull()
       .references(() => school.id, { onDelete: "cascade" }),
+    idea: text("idea"),
+    teacherName: text("teacher_name"),
+    teacherDesignation: text("teacher_designation"),
+    teacherPhone: text("teacher_phone"),
+    teacherEmail: text("teacher_email"),
+    principalName: text("principal_name"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
@@ -59,8 +65,10 @@ export const team = pgTable(
 /**
  * Team membership. All members are developers; exactly one is the leader
  * (validated by the API layer and this partial unique index). Member
- * personal data (full name, national ID, birthday, grade) is a snapshot
- * copied from the member's profile at join time.
+ * personal data (full name, grade, class, admission number) is a snapshot
+ * taken at team registration time. `userId` is null for members added
+ * directly by the school (no account required); it is only set when a
+ * member joins by requesting to join their own account's team.
  */
 export const teamMember = pgTable(
   "team_member",
@@ -69,15 +77,17 @@ export const teamMember = pgTable(
     teamId: uuid("team_id")
       .notNull()
       .references(() => team.id, { onDelete: "cascade" }),
-    userId: text("user_id")
-      .notNull()
-      .references(() => userProfile.userId, { onDelete: "cascade" }),
+    userId: text("user_id").references(() => userProfile.userId, {
+      onDelete: "cascade",
+    }),
     teamRole: teamRoleEnum("team_role").default("developer").notNull(),
     specialty: memberSpecialtyEnum("specialty"),
     grade: text("grade").notNull(),
     fullName: text("full_name").notNull(),
-    nationalId: text("national_id").notNull(),
-    birthday: text("birthday").notNull(),
+    className: text("class_name"),
+    admissionNumber: text("admission_number"),
+    nationalId: text("national_id"),
+    birthday: text("birthday"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
