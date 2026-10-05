@@ -29,12 +29,20 @@ function DialogBackdrop({
 
 function DialogContent({
   className,
+  backdropClassName,
+  viewportClassName,
   ...props
-}: Omit<DialogPrimitive.Popup.Props, "className"> & { className?: string }) {
+}: Omit<DialogPrimitive.Popup.Props, "className"> & {
+  className?: string;
+  backdropClassName?: string;
+  viewportClassName?: string;
+}) {
   return (
     <DialogPrimitive.Portal>
-      <DialogBackdrop />
-      <DialogPrimitive.Viewport className="fixed inset-0 z-70 flex flex-col outline-none">
+      <DialogBackdrop className={backdropClassName} />
+      <DialogPrimitive.Viewport
+        className={cn("fixed inset-0 z-70 flex flex-col outline-none", viewportClassName)}
+      >
         <DialogPrimitive.Popup
           className={cn(
             "flex h-full w-full flex-col p-6 outline-none sm:p-8",

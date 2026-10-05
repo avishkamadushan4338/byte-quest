@@ -80,9 +80,6 @@ const validateGuardian = (guardian: GuardianDetails): GuardianErrors => {
   if (guardian.name.trim().length === 0) {
     errors.name = validationCopy.required;
   }
-  if (guardian.relationship === null) {
-    errors.relationship = validationCopy.required;
-  }
   if (guardian.contactNumber.trim().length === 0) {
     errors.contactNumber = validationCopy.required;
   } else if (!isPhone(guardian.contactNumber)) {

@@ -1,68 +1,63 @@
-import { Container } from "@byte-quest/ui/components/container";
-import { Section } from "@byte-quest/ui/components/section";
-import { SectionHeader } from "@byte-quest/ui/components/section-header";
-import {
-  HairlineCell,
-  HairlineGrid,
-} from "@byte-quest/ui/components/stat-strip";
+import { SectionHeading } from "@/components/site/section-heading";
 
 import { phases, structureLead } from "./data";
 
 export const Structure = () => (
-  <Section id="phases">
-    <Container>
-      <SectionHeader
-        kicker="HOW IT WORKS"
-        lead={structureLead}
-        title="Three phases, one continuous journey."
-      />
-
-      <HairlineGrid
-        className="border-line-soft mt-12 border"
-        columns="minmax(min(100%,300px),1fr)"
-      >
+  <section
+    className="px-[clamp(20px,5vw,64px)] py-[clamp(56px,7vw,96px)]"
+    id="structure"
+  >
+    <div className="mx-auto max-w-[1280px]">
+      <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))] items-end gap-x-[72px] gap-y-6">
+        <div>
+          <SectionHeading
+            kicker="HOW IT WORKS"
+            title="Three phases, one continuous journey."
+          />
+        </div>
+        <p className="text-muted m-0 max-w-[500px] text-[16.5px] leading-[1.65]">
+          {structureLead}
+        </p>
+      </div>
+      <div className="mt-10 grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr))] overflow-hidden rounded-[20px] border border-[rgba(185,245,208,0.1)]">
         {phases.map((phase) => (
-          <HairlineCell className="relative gap-4 p-7 pb-0" key={phase.id}>
-            <span
-              aria-hidden="true"
+          <div
+            className="bg-surface relative flex flex-col gap-3.5 border-r border-[rgba(185,245,208,0.08)] p-[26px]"
+            key={phase.n}
+          >
+            <div
               className="absolute inset-x-0 top-0 h-[3px]"
               style={{ background: phase.color }}
             />
-
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <div className="flex items-center justify-between">
               <span
                 className="font-mono text-[11px] tracking-[0.14em]"
                 style={{ color: phase.color }}
               >
                 PHASE {phase.n}
               </span>
-              <span className="text-muted-2 font-mono text-[11px] tracking-[0.14em]">
+              <span className="text-muted-2 font-mono text-[10.5px]">
                 {phase.weeks}
               </span>
             </div>
-
-            <h3 className="font-display text-[24px] leading-[1.1] tracking-[-0.025em]">
+            <div className="font-display text-[24px] font-bold tracking-[-0.02em]">
               {phase.title}
-            </h3>
-
-            <p className="text-muted m-0 text-[14px] leading-[1.55]">
-              {phase.body}
-            </p>
-
-            <div className="border-line-soft mt-auto flex items-center justify-between gap-3 border-t py-4">
-              <span className="text-faint font-mono text-[10.5px] tracking-[0.14em] uppercase">
-                Milestone
-              </span>
+            </div>
+            <div className="text-muted text-[14px] leading-[1.55]">
+              {phase.items}
+            </div>
+            <div className="mt-auto flex justify-between gap-2.5 border-t border-[rgba(185,245,208,0.07)] pt-3 text-[13px]">
+              <span className="text-faint">Milestone</span>
               <span
-                className="font-mono text-[11.5px] tracking-[0.06em]"
+                className="font-semibold"
                 style={{ color: phase.milestoneColor }}
               >
                 {phase.milestone}
               </span>
             </div>
-          </HairlineCell>
+          </div>
         ))}
-      </HairlineGrid>
-    </Container>
-  </Section>
+      </div>
+    </div>
+  </section>
 );

@@ -1,6 +1,5 @@
 import { BrandLockup } from "@byte-quest/ui/components/brand";
 import { useScrolled } from "@byte-quest/ui/hooks/use-scrolled";
-import { Button } from "@byte-quest/ui/primitives/button";
 import {
   DialogClose,
   DialogContent,
@@ -15,27 +14,34 @@ import { isInternalHref, menuLinks, primaryNavLinks } from "./navigation";
 
 const CREST_SRC = "/assets/crest.png";
 
+const navLinkClass = "text-muted hover:text-fg whitespace-nowrap";
+const menuLinkClass =
+  "font-display text-fg hover:text-volt flex items-baseline gap-4 border-b border-[rgba(185,245,208,0.08)] py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em]";
+
 export const SiteHeader = () => {
   const scrolled = useScrolled();
   const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header
-      className="fixed inset-x-0 top-0 z-50 flex justify-center transition-[padding] duration-300"
+      className="fixed inset-x-0 top-0 z-50 flex justify-center transition-[padding] duration-[350ms] ease-in-out"
       style={{ padding: scrolled ? "10px 16px" : "20px 24px" }}
     >
       <nav
         aria-label="Primary"
-        className="flex w-full max-w-[1280px] items-center justify-between gap-6 rounded-2xl border backdrop-blur-[18px] transition-all duration-300"
+        className="flex w-full max-w-[1280px] items-center justify-between gap-6 rounded-[16px] border backdrop-blur-[18px] transition-all duration-[350ms] ease-in-out"
         style={{
           padding: scrolled ? "7px 8px 7px 14px" : "10px 12px 10px 18px",
           background: scrolled ? "rgba(2,8,7,0.78)" : "rgba(2,8,7,0)",
-          borderColor: scrolled ? "rgba(185,245,208,0.1)" : "transparent",
+          borderColor: scrolled
+            ? "rgba(185,245,208,0.1)"
+            : "rgba(185,245,208,0)",
         }}
       >
         <Link
           aria-label="BYTE QUEST home"
-          className="text-fg flex shrink-0 items-center gap-3"
+          className="text-fg hover:text-fg flex shrink-0 items-center gap-3"
           to="/"
         >
           <BrandLockup
@@ -45,83 +51,74 @@ export const SiteHeader = () => {
         </Link>
 
         <div className="hidden gap-7 text-[13.5px] font-medium min-[1100px]:flex">
-          {primaryNavLinks.map((link) =>
-            isInternalHref(link.href) ? (
-              <Link
-                className="text-muted hover:text-fg whitespace-nowrap transition-colors"
-                key={link.label}
-                to={link.href}
-              >
-                {link.label}
-              </Link>
-            ) : (
-              <a
-                className="text-muted hover:text-fg whitespace-nowrap transition-colors"
-                href={link.href}
-                key={link.label}
-              >
-                {link.label}
-              </a>
-            )
-          )}
+          {primaryNavLinks.map((link) => (
+            <Link className={navLinkClass} key={link.label} to={link.href}>
+              {link.label}
+            </Link>
+          ))}
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Button
-            nativeButton={false}
-            render={<Link to="/register" />}
-            size="sm"
+          <Link
+            className="bg-volt text-ink hover:bg-lime hover:text-ink inline-flex items-center rounded-full px-[18px] py-2.5 text-[13px] font-bold whitespace-nowrap"
+            to="/register"
           >
             Register Now
-          </Button>
+          </Link>
           <DialogRoot onOpenChange={setMenuOpen} open={menuOpen}>
             <DialogTrigger
               aria-label="Open menu"
-              className="border-line-strong hover:border-volt flex size-10 flex-col items-center justify-center gap-[5px] rounded-full border bg-transparent transition-colors min-[1100px]:hidden"
+              className="flex size-10 cursor-pointer flex-col items-center justify-center gap-[5px] rounded-full border border-[rgba(185,245,208,0.2)] bg-transparent"
             >
               <span className="bg-fg h-[1.5px] w-[15px]" />
               <span className="bg-fg h-[1.5px] w-[15px]" />
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="px-[clamp(20px,5vw,64px)] py-6 sm:px-[clamp(20px,5vw,64px)] sm:py-6">
               <div className="flex items-center justify-between">
                 <DialogTitle>Menu</DialogTitle>
-                <DialogClose aria-label="Close menu">×</DialogClose>
+                <DialogClose
+                  aria-label="Close menu"
+                  className="hover:text-fg border-[rgba(185,245,208,0.25)] text-[20px] hover:border-[rgba(185,245,208,0.25)]"
+                >
+                  ×
+                </DialogClose>
               </div>
-              <div
-                className="grid flex-1 content-center gap-1 md:grid-cols-2"
-                style={{ columnGap: "48px" }}
-              >
-                {menuLinks.map((link, index) =>
-                  isInternalHref(link.href) ? (
-                    <Link
-                      className="border-line-soft font-display text-fg hover:text-volt flex items-baseline gap-4 border-b py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em] transition-colors"
-                      key={link.label}
-                      onClick={() => setMenuOpen(false)}
-                      to={link.href}
-                    >
-                      <span className="text-teal font-mono text-[11px] tracking-[0.1em]">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      {link.label}
-                    </Link>
-                  ) : (
+              <div className="grid flex-1 [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))] content-center gap-x-12 gap-y-1">
+                {menuLinks.map((link, index) => {
+                  const number = (
+                    <span className="text-teal font-mono text-[11px] tracking-[0.1em]">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  );
+                  if (isInternalHref(link.href)) {
+                    return (
+                      <Link
+                        className={menuLinkClass}
+                        key={link.label}
+                        onClick={closeMenu}
+                        to={link.href}
+                      >
+                        {number}
+                        {link.label}
+                      </Link>
+                    );
+                  }
+                  return (
                     <a
-                      className="border-line-soft font-display text-fg hover:text-volt flex items-baseline gap-4 border-b py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em] transition-colors"
+                      className={menuLinkClass}
                       href={link.href}
                       key={link.label}
-                      onClick={() => setMenuOpen(false)}
+                      onClick={closeMenu}
                     >
-                      <span className="text-teal font-mono text-[11px] tracking-[0.1em]">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
+                      {number}
                       {link.label}
                     </a>
-                  )
-                )}
+                  );
+                })}
               </div>
               <div className="text-muted-2 flex flex-wrap justify-between gap-3 font-mono text-[11px] tracking-[0.08em]">
                 <span>LEARN. BUILD. INNOVATE. INSPIRE.</span>
-                <span>ST. ALOYSIUS&apos; COLLEGE, GALLE — OBA</span>
+                <span>ST. ALOYSIUS&apos; COLLEGE, GALLE · OBA</span>
               </div>
             </DialogContent>
           </DialogRoot>

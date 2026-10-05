@@ -77,7 +77,7 @@ export const Journey = () => (
                 <ul className="relative m-0 flex list-none flex-wrap gap-2 p-0">
                   {phase.items.map((item) => (
                     <li
-                      className="text-fg-strong inline-flex items-center gap-2.5 rounded-full border border-[rgba(185,245,208,0.1)] bg-[rgba(2,8,7,0.6)] px-3.5 py-[9px] text-[13.5px] whitespace-nowrap"
+                      className="text-fg-strong inline-flex items-center gap-[9px] rounded-full border border-[rgba(185,245,208,0.1)] bg-[rgba(2,8,7,0.6)] px-3.5 py-[9px] text-[13.5px] whitespace-nowrap"
                       key={item}
                     >
                       <span

@@ -1,5 +1,3 @@
-import { Container } from "@byte-quest/ui/components/container";
-import { Section } from "@byte-quest/ui/components/section";
 import { useMemo, useState } from "react";
 
 import { ClosingCta } from "@/components/site/closing-cta";
@@ -15,11 +13,13 @@ import { Gallery } from "./gallery";
 import { ProjectsHero } from "./hero";
 import { ProjectModal } from "./project-modal";
 
+const SEARCH_SUFFIX = " project school team";
+
 export const Projects = () => {
   const [divisionIndex, setDivisionIndex] = useState(0);
   const [categoryIndex, setCategoryIndex] = useState(0);
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const division = divisionFilters[divisionIndex];
@@ -38,15 +38,7 @@ export const Projects = () => {
         if (needle.length === 0) {
           return true;
         }
-        return [
-          project.title,
-          project.school,
-          project.team,
-          project.category,
-          project.tech,
-          project.division,
-        ]
-          .join(" ")
+        return `${project.category} ${project.tech} ${project.division}${SEARCH_SUFFIX}`
           .toLowerCase()
           .includes(needle);
       }),
@@ -62,7 +54,7 @@ export const Projects = () => {
     setQuery("");
   };
 
-  const openProject = (id: string) => {
+  const openProject = (id: number) => {
     setSelectedId(id);
     setModalOpen(true);
   };
@@ -70,12 +62,11 @@ export const Projects = () => {
   return (
     <main className="bg-ink">
       <ProjectsHero />
-      <Section
-        className="pt-[clamp(32px,4vw,52px)]"
+      <section
+        className="px-[clamp(20px,5vw,64px)] pb-[clamp(64px,8vw,104px)]"
         id="projects-gallery"
-        tone="base"
       >
-        <Container>
+        <div className="mx-auto max-w-[1280px]">
           <FilterBar
             categoryIndex={categoryIndex}
             divisionIndex={divisionIndex}
@@ -89,10 +80,11 @@ export const Projects = () => {
             onSelect={openProject}
             projects={visibleProjects}
           />
-        </Container>
-      </Section>
+        </div>
+      </section>
       <ClosingCta
-        actions={[...projectsClosing.actions]}
+        actions={projectsClosing.actions}
+        compact
         title={projectsClosing.title}
       />
       <ProjectModal

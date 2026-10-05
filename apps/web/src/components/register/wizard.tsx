@@ -1,15 +1,9 @@
-import { Badge } from "@byte-quest/ui/components/badge";
-import { Card } from "@byte-quest/ui/components/card";
-import { Container } from "@byte-quest/ui/components/container";
-import { Section } from "@byte-quest/ui/components/section";
-import { ProgressMeter, Steps } from "@byte-quest/ui/components/steps";
-import { Button } from "@byte-quest/ui/primitives/button";
 import { useRouter } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { PageHero } from "@/components/site/page-hero";
+import { SubpageHero } from "@/components/site/subpage-hero";
 import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/utils/orpc";
 
@@ -36,10 +30,10 @@ import {
   registerAside,
   registerHero,
   registerSteps,
-  stepList,
   stepOrder,
   validationCopy,
 } from "./data";
+import { RegisterStepper } from "./register-stepper";
 import { StepAccount } from "./step-account";
 import { StepConfirmation } from "./step-confirmation";
 import { StepDivision } from "./step-division";
@@ -151,6 +145,12 @@ const validateStudents = (
 
     if (member.fullName.trim().length === 0) {
       entry.fullName = validationCopy.required;
+    }
+    if (member.className.trim().length === 0) {
+      entry.className = validationCopy.required;
+    }
+    if (member.admissionNumber.trim().length === 0) {
+      entry.admissionNumber = validationCopy.required;
     }
     if (member.grade === null) {
       entry.grade = validationCopy.required;
@@ -529,7 +529,7 @@ export const Register = () => {
       <StepReview
         errors={errors}
         onConsentChange={handleConsentChange}
-        onEdit={handleSelect}
+        onEdit={(key) => handleSelect(stepOrder.indexOf(key))}
         state={state}
       />
     ),
@@ -544,90 +544,84 @@ export const Register = () => {
 
   return (
     <main className="bg-ink overflow-x-hidden">
-      <PageHero
+      <SubpageHero
         aside={
           <div className="flex flex-wrap gap-2">
             {registerHero.pills.map((pill) => (
-              <Badge key={pill.label} tone={pill.tone}>
+              <span
+                className="rounded-full px-3 py-2 text-[13px] whitespace-nowrap"
+                key={pill.label}
+                style={{
+                  color: pill.color,
+                  border: `1px solid ${pill.line}`,
+                }}
+              >
                 {pill.label}
-              </Badge>
+              </span>
             ))}
           </div>
         }
-        breadcrumb={[{ label: "Home", to: "/" }, { label: "Register" }]}
-        id="register"
+        className="pt-[clamp(48px,6vw,80px)] pb-[clamp(28px,4vw,44px)] [&_h1]:mt-4 [&_h1]:text-[clamp(40px,5.5vw,76px)]"
+        crumb="REGISTER"
+        gridClassName="mt-6 gap-y-5"
         kicker={registerHero.kicker}
-        kickerTone="volt"
         title={registerHero.title}
       />
 
-      <Section tone="base">
-        <Container>
-          <div className="flex flex-wrap items-start gap-5">
-            <aside className="flex-[1_1_260px] lg:sticky lg:top-[100px]">
-              <Card className="p-5">
-                <p className="text-muted-2 font-mono text-[11px] tracking-[0.16em]">
-                  STEP {step + 1} OF {stepOrder.length}
+      <section
+        className="px-[clamp(20px,5vw,64px)] pb-[clamp(64px,8vw,112px)]"
+        id="register"
+      >
+        <div className="mx-auto flex max-w-[1280px] flex-wrap items-start gap-5">
+          <RegisterStepper
+            current={step}
+            done={submitted}
+            maxStep={maxStep}
+            onSelect={handleSelect}
+          />
+
+          <div className="bg-surface min-w-0 flex-[3_1_560px] rounded-[24px] border border-[rgba(185,245,208,0.09)] p-[clamp(22px,3.5vw,40px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+            {isConfirmation ? null : (
+              <div className="mb-6">
+                <div className="text-volt font-mono text-[10.5px] tracking-[0.16em]">
+                  {content.eyebrow}
+                </div>
+                <h2 className="mt-2 mb-0 text-[clamp(26px,3vw,36px)] leading-[1.05] tracking-[-0.03em]">
+                  {content.title}
+                </h2>
+                <p className="text-muted-2 mt-2 mb-0 max-w-[560px] text-[14.5px] leading-[1.55]">
+                  {content.body}
                 </p>
-                <ProgressMeter
-                  className="mt-3.5"
-                  max={stepOrder.length}
-                  value={step + 1}
-                />
-                <Steps
-                  className="mt-4 hidden min-[1100px]:grid"
-                  current={step}
-                  maxVisited={maxStep}
-                  onSelect={handleSelect}
-                  steps={stepList}
-                />
-                <p className="font-display mt-4 text-[16px] font-semibold min-[1100px]:hidden">
-                  {content.label}
-                </p>
-              </Card>
-            </aside>
+              </div>
+            )}
 
-            <div className="min-w-0 flex-[3_1_560px]">
-              <Card className="rounded-2xl p-[clamp(22px,3.5vw,40px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-                {isConfirmation ? null : (
-                  <div className="mb-7">
-                    <p className="text-volt font-mono text-[11px] tracking-[0.16em]">
-                      {content.eyebrow}
-                    </p>
-                    <h2 className="font-display mt-3 text-[clamp(26px,3vw,36px)] leading-[1.02] tracking-[-0.03em]">
-                      {content.title}
-                    </h2>
-                    <p className="text-muted-2 mt-2.5 text-[14.5px] leading-[1.6]">
-                      {content.body}
-                    </p>
-                  </div>
-                )}
+            {panels[currentKey]}
 
-                {panels[currentKey]}
-
-                {submitted ? null : (
-                  <div className="border-line-soft mt-7 flex items-center justify-between gap-3 border-t pt-5">
-                    <Button
-                      disabled={pending || step === 0}
-                      onClick={handleBack}
-                      variant="ghost"
-                    >
-                      {registerAside.backLabel}
-                    </Button>
-                    <Button
-                      aria-busy={pending}
-                      disabled={pending}
-                      onClick={handleNext}
-                    >
-                      {advanceLabel}
-                    </Button>
-                  </div>
-                )}
-              </Card>
-            </div>
+            {submitted ? null : (
+              <div className="mt-7 flex items-center justify-between gap-3 border-t border-[rgba(185,245,208,0.08)] pt-5">
+                <button
+                  className="cursor-pointer rounded-full border border-[rgba(242,247,244,0.2)] bg-transparent px-5 py-[13px] font-sans text-[14px] font-semibold disabled:cursor-default"
+                  disabled={pending || step === 0}
+                  onClick={handleBack}
+                  style={{ color: step === 0 ? "#3D5249" : "#F2F7F4" }}
+                  type="button"
+                >
+                  {registerAside.backLabel}
+                </button>
+                <button
+                  aria-busy={pending}
+                  className="bg-volt text-ink hover:bg-lime cursor-pointer rounded-full border-none px-6 py-3.5 font-sans text-[14.5px] font-bold whitespace-nowrap disabled:opacity-60"
+                  disabled={pending}
+                  onClick={handleNext}
+                  type="button"
+                >
+                  {advanceLabel}
+                </button>
+              </div>
+            )}
           </div>
-        </Container>
-      </Section>
+        </div>
+      </section>
     </main>
   );
 };

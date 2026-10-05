@@ -21,6 +21,7 @@ export const Projects = () => {
             </h2>
           </div>
           <Button
+            nativeButton={false}
             render={<Link aria-label="Explore all projects" to="/projects" />}
             variant="outline"
           >
@@ -63,7 +64,7 @@ export const Projects = () => {
                   PROJECT THUMBNAIL
                 </span>
                 <span
-                  className="absolute top-3 left-3 rounded-md border bg-[rgba(2,8,7,0.85)] px-2 py-1 font-mono text-[10px] tracking-[0.12em]"
+                  className="absolute top-3 left-3 rounded-[6px] border bg-[rgba(2,8,7,0.85)] px-2 py-1 font-mono text-[10px] tracking-[0.12em]"
                   style={{ color: slot.color, borderColor: slot.line }}
                 >
                   {slot.division}
@@ -81,7 +82,7 @@ export const Projects = () => {
                 <div className="flex flex-wrap gap-1.5">
                   {["SCHOOL", "CATEGORY", "TECHNOLOGY"].map((meta) => (
                     <span
-                      className="bg-line-soft text-faint rounded-md px-2 py-1 font-mono text-[10.5px] tracking-[0.06em]"
+                      className="bg-line-soft text-faint rounded-[6px] px-2 py-1 font-mono text-[10.5px] tracking-[0.06em]"
                       key={meta}
                     >
                       {meta}

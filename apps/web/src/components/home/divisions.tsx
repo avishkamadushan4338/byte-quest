@@ -16,7 +16,7 @@ export const Divisions = () => (
       <div className="mt-14 grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr))] gap-4">
         {divisions.map((division) => (
           <article
-            className="relative flex flex-col gap-[22px] overflow-hidden rounded-3xl p-[clamp(24px,3vw,36px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+            className="relative flex flex-col gap-[22px] overflow-hidden rounded-[24px] p-[clamp(24px,3vw,36px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
             key={division.name}
             style={{
               background: division.bg,
@@ -57,7 +57,7 @@ export const Divisions = () => (
               <div className="text-muted-2 font-mono text-[10px] tracking-[0.14em]">
                 THE CHALLENGE
               </div>
-              <p className="text-fg-strong mt-1.5 text-[15.5px] leading-[1.5]">
+              <p className="text-fg-strong mt-1.5 mb-0 text-[15.5px] leading-[1.5] text-pretty">
                 {division.challenge}
               </p>
             </div>
@@ -90,7 +90,7 @@ export const Divisions = () => (
                 <div className="flex flex-wrap gap-1.5">
                   {division.platforms.map((platform) => (
                     <span
-                      className="rounded-[7px] border px-2.5 py-[5px] font-mono text-[11.5px] whitespace-nowrap"
+                      className="rounded-[7px] border px-[9px] py-[5px] font-mono text-[11.5px] whitespace-nowrap"
                       key={platform}
                       style={{
                         color: division.accent,

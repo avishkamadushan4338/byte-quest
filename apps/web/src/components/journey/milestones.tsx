@@ -1,69 +1,62 @@
-import { Badge } from "@byte-quest/ui/components/badge";
-import { Card } from "@byte-quest/ui/components/card";
-import { Container } from "@byte-quest/ui/components/container";
-import { Section } from "@byte-quest/ui/components/section";
-import { SectionHeader } from "@byte-quest/ui/components/section-header";
+import { SectionHeading } from "@/components/site/section-heading";
 
 import { milestones } from "./data";
 
 export const Milestones = () => (
-  <Section id="milestones" tone="impact">
-    <Container>
-      <SectionHeader
+  <section
+    className="px-[clamp(20px,5vw,64px)] py-[clamp(56px,7vw,96px)]"
+    id="milestones"
+  >
+    <div className="mx-auto max-w-[1280px]">
+      <SectionHeading
         kicker="MAJOR MILESTONES"
         title="Three moments that matter."
       />
-
-      <div className="mt-14 grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
+      <div className="mt-10 grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-4">
         {milestones.map((item) => (
-          <Card
-            className="flex flex-col gap-6 p-[26px]"
+          <article
+            className="flex flex-col gap-3.5 rounded-[20px] p-6"
             key={item.week}
             style={{
-              background: `linear-gradient(180deg,${item.tint},transparent 60%),#030f0b`,
-              borderColor: item.line,
+              background: `linear-gradient(180deg,${item.tint},transparent 60%),#030F0B`,
+              border: `1px solid ${item.line}`,
             }}
           >
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between">
               <span
-                className="font-mono text-[11px] tracking-[0.16em]"
+                className="font-mono text-[10.5px] tracking-[0.14em]"
                 style={{ color: item.accent }}
               >
                 {item.week}
               </span>
-              <Badge tone="gold">DATE TBA</Badge>
+              <span className="text-gold-bright rounded-full border border-[rgba(240,216,117,0.3)] px-[9px] py-1 font-mono text-[10px] tracking-[0.12em]">
+                DATE TBA
+              </span>
             </div>
-
             <div>
-              <div
-                className="font-mono text-[10.5px] tracking-[0.14em]"
-                style={{ color: item.accent }}
-              >
+              <div className="text-muted-2 font-mono text-[10.5px] tracking-[0.14em]">
                 {item.label}
               </div>
-              <h3 className="mt-2 text-[24px] leading-[1.1] tracking-[-0.025em]">
+              <div className="font-display mt-1.5 text-[24px] font-bold tracking-[-0.02em]">
                 {item.title}
-              </h3>
+              </div>
             </div>
-
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13.5px]">
+            <div className="text-muted flex flex-wrap gap-x-2 gap-y-1.5 text-[13.5px]">
               {item.flow.map((step, index) => (
                 <span
-                  className="flex items-center gap-2 whitespace-nowrap"
+                  className="inline-flex gap-2 whitespace-nowrap"
                   key={step}
                 >
-                  {index > 0 ? (
-                    <span aria-hidden="true" style={{ color: item.accent }}>
-                      →
-                    </span>
-                  ) : null}
-                  <span className="text-muted">{step}</span>
+                  <span aria-hidden="true" style={{ color: item.accent }}>
+                    {index > 0 ? "→" : ""}
+                  </span>
+                  {step}
                 </span>
               ))}
             </div>
-          </Card>
+          </article>
         ))}
       </div>
-    </Container>
-  </Section>
+    </div>
+  </section>
 );

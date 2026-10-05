@@ -1,53 +1,40 @@
-import { Button } from "@byte-quest/ui/primitives/button";
-
 import { galleryEmpty, galleryNote } from "./data";
 import type { Project } from "./data";
 import { ProjectCard } from "./project-card";
 
 interface GalleryProps {
   projects: Project[];
+  onSelect: (id: number) => void;
   onClear: () => void;
-  onSelect: (id: string) => void;
 }
 
-export const Gallery = ({ projects, onClear, onSelect }: GalleryProps) => {
-  const count = projects.length;
-  const countLabel = `${count} ${count === 1 ? "PROJECT" : "PROJECTS"}`;
+const countLabel = (count: number) =>
+  `${count} PROJECT${count === 1 ? "" : "S"}`;
 
-  return (
-    <>
-      <div className="text-faint mt-4 flex items-center justify-between gap-3 font-mono text-[11px] tracking-[0.1em]">
-        <span>{countLabel}</span>
-        <span>{galleryNote}</span>
+export const Gallery = ({ projects, onSelect, onClear }: GalleryProps) => (
+  <>
+    <div className="text-faint mt-4 flex items-center justify-between gap-3 font-mono text-[11px] tracking-[0.1em]">
+      <span>{countLabel(projects.length)}</span>
+      <span>{galleryNote}</span>
+    </div>
+    <div className="mt-3.5 grid [grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr))] gap-4">
+      {projects.map((project) => (
+        <ProjectCard key={project.id} onSelect={onSelect} project={project} />
+      ))}
+    </div>
+    {projects.length === 0 ? (
+      <div className="mt-3.5 rounded-[18px] border border-dashed border-[rgba(185,245,208,0.18)] px-5 py-10 text-center">
+        <div className="font-display text-[20px] font-semibold">
+          {galleryEmpty.title}
+        </div>
+        <button
+          className="text-fg hover:border-volt mt-3.5 cursor-pointer rounded-full border border-[rgba(242,247,244,0.22)] bg-transparent px-[18px] py-2.5 font-sans text-[13.5px] font-semibold"
+          onClick={onClear}
+          type="button"
+        >
+          {galleryEmpty.action}
+        </button>
       </div>
-
-      {count > 0 ? (
-        <div className="mt-4 grid [grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr))] gap-4">
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              onSelect={onSelect}
-              project={project}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="border-line-fg/20 mt-4 rounded-[18px] border border-dashed p-10 text-center">
-          <p className="font-display text-fg m-0 text-[20px]">
-            {galleryEmpty.title}
-          </p>
-          <p className="text-muted-2 mx-auto mt-2 max-w-[440px] text-[14px] leading-[1.6]">
-            {galleryEmpty.description}
-          </p>
-          <Button
-            className="mt-6 font-mono text-[12px] tracking-[0.08em]"
-            onClick={onClear}
-            variant="outline"
-          >
-            {galleryEmpty.action}
-          </Button>
-        </div>
-      )}
-    </>
-  );
-};
+    ) : null}
+  </>
+);

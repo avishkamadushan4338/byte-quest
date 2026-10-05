@@ -13,7 +13,7 @@ export const Divisions = () => (
   <Section className="overflow-hidden" id="schools" tone="journey">
     <Container>
       <SectionHeader
-        className="[&_h2]:text-[clamp(34px,4.4vw,60px)] [&_p]:text-[16.5px]"
+        className="[&_h2]:text-[clamp(34px,4.4vw,60px)] [&_p]:max-w-[500px] [&_p]:text-[16.5px]"
         kicker="WHO CAN PARTICIPATE"
         lead={eligibilityLead}
         title="School teams, two divisions."
