@@ -1,11 +1,10 @@
-import { Callout } from "@byte-quest/ui/components/callout";
 import {
-  RadioCardField,
+  fieldGridClass,
+  InputField,
   SelectField,
-  TextField,
-} from "@byte-quest/ui/components/fields";
-import { Info } from "@byte-quest/ui/components/icons";
+} from "@/components/site/design-fields";
 
+import { ChoiceCard } from "./choice-card";
 import { accountCopy, accountRoles } from "./data";
 import type { AccountDetails, AccountErrors } from "./data";
 
@@ -20,30 +19,43 @@ export const StepAccount = ({
   errors,
   onChange,
 }: StepAccountProps) => (
-  <div className="grid gap-6">
-    <RadioCardField
-      columns="minmax(min(100%,260px),1fr)"
-      error={errors.role}
-      legend="Registering as"
-      name="registrantRole"
-      onValueChange={(value) =>
-        onChange({ role: value === "mic" ? "mic" : "leader" })
-      }
-      options={accountRoles}
-      value={account.role}
-    />
-
-    <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-4">
-      <TextField
+  <>
+    <div
+      aria-label="Registering as"
+      className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3"
+      role="radiogroup"
+    >
+      {accountRoles.map((role) => (
+        <ChoiceCard
+          name="registrant-role"
+          color={role.color}
+          description={role.description}
+          key={role.value}
+          kicker={role.badge}
+          onSelect={() => onChange({ role: role.value })}
+          selected={account.role === role.value}
+          title={role.title}
+        />
+      ))}
+    </div>
+    <div
+      className="mt-2.5 mb-2 min-h-4 text-[12px] text-[#FF8A7A]"
+      role="alert"
+    >
+      {errors.role}
+    </div>
+    <div className={fieldGridClass}>
+      <InputField
+        autoComplete="name"
         error={errors.fullName}
         id="account-full-name"
         label="Full name"
         onValueChange={(fullName) => onChange({ fullName })}
         placeholder="As in school records"
-        required
+        requirement="required"
         value={account.fullName}
       />
-      <TextField
+      <InputField
         autoComplete="email"
         error={errors.email}
         id="account-email"
@@ -51,66 +63,65 @@ export const StepAccount = ({
         label="Email"
         onValueChange={(email) => onChange({ email })}
         placeholder="you@school.lk"
-        required
+        requirement="required"
         type="email"
         value={account.email}
       />
-      <TextField
-        description={accountCopy.usernameHint}
+      <InputField
+        autoComplete="username"
         error={errors.username}
+        hint={accountCopy.usernameHint}
         id="account-username"
         label="Username"
         onValueChange={(username) => onChange({ username })}
         placeholder="your-username"
-        required
+        requirement="required"
         value={account.username}
       />
-      <TextField
-        description={accountCopy.passwordHint}
+      <InputField
+        autoComplete="new-password"
         error={errors.password}
+        hint={accountCopy.passwordHint}
         id="account-password"
         label="Password"
         onValueChange={(password) => onChange({ password })}
         placeholder="••••••••"
-        required
+        requirement="required"
         type="password"
         value={account.password}
       />
-      <TextField
+      <InputField
         error={errors.nationalId}
         id="account-national-id"
         label="National ID"
         onValueChange={(nationalId) => onChange({ nationalId })}
         placeholder="e.g. 199012345678"
-        required
+        requirement="required"
         value={account.nationalId}
       />
-      <TextField
-        description={accountCopy.birthdayHint}
+      <InputField
         error={errors.birthday}
+        hint={accountCopy.birthdayHint}
         id="account-birthday"
         label="Birthday"
         onValueChange={(birthday) => onChange({ birthday })}
         placeholder="YYYY-MM-DD"
-        required
+        requirement="required"
         value={account.birthday}
       />
       <SelectField
         error={errors.grade}
         id="account-grade"
         label="Grade"
-        onValueChange={(grade) => onChange({ grade })}
+        onValueChange={(grade) => onChange({ grade: grade || null })}
         options={accountCopy.gradeOptions}
-        required
-        value={account.grade}
+        requirement="required"
+        value={account.grade ?? ""}
       />
     </div>
-
-    <Callout
-      icon={<Info className="size-4.5" />}
-      title="Students don't register here"
-    >
+    <div className="text-muted mt-2 rounded-[14px] border border-dashed border-[rgba(185,245,208,0.18)] px-5 py-4 text-[14px] leading-[1.55]">
+      <span className="text-fg font-semibold">{accountCopy.studentsTitle}</span>{" "}
       {accountCopy.studentsNote}
-    </Callout>
-  </div>
+    </div>
+  </>
 );

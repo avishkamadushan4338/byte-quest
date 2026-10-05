@@ -1,14 +1,3 @@
-export const heroArms = [
-  { rotation: -160, border: "rgba(185,245,208,0.24)" },
-  { rotation: -118, border: "rgba(185,245,208,0.14)" },
-  { rotation: -76, border: "rgba(185,245,208,0.24)" },
-  { rotation: -34, border: "rgba(185,245,208,0.14)" },
-  { rotation: 8, border: "rgba(185,245,208,0.24)" },
-  { rotation: 50, border: "rgba(185,245,208,0.14)" },
-  { rotation: 92, border: "rgba(185,245,208,0.24)" },
-  { rotation: 134, border: "rgba(185,245,208,0.14)" },
-];
-
 export const crestAlt = "St. Aloysius' College crest";
 
 export const heroPresenter = {
@@ -225,75 +214,22 @@ export const projectSlots = [
   { division: "SENIOR", color: "#52FF3D", line: "rgba(82,255,61,0.3)" },
 ];
 
-export const podium = [
+export const runnerUps = [
   {
-    rank: "2",
-    kicker: "SECOND PLACE",
+    rank: "02",
+    kicker: "1ST RUNNER-UP · PER DIVISION",
     title: "1st Runner-Up",
     description: "Outstanding innovation and execution.",
-    orderClass: "order-2 min-[1000px]:order-1",
-    minHeightClass: "min-h-[250px] min-[1000px]:min-h-[290px]",
-    medalClass: "w-[72px]",
-    medalNumberClass: "text-[30px]",
-    ring: "6px",
-    titleClass: "text-[22px]",
-    numeralClass: "text-[140px]",
-    numeralStrokeClass: "[-webkit-text-stroke:1.5px_rgba(217,228,223,0.1)]",
-    color: "#D9E4DF",
-    line: "rgba(217,228,223,0.32)",
-    glow: "rgba(217,228,223,0.14)",
-    shadow: "rgba(217,228,223,0.35)",
-    highlight: "0.1",
-    ink: "#1E2723",
-    background: "linear-gradient(180deg,#141E1A,#030F0B 70%)",
-    medalBackground:
-      "radial-gradient(circle at 35% 30%,#FFFFFF,#C9D4CF 45%,#6F7C76 100%)",
+    kickerColor: "#C9D4CF",
+    numeralGradient: "linear-gradient(180deg,#FFFFFF,#AEBBB5 60%,#5E6B65)",
   },
   {
-    rank: "1",
-    kicker: "FIRST PLACE",
-    title: "Champion",
-    description: "The highest honour of BYTE QUEST.",
-    orderClass: "order-1 min-[1000px]:order-2",
-    minHeightClass: "min-h-[280px] min-[1000px]:min-h-[350px]",
-    medalClass: "w-[100px]",
-    medalNumberClass: "text-[42px]",
-    ring: "8px",
-    titleClass: "text-[clamp(28px,2.6vw,34px)]",
-    numeralClass: "text-[180px]",
-    numeralStrokeClass: "[-webkit-text-stroke:1.5px_rgba(212,175,55,0.16)]",
-    color: "#F0D875",
-    line: "rgba(212,175,55,0.55)",
-    glow: "rgba(212,175,55,0.32)",
-    shadow: "rgba(212,175,55,0.65)",
-    highlight: "0.18",
-    ink: "#2A2106",
-    background: "linear-gradient(180deg,#2A230C,#0B1209 55%,#030F0B)",
-    medalBackground:
-      "radial-gradient(circle at 35% 30%,#FFF6CC,#E8C55A 40%,#B08A22 70%,#6B5210 100%)",
-  },
-  {
-    rank: "3",
-    kicker: "THIRD PLACE",
+    rank: "03",
+    kicker: "2ND RUNNER-UP · PER DIVISION",
     title: "2nd Runner-Up",
     description: "Exceptional creativity and impact.",
-    orderClass: "order-3",
-    minHeightClass: "min-h-[250px] min-[1000px]:min-h-[260px]",
-    medalClass: "w-[64px]",
-    medalNumberClass: "text-[26px]",
-    ring: "6px",
-    titleClass: "text-[22px]",
-    numeralClass: "text-[130px]",
-    numeralStrokeClass: "[-webkit-text-stroke:1.5px_rgba(201,139,90,0.12)]",
-    color: "#E0A574",
-    line: "rgba(201,139,90,0.38)",
-    glow: "rgba(201,139,90,0.16)",
-    shadow: "rgba(201,139,90,0.4)",
-    highlight: "0.1",
-    ink: "#2B1709",
-    background: "linear-gradient(180deg,#1E150D,#030F0B 70%)",
-    medalBackground:
-      "radial-gradient(circle at 35% 30%,#FFE0C2,#D0915C 45%,#7A4A22 100%)",
+    kickerColor: "#E0A574",
+    numeralGradient: "linear-gradient(180deg,#FFE0C2,#C98B5A 60%,#6B3F1C)",
   },
 ];
 

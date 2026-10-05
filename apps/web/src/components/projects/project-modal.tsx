@@ -1,5 +1,3 @@
-import { DefinitionTable } from "@byte-quest/ui/components/table";
-import { cn } from "@byte-quest/ui/lib/utils";
 import {
   DialogClose,
   DialogContent,
@@ -7,7 +5,14 @@ import {
   DialogTitle,
 } from "@byte-quest/ui/primitives/dialog";
 
-import { categoryTints, divisionMeta } from "./data";
+import {
+  categoryTints,
+  divisionMeta,
+  pending,
+  placeholderTitle,
+  projectSummary,
+  projectYear,
+} from "./data";
 import type { Project } from "./data";
 
 interface ProjectModalProps {
@@ -16,70 +21,82 @@ interface ProjectModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+const detailRows = (project: Project) => [
+  { label: "SCHOOL", value: pending },
+  { label: "TEAM", value: pending },
+  { label: "DIVISION", value: divisionMeta[project.division].scope },
+  { label: "TECHNOLOGY", value: project.tech },
+  { label: "YEAR", value: projectYear },
+];
+
 export const ProjectModal = ({
   project,
   open,
   onOpenChange,
 }: ProjectModalProps) => (
   <DialogRoot onOpenChange={onOpenChange} open={open && Boolean(project)}>
-    <DialogContent className="h-full w-full overflow-y-auto">
+    <DialogContent
+      aria-label="Project details"
+      backdropClassName="bg-[rgba(2,8,7,0.82)] backdrop-blur-[10px]"
+      className="bg-surface h-auto max-h-[calc(100vh-40px)] max-w-[880px] overflow-auto rounded-[24px] border border-[rgba(185,245,208,0.14)] p-0 shadow-[0_40px_100px_-30px_rgba(0,0,0,0.9)] sm:p-0"
+      viewportClassName="items-center justify-center p-5"
+    >
       {project ? (
-        <div className="border-line-soft bg-surface my-auto w-full max-w-[1020px] overflow-hidden rounded-[20px] border">
+        <>
           <div
             className="relative flex aspect-[16/7] items-center justify-center"
             style={{
               background: `radial-gradient(60% 80% at 70% 30%, ${categoryTints[project.category]}, transparent 70%), repeating-linear-gradient(135deg,#061C16 0 12px,#04140F 12px 24px)`,
             }}
           >
-            <span className="text-faint-2 font-mono text-[10.5px] tracking-[0.1em]">
+            <span className="text-faint-2 font-mono text-[11px] tracking-[0.1em]">
               PROJECT IMAGE / VIDEO
             </span>
             <DialogClose
               aria-label="Close"
-              className="border-line-strong hover:border-volt hover:text-volt absolute top-4 right-4 bg-[rgba(2,8,7,0.85)]"
+              className="hover:text-fg absolute top-3.5 right-3.5 size-10 cursor-pointer border-[rgba(242,247,244,0.2)] bg-[rgba(2,8,7,0.7)] text-[18px] hover:border-[rgba(242,247,244,0.2)]"
             >
               ×
             </DialogClose>
           </div>
-
           <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-7 p-[clamp(20px,3vw,32px)]">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col gap-3.5">
+              <div className="flex flex-wrap gap-1.5">
                 <span
-                  className={cn(
-                    "rounded-full border px-2.5 py-1 font-mono text-[10.5px] tracking-[0.12em]",
-                    divisionMeta[project.division].chip
-                  )}
+                  className="rounded-[6px] px-2 py-1 font-mono text-[10px] tracking-[0.12em]"
+                  style={{
+                    color: divisionMeta[project.division].color,
+                    border: `1px solid ${divisionMeta[project.division].line}`,
+                  }}
                 >
-                  {divisionMeta[project.division].label}
+                  {project.division}
                 </span>
-                <span className="bg-volt/7 text-lime rounded-full px-2.5 py-1 text-[11.5px]">
+                <span className="text-lime rounded-full bg-[rgba(82,255,61,0.07)] px-[9px] py-1 text-[11.5px]">
                   {project.category}
                 </span>
               </div>
-              <DialogTitle className="font-display text-fg text-[clamp(26px,3vw,36px)] tracking-[-0.03em] normal-case">
-                {project.title}
+              <DialogTitle className="font-display text-fg m-0 text-[clamp(26px,3vw,36px)] leading-[1.05] font-bold tracking-[-0.03em] normal-case">
+                {placeholderTitle}
               </DialogTitle>
-              <p className="text-muted-2 m-0 text-[15px] leading-[1.65]">
-                {project.summary}
+              <p className="text-muted-2 m-0 text-[15px] leading-[1.6]">
+                {projectSummary}
               </p>
             </div>
-
-            <DefinitionTable
-              labelWidth="120px"
-              rows={[
-                { label: "School", value: project.school },
-                { label: "Team", value: project.team },
-                {
-                  label: "Division",
-                  value: divisionMeta[project.division].scope,
-                },
-                { label: "Technology", value: project.tech },
-                { label: "Year", value: "2026" },
-              ]}
-            />
+            <div className="grid gap-px self-start overflow-hidden rounded-[14px] bg-[rgba(185,245,208,0.08)]">
+              {detailRows(project).map((row) => (
+                <div
+                  className="bg-ink grid grid-cols-[110px_1fr] gap-3 px-4 py-3 text-[13.5px]"
+                  key={row.label}
+                >
+                  <span className="text-faint pt-0.5 font-mono text-[10px] tracking-[0.12em]">
+                    {row.label}
+                  </span>
+                  <span className="text-fg-dim">{row.value}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </>
       ) : null}
     </DialogContent>
   </DialogRoot>

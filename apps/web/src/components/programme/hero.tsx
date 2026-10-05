@@ -1,39 +1,37 @@
-import { StatStrip } from "@byte-quest/ui/components/stat-strip";
-import { Button } from "@byte-quest/ui/primitives/button";
 import { Link } from "@tanstack/react-router";
 
-import { PageHero } from "@/components/site/page-hero";
+import { FactStrip } from "@/components/site/fact-strip";
+import { SubpageHero } from "@/components/site/subpage-hero";
 
-import { programmeBreadcrumb, programmeLead, programmeStats } from "./data";
+import { programmeFacts, programmeLead } from "./data";
 
 export const Hero = () => (
-  <div id="programme">
-    <PageHero
-      aside={
-        <>
-          <p className="text-muted m-0 text-[17px] leading-[1.65]">
-            {programmeLead}
-          </p>
-          <div className="flex flex-wrap gap-2.5">
-            <Button render={<Link to="/register" />}>
-              Register your team <span aria-hidden="true">→</span>
-            </Button>
-            <Button render={<Link to="/journey" />} variant="outline">
-              See the 12-week journey
-            </Button>
-          </div>
-        </>
-      }
-      breadcrumb={programmeBreadcrumb}
-      kicker="THE PROGRAMME"
-      kickerTone="volt"
-      title="An innovation accelerator for schools."
-    >
-      <StatStrip
-        className="mt-12"
-        columns="minmax(min(100%,190px),1fr)"
-        items={programmeStats}
-      />
-    </PageHero>
-  </div>
+  <SubpageHero
+    aside={
+      <div className="flex flex-col gap-[22px]">
+        <p className="text-muted m-0 max-w-[520px] text-[17px] leading-[1.65] text-pretty">
+          {programmeLead}
+        </p>
+        <div className="flex flex-wrap gap-2.5">
+          <Link
+            className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
+            to="/register"
+          >
+            Register your team →
+          </Link>
+          <Link
+            className="text-fg hover:border-volt hover:text-fg rounded-full border border-[rgba(242,247,244,0.24)] px-[22px] py-3.5 text-[14px] font-semibold whitespace-nowrap"
+            to="/journey"
+          >
+            See the 12-week journey
+          </Link>
+        </div>
+      </div>
+    }
+    crumb="PROGRAMME"
+    kicker="THE PROGRAMME"
+    title="An innovation accelerator for schools."
+  >
+    <FactStrip compact facts={programmeFacts} />
+  </SubpageHero>
 );

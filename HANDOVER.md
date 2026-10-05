@@ -177,7 +177,7 @@ The previous folder (`Byte Quest website design`) is superseded — only Home v2
 
 Assets are copied into `apps/web/public/assets/` (`crest.png`, `hero-avatar.png`, `hero-vr.png`) and served from `/assets/…`.
 
-**Deliberate omission:** the hero's Three.js canvas is not implemented — the brief was canvas-free, and the VR avatar + glow replace it. Adding it means adding the dependency.
+**Hero dots:** the design's Three.js point cloud is reproduced without the dependency by `components/home/hero-dots.tsx`, a 2D canvas using the same projection, drift and scroll response.
 
 ---
 

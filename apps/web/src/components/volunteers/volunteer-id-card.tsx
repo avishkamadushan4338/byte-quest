@@ -331,122 +331,125 @@ export const renderVolunteerIdCard = async (options: IdCardRenderOptions) => {
   link.click();
 };
 
+const BAR_WIDTH_SPREAD = 3;
+const GAP_DIVISOR = 4;
+
+const cardBars = (reference: string) =>
+  [...(reference || "BQ")].flatMap((char, index) => {
+    const code = char.codePointAt(0) ?? 0;
+    return [
+      {
+        key: `${index}-bar`,
+        width: 1 + (code % BAR_WIDTH_SPREAD),
+        filled: true,
+      },
+      {
+        key: `${index}-gap`,
+        width: 1 + (Math.floor(code / GAP_DIVISOR) % 2),
+        filled: false,
+      },
+    ];
+  });
+
+const metaLabelClass = "text-faint font-mono tracking-[0.08em]";
+
 export const VolunteerIdCard = ({
   photo,
   reference,
   roles,
   student,
 }: VolunteerIdCardProps) => {
-  const classValue = `Gr ${student.grade ?? "—"} · ${student.className}`;
+  const classValue = `${student.grade ? `Gr ${student.grade}` : ""} · ${student.className}`;
 
   return (
-    <div className="grid gap-3">
-      <div
-        className="border-line-fg/18 relative flex aspect-[1.586/1] flex-col overflow-hidden rounded-[22px] border p-[clamp(14px,2vw,22px)] shadow-[0_0_60px_-20px_rgba(82,255,61,0.35)]"
+    <div className="w-full min-w-0 flex-[0_1_460px] [perspective:1200px]">
+      <figure
+        aria-label="Digital volunteer ID card"
+        className="relative m-0 flex aspect-[1.586/1] [transform:rotateY(-6deg)_rotateX(4deg)] flex-col overflow-hidden rounded-[22px] border border-[rgba(185,245,208,0.18)] p-[clamp(14px,3.6%,22px)] shadow-[0_40px_80px_-30px_rgba(0,0,0,0.8),0_0_60px_-20px_rgba(82,255,61,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] transition-transform duration-500 hover:[transform:rotateY(0)_rotateX(0)]"
         style={{
           background:
-            "radial-gradient(70% 60% at 100% 0%, rgba(0,169,154,0.35), transparent 60%), radial-gradient(70% 60% at 0% 100%, rgba(212,175,55,0.22), transparent 60%), linear-gradient(150deg,#0a2a20,#020807 70%)",
+            "radial-gradient(70% 90% at 100% 0%, rgba(8,122,85,0.55), transparent 60%), radial-gradient(50% 60% at 0% 100%, rgba(212,175,55,0.14), transparent 70%), linear-gradient(150deg,#0A2A20,#020807 70%)",
         }}
       >
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-1"
-          style={{
-            background:
-              "linear-gradient(90deg,#00a99a,#52ff3d,#b7f000,#d4af37)",
-          }}
-        />
-
-        <div className="border-line-fg/12 flex items-center justify-between gap-3 border-b pb-[clamp(9px,1.3vw,15px)]">
+        <div className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#00A99A,#52FF3D,#B7F000,#D4AF37)]" />
+        <div className="flex items-center justify-between gap-2.5">
           <div className="flex min-w-0 items-center gap-2.5">
-            <img alt="" className="h-7 w-auto" src={idCard.crestSrc} />
-            <Brand className="text-[clamp(13px,1.5vw,18px)]" />
-          </div>
-          <div className="flex shrink-0 items-center gap-2.5">
-            <span className="text-faint font-mono text-[8.5px] tracking-[0.14em]">
-              {idCard.schoolLine}
-            </span>
-            <span className="bg-volt text-ink rounded-[5px] px-1.5 py-[3px] font-mono text-[8.5px] tracking-[0.12em]">
-              {idCard.chip}
-            </span>
-          </div>
-        </div>
-
-        <div className="grid flex-1 grid-cols-[30%_1fr] items-center gap-[clamp(10px,1.8vw,22px)] pt-[clamp(9px,1.3vw,15px)]">
-          {photo ? (
             <img
-              alt={idCard.photoAlt}
-              aria-label={idCard.photoAlt}
-              className="border-gold/55 aspect-[4/5] w-full rounded-[12px] border-[1.5px] object-cover"
-              src={photo.url}
+              alt=""
+              className="h-[clamp(24px,5vw,34px)] w-auto shrink-0"
+              src={idCard.crestSrc}
             />
-          ) : (
-            <div className="border-gold/55 bg-ink/60 text-faint-2 flex aspect-[4/5] w-full items-center justify-center rounded-[12px] border-[1.5px] font-mono text-[10px] tracking-[0.12em]">
-              {validationCopy.photoPlaceholder}
-            </div>
-          )}
-
-          <div className="flex min-w-0 flex-col gap-1">
-            <span className="text-faint-2 font-mono text-[8px] tracking-[0.16em]">
-              {idCard.schoolLabel}
-            </span>
-            <span className="text-fg-dim truncate text-[11px]">
-              {student.school}
-            </span>
-            <h3 className="font-display text-fg line-clamp-2 text-[clamp(15px,1.7vw,22px)] leading-[1.1] tracking-[-0.03em]">
-              {student.fullName}
-            </h3>
-            <p className="text-lime text-[clamp(10px,1vw,12px)] font-semibold">
-              {roles.join(" · ")}
-            </p>
-            <div className="mt-auto grid grid-cols-2 gap-2 pt-2">
-              <div>
-                <div className="text-faint-2 font-mono text-[8px] tracking-[0.16em]">
-                  {idCard.classLabel}
-                </div>
-                <div className="text-fg-dim font-mono text-[10.5px]">
-                  {classValue}
-                </div>
-              </div>
-              <div>
-                <div className="text-faint-2 font-mono text-[8px] tracking-[0.16em]">
-                  {idCard.admissionLabel}
-                </div>
-                <div className="text-fg-dim font-mono text-[10.5px]">
-                  {student.admissionNumber}
-                </div>
+            <div className="min-w-0 leading-none">
+              <Brand className="text-[clamp(13px,3.4vw,17px)]" />
+              <div className="text-muted-2 mt-1 font-mono text-[clamp(7px,1.6vw,8.5px)] tracking-[0.14em] whitespace-nowrap">
+                {idCard.schoolLine}
               </div>
             </div>
           </div>
+          <span className="bg-volt text-ink rounded-[5px] px-2 py-1 font-mono text-[clamp(7.5px,1.7vw,9.5px)] tracking-[0.16em] whitespace-nowrap">
+            {idCard.chip}
+          </span>
         </div>
-
-        <div className="border-line-fg/12 mt-auto flex items-end justify-between gap-4 border-t pt-[clamp(8px,1.2vw,14px)]">
-          <div>
-            <div className="text-faint-2 font-mono text-[8px] tracking-[0.16em]">
+        <div className="mt-[clamp(8px,3%,16px)] flex flex-1 items-center gap-[clamp(12px,4%,20px)]">
+          <div className="aspect-[4/5] w-[30%] shrink-0 overflow-hidden rounded-[12px] border-[1.5px] border-[rgba(212,175,55,0.55)] bg-[#061C16]">
+            {photo ? (
+              <img
+                alt={idCard.photoAlt}
+                className="size-full object-cover"
+                src={photo.url}
+              />
+            ) : null}
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col gap-[clamp(4px,1.4%,8px)]">
+            <div className="font-display text-fg line-clamp-2 text-[clamp(15px,4vw,22px)] leading-[1.05] font-bold tracking-[-0.02em]">
+              {student.fullName.trim()}
+            </div>
+            <div className="text-lime truncate text-[clamp(10px,2.4vw,12.5px)] font-semibold">
+              {roles.join(" · ")}
+            </div>
+            <div className="mt-1 grid grid-cols-[auto_1fr] gap-x-2.5 gap-y-0.5 text-[clamp(8.5px,2vw,11px)]">
+              <span className={metaLabelClass}>{idCard.schoolLabel}</span>
+              <span className="text-fg-dim truncate">{student.school}</span>
+              <span className={metaLabelClass}>{idCard.classLabel}</span>
+              <span className="text-fg-dim whitespace-nowrap">
+                {classValue}
+              </span>
+              <span className={metaLabelClass}>{idCard.admissionLabel}</span>
+              <span className="text-fg-dim whitespace-nowrap">
+                {student.admissionNumber}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="mt-[clamp(6px,2%,12px)] flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <div className="text-faint font-mono text-[clamp(7px,1.6vw,8.5px)] tracking-[0.14em]">
               {idCard.idLabel}
             </div>
-            <div className="text-volt font-mono text-[clamp(11px,1.2vw,14px)] tracking-[0.06em]">
+            <div className="text-volt mt-0.5 font-mono text-[clamp(11px,2.8vw,15px)] tracking-[0.08em] whitespace-nowrap">
               {reference}
             </div>
           </div>
-          <div aria-hidden="true" className="flex h-8 items-stretch gap-[2px]">
-            {barcodeBars(reference).map((bar) => (
+          <div
+            aria-hidden="true"
+            className="flex h-[clamp(20px,6vw,30px)] items-end gap-[1.5px]"
+          >
+            {cardBars(reference).map((bar) => (
               <span
                 className={cn(
                   "h-full",
-                  bar.filled ? "bg-fg/85" : "bg-transparent"
+                  bar.filled ? "bg-fg" : "bg-transparent"
                 )}
                 key={bar.key}
-                style={{ width: bar.width }}
+                style={{ width: `${bar.width}px` }}
               />
             ))}
           </div>
         </div>
-      </div>
-
-      <p className="text-faint-2 text-center font-mono text-[10.5px] tracking-[0.18em]">
+      </figure>
+      <div className="text-faint-2 mt-3.5 text-center font-mono text-[10.5px] tracking-[0.12em]">
         {idCard.tagline}
-      </p>
+      </div>
     </div>
   );
 };

@@ -1,43 +1,42 @@
-import { Container } from "@byte-quest/ui/components/container";
-import { Section } from "@byte-quest/ui/components/section";
-import { SectionHeader } from "@byte-quest/ui/components/section-header";
-
 import { objectives, objectivesLead } from "./data";
 
 export const Objectives = () => (
-  <Section id="objectives">
-    <Container>
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-[72px]">
-        <div className="lg:sticky lg:top-[110px] lg:self-start">
-          <SectionHeader
-            kicker="OBJECTIVES"
-            kickerTone="teal"
-            lead={objectivesLead}
-            title="Why BYTE QUEST exists."
-          />
+  <section
+    className="px-[clamp(20px,5vw,64px)] pb-[clamp(64px,8vw,112px)]"
+    id="objectives"
+  >
+    <div className="mx-auto grid max-w-[1280px] [grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))] items-start gap-x-[72px] gap-y-10">
+      <div className="sticky top-[110px]">
+        <div className="text-teal font-mono text-[11px] tracking-[0.16em]">
+          OBJECTIVES
         </div>
-
-        <div className="border-line-soft border-t">
-          {objectives.map((objective) => (
-            <div
-              className="border-line-soft grid grid-cols-[56px_1fr] gap-x-4 border-b py-[22px]"
-              key={objective.n}
-            >
-              <span className="text-volt font-mono text-[12px] tracking-[0.12em]">
-                {objective.n}
-              </span>
-              <div>
-                <h3 className="font-display text-[20px] leading-[1.2] tracking-[-0.02em]">
-                  {objective.title}
-                </h3>
-                <p className="text-muted-2 m-0 mt-1.5 text-[14.5px] leading-[1.55]">
-                  {objective.description}
-                </p>
+        <h2 className="mt-[18px] mb-0 text-[clamp(34px,4.4vw,60px)] leading-[0.95] tracking-[-0.04em]">
+          Why BYTE QUEST exists.
+        </h2>
+        <p className="text-muted mt-5 mb-0 max-w-[440px] text-[16.5px] leading-[1.65]">
+          {objectivesLead}
+        </p>
+      </div>
+      <div className="grid border-t border-[rgba(185,245,208,0.1)]">
+        {objectives.map((objective) => (
+          <div
+            className="grid grid-cols-[56px_1fr] gap-4 border-b border-[rgba(185,245,208,0.1)] py-[22px]"
+            key={objective.n}
+          >
+            <span className="text-volt pt-1 font-mono text-[12px]">
+              {objective.n}
+            </span>
+            <div>
+              <div className="font-display text-[20px] font-semibold tracking-[-0.01em]">
+                {objective.title}
+              </div>
+              <div className="text-muted-2 mt-1.5 text-[14.5px] leading-[1.55]">
+                {objective.description}
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
-    </Container>
-  </Section>
+    </div>
+  </section>
 );

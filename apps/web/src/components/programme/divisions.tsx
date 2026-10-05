@@ -1,59 +1,69 @@
-import { Container } from "@byte-quest/ui/components/container";
-import { Section } from "@byte-quest/ui/components/section";
-import { SectionHeader } from "@byte-quest/ui/components/section-header";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeadCell,
-  TableRow,
-  TableWrapper,
-} from "@byte-quest/ui/components/table";
+import { SectionHeading } from "@/components/site/section-heading";
 
-import { comparisonRows, divisionHeads } from "./data";
+import { comparisonRows } from "./data";
+
+const rowGrid = "grid grid-cols-[minmax(110px,0.6fr)_1fr_1fr]";
+const cellBorder = "border-l border-[rgba(185,245,208,0.08)]";
 
 export const Divisions = () => (
-  <Section id="divisions">
-    <Container>
-      <SectionHeader
-        kicker="DIVISIONS"
-        kickerTone="volt"
-        lead="Each team competes in one division, based on the grades of its members."
-        title="Junior and Senior, side by side."
-      />
-
-      <TableWrapper className="mt-12">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeadCell className="min-w-[160px]" />
-              {divisionHeads.map((division) => (
-                <TableHeadCell className="min-w-[240px]" key={division.label}>
-                  <span className="block">{division.label}</span>
-                  <span
-                    className="font-display mt-1 block text-[26px] tracking-[-0.03em] normal-case"
-                    style={{ color: division.color }}
-                  >
-                    {division.name}
-                  </span>
-                </TableHeadCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {comparisonRows.map((row) => (
-              <TableRow key={row.label}>
-                <TableCell className="text-faint font-mono text-[10.5px] tracking-[0.14em] whitespace-nowrap uppercase">
-                  {row.label}
-                </TableCell>
-                <TableCell>{row.junior}</TableCell>
-                <TableCell>{row.senior}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableWrapper>
-    </Container>
-  </Section>
+  <section
+    className="px-[clamp(20px,5vw,64px)] py-[clamp(56px,7vw,96px)]"
+    id="divisions"
+  >
+    <div className="mx-auto max-w-[1280px]">
+      <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))] items-end gap-x-[72px] gap-y-6">
+        <div>
+          <SectionHeading
+            kicker="DIVISIONS"
+            title="Junior and Senior, side by side."
+          />
+        </div>
+        <p className="text-muted m-0 max-w-[500px] text-[16.5px] leading-[1.65]">
+          Each team competes in one division, based on the grades of its
+          members.
+        </p>
+      </div>
+      <div className="mt-10 overflow-hidden rounded-[20px] border border-[rgba(185,245,208,0.1)]">
+        <div className={`${rowGrid} bg-surface-2`}>
+          <div className="px-[18px] py-4" />
+          <div className={`${cellBorder} px-[18px] py-4`}>
+            <div className="text-mint font-mono text-[10.5px] tracking-[0.14em]">
+              DIVISION A
+            </div>
+            <div className="font-display mt-1 text-[clamp(22px,2.4vw,30px)] font-bold tracking-[-0.025em]">
+              Junior
+            </div>
+          </div>
+          <div className={`${cellBorder} px-[18px] py-4`}>
+            <div className="text-volt font-mono text-[10.5px] tracking-[0.14em]">
+              DIVISION B
+            </div>
+            <div className="font-display mt-1 text-[clamp(22px,2.4vw,30px)] font-bold tracking-[-0.025em]">
+              Senior
+            </div>
+          </div>
+        </div>
+        {comparisonRows.map((row) => (
+          <div
+            className={`${rowGrid} bg-surface border-t border-[rgba(185,245,208,0.08)]`}
+            key={row.label}
+          >
+            <div className="text-faint px-[18px] py-4 font-mono text-[10.5px] tracking-[0.12em]">
+              {row.label}
+            </div>
+            <div
+              className={`${cellBorder} text-fg-dim px-[18px] py-4 text-[14px] leading-[1.5]`}
+            >
+              {row.junior}
+            </div>
+            <div
+              className={`${cellBorder} text-fg-dim px-[18px] py-4 text-[14px] leading-[1.5]`}
+            >
+              {row.senior}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 );

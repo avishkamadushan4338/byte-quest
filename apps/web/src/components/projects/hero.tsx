@@ -1,11 +1,11 @@
-import { PageHero } from "@/components/site/page-hero";
+import { SubpageHero } from "@/components/site/subpage-hero";
 
 import { projectsHero } from "./data";
 
 export const ProjectsHero = () => (
-  <PageHero
-    breadcrumb={projectsHero.breadcrumb}
-    id="projects"
+  <SubpageHero
+    className="pb-[clamp(32px,4vw,48px)]"
+    crumb="PROJECTS"
     kicker={projectsHero.kicker}
     lead={projectsHero.lead}
     title={projectsHero.title}

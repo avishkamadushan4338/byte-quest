@@ -18,7 +18,7 @@ export const Gains = () => (
 
     <Container className="relative">
       <SectionHeader
-        className="[&_h2]:text-[clamp(34px,4.4vw,60px)] [&_p]:text-[16.5px]"
+        className="[&_h2]:text-[clamp(34px,4.4vw,60px)] [&_p]:max-w-[500px] [&_p]:text-[16.5px]"
         kicker="WHAT STUDENTS GAIN"
         lead={gainsLead}
         title="Skills that outlast the programme."

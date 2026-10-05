@@ -1,6 +1,4 @@
-import { SelectField, TextField } from "@byte-quest/ui/components/fields";
-import { cn } from "@byte-quest/ui/lib/utils";
-import { Button } from "@byte-quest/ui/primitives/button";
+import { InputField, SelectField } from "@/components/site/design-fields";
 
 import type { Division, MemberDetails, RegisterErrors } from "./data";
 import { gradeOptionsForDivision, studentLabel } from "./data";
@@ -13,12 +11,6 @@ interface StepStudentsProps {
   students: MemberDetails[];
   leaderIndex: number;
 }
-
-const memberChipClasses =
-  "border-line-strong text-muted-2 flex size-7 shrink-0 items-center justify-center rounded-[8px] border bg-ink font-mono text-[11px]";
-
-const leaderButtonClasses =
-  "ml-auto h-auto px-3 py-1.5 font-mono text-[10.5px] tracking-[0.12em]";
 
 export const StepStudents = ({
   division,
@@ -35,83 +27,84 @@ export const StepStudents = ({
       {students.map((member, index) => {
         const isLeader = index === leaderIndex;
         const memberErrors = errors.students?.[String(index)];
+        const prefix = `student-${index}`;
 
         return (
           <div
-            className={cn(
-              "bg-ink rounded-2xl border p-4",
-              isLeader ? "border-gold/30" : "border-line-soft"
-            )}
-            key={String(index)}
+            className="bg-ink rounded-[16px] p-[18px]"
+            key={prefix}
+            style={{
+              border: `1px solid ${isLeader ? "rgba(212,175,55,0.3)" : "rgba(185,245,208,0.08)"}`,
+            }}
           >
-            <div className="mb-3.5 flex items-center gap-3">
-              <span className={memberChipClasses}>
-                {String(index + 1).padStart(2, "0")}
+            <div className="mb-3.5 flex items-center justify-between gap-3">
+              <span className="flex items-center gap-2.5">
+                <span className="text-volt flex size-7 items-center justify-center rounded-[8px] border border-[rgba(82,255,61,0.35)] font-mono text-[11px]">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="font-display text-[16px] font-semibold">
+                  {studentLabel(index)}
+                </span>
               </span>
-              <span className="font-display text-fg text-[16px] font-semibold tracking-[-0.02em]">
-                {studentLabel(index)}
-              </span>
-              <Button
+              <button
                 aria-pressed={isLeader}
-                aria-label={`Make ${studentLabel(index)} the team leader`}
-                className={cn(
-                  leaderButtonClasses,
-                  isLeader
-                    ? "border-gold/45 bg-gold/12 text-gold-bright"
-                    : "border-line-strong text-muted-2"
-                )}
+                className="cursor-pointer rounded-full px-3 py-1.5 font-mono text-[10.5px] tracking-[0.1em] whitespace-nowrap"
                 onClick={() => onLeaderChange(index)}
-                size="sm"
-                variant="outline"
+                style={{
+                  background: isLeader
+                    ? "rgba(212,175,55,0.12)"
+                    : "transparent",
+                  color: isLeader ? "#F0D875" : "#8FA79C",
+                  border: `1px solid ${isLeader ? "rgba(212,175,55,0.45)" : "rgba(185,245,208,0.15)"}`,
+                }}
+                type="button"
               >
                 {isLeader ? "★ TEAM LEADER" : "MAKE LEADER"}
-              </Button>
+              </button>
             </div>
-
-            <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-3">
-              <TextField
-                autoComplete="name"
+            <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-x-3.5 gap-y-3">
+              <InputField
                 error={memberErrors?.fullName}
-                id={`student-${index}-full-name`}
+                id={`${prefix}-full-name`}
                 label="Full name"
                 onValueChange={(value) =>
                   onMemberChange(index, { fullName: value })
                 }
                 placeholder="As in school records"
+                surface="surface"
                 value={member.fullName}
               />
               <SelectField
                 error={memberErrors?.grade}
-                id={`student-${index}-grade`}
+                id={`${prefix}-grade`}
                 label="Grade"
                 onValueChange={(value) =>
-                  onMemberChange(index, { grade: value })
+                  onMemberChange(index, { grade: value || null })
                 }
                 options={gradeOptions}
-                placeholder={
-                  gradeOptions.length > 0
-                    ? "Select grade"
-                    : "Choose a division first"
-                }
-                value={member.grade}
+                surface="surface"
+                value={member.grade ?? ""}
               />
-              <TextField
-                id={`student-${index}-class`}
+              <InputField
+                error={memberErrors?.className}
+                id={`${prefix}-class`}
                 label="Class"
                 onValueChange={(value) =>
                   onMemberChange(index, { className: value })
                 }
                 placeholder="e.g. 10B"
+                surface="surface"
                 value={member.className}
               />
-              <TextField
-                id={`student-${index}-admission-number`}
-                inputMode="numeric"
+              <InputField
+                error={memberErrors?.admissionNumber}
+                id={`${prefix}-admission-number`}
                 label="Admission number"
                 onValueChange={(value) =>
                   onMemberChange(index, { admissionNumber: value })
                 }
                 placeholder="e.g. 12345"
+                surface="surface"
                 value={member.admissionNumber}
               />
             </div>

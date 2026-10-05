@@ -2,7 +2,8 @@ import { Container } from "@byte-quest/ui/components/container";
 import { Button } from "@byte-quest/ui/primitives/button";
 import { Link } from "@tanstack/react-router";
 
-import { crestAlt, heroArms, heroPresenter } from "./data";
+import { crestAlt, heroPresenter } from "./data";
+import { HeroDots } from "./hero-dots";
 
 const AVATAR_SRC = "/assets/hero-avatar.png";
 const CREST_SRC = "/assets/crest.png";
@@ -16,21 +17,7 @@ export const Hero = () => (
         "radial-gradient(42% 60% at 26% 46%, rgba(82,255,61,0.20) 0%, rgba(0,169,154,0.12) 35%, rgba(0,169,154,0.04) 65%, transparent 85%), radial-gradient(50% 55% at 24% 45%, rgba(0,169,154,0.16), rgba(0,169,154,0.06) 45%, transparent 75%), radial-gradient(40% 50% at 100% 30%, rgba(82,255,61,0.12), transparent 75%), #020807",
     }}
   >
-    <div
-      aria-hidden="true"
-      className="absolute top-[48%] left-[26%] hidden size-0 opacity-40 min-[640px]:block min-[980px]:opacity-100"
-    >
-      {heroArms.map((arm) => (
-        <div
-          className="absolute top-0 left-0 h-[clamp(48px,7vh,80px)] w-[clamp(180px,26vh,300px)] rounded-[16px] border-2"
-          key={arm.rotation}
-          style={{
-            borderColor: arm.border,
-            transform: `translate(-50%,-50%) rotate(${arm.rotation}deg) translateX(clamp(150px,22vh,260px))`,
-          }}
-        />
-      ))}
-    </div>
+    <HeroDots />
 
     <div
       aria-hidden="true"
@@ -61,7 +48,7 @@ export const Hero = () => (
 
     <Container className="relative z-[2] flex justify-end">
       <div className="[container-type:inline-size] -mt-[200px] mr-[clamp(-48px,-3vw,0px)] w-[min(100%,600px)]">
-        <h1 className="font-display text-[min(88px,calc(100cqw/8.8))] leading-[1] font-bold tracking-[-0.02em] whitespace-nowrap">
+        <h1 className="font-hero m-0 text-[min(88px,calc(100cqw/8.4))] leading-[1] font-extrabold tracking-[-0.02em] whitespace-nowrap">
           BYTE{" "}
           <span className="bg-[linear-gradient(90deg,#52FF3D,#B7F000_55%,#00A99A)] bg-clip-text text-transparent">
             QUEST
@@ -95,12 +82,14 @@ export const Hero = () => (
         <div className="mt-8 flex flex-wrap gap-2.5">
           <Button
             className="h-auto px-6 py-[15px] text-[14.5px]"
+            nativeButton={false}
             render={<Link to="/register" />}
           >
             Register your team <span aria-hidden="true">→</span>
           </Button>
           <Button
             className="h-auto px-6 py-[15px] text-[14.5px]"
+            nativeButton={false}
             render={<Link aria-label="Explore the programme" to="/programme" />}
             variant="outline"
           >

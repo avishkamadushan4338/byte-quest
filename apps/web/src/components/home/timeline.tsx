@@ -9,7 +9,7 @@ import { milestoneWeeks, phaseOf, weekTags, weeks } from "./data";
 const isMilestone = (week: number) => milestoneWeeks.includes(week);
 
 const weekButtonBase =
-  "flex size-11 items-center justify-center rounded-xl border font-mono text-[13px] transition-all duration-300";
+  "flex size-11 items-center justify-center rounded-[12px] border font-mono text-[13px] transition-all duration-300";
 
 const weekButtonClasses = (week: number, active: number) => {
   const isGold = week === 12;
@@ -25,13 +25,13 @@ const weekButtonClasses = (week: number, active: number) => {
     );
   }
 
-  let border = "border-line";
+  let border = "border-[rgba(185,245,208,0.14)]";
   if (milestone) {
     border = isGold ? "border-gold/55" : "border-lime/45";
   }
 
   const background = done ? "bg-[#0A3D2C]" : "bg-ink";
-  const foreground = done && milestone ? "text-mint" : "text-muted";
+  const foreground = done ? "text-mint" : "text-muted";
 
   return cn(weekButtonBase, border, background, foreground);
 };
@@ -123,7 +123,7 @@ export const Timeline = () => {
               <div className="flex gap-1.5">
                 <button
                   aria-label="Previous week"
-                  className="border-line-strong text-fg hover:border-volt size-9 cursor-pointer rounded-full border bg-transparent transition-colors disabled:opacity-40"
+                  className="text-fg hover:border-volt size-9 cursor-pointer rounded-full border border-[rgba(185,245,208,0.18)] bg-transparent text-[13.333px] transition-colors disabled:opacity-40"
                   disabled={activeWeek <= 1}
                   onClick={() => selectWeek(Math.max(1, activeWeek - 1))}
                   type="button"
@@ -132,7 +132,7 @@ export const Timeline = () => {
                 </button>
                 <button
                   aria-label="Next week"
-                  className="border-line-strong text-fg hover:border-volt size-9 cursor-pointer rounded-full border bg-transparent transition-colors disabled:opacity-40"
+                  className="text-fg hover:border-volt size-9 cursor-pointer rounded-full border border-[rgba(185,245,208,0.18)] bg-transparent text-[13.333px] transition-colors disabled:opacity-40"
                   disabled={activeWeek >= weeks.length}
                   onClick={() =>
                     selectWeek(Math.min(weeks.length, activeWeek + 1))

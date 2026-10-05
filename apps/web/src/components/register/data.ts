@@ -1,5 +1,4 @@
-import type { BadgeTone } from "@byte-quest/ui/components/badge";
-import type { SelectOption } from "@byte-quest/ui/components/fields";
+import type { FieldOption } from "@/components/site/design-fields";
 
 export type Division = "junior" | "senior";
 
@@ -94,6 +93,8 @@ export interface TeamErrors {
 export interface StudentErrors {
   fullName?: string;
   grade?: string;
+  className?: string;
+  admissionNumber?: string;
 }
 
 export interface TeacherErrors {
@@ -115,7 +116,8 @@ export interface RegisterErrors {
 
 export interface HeroPill {
   label: string;
-  tone: BadgeTone;
+  color: string;
+  line: string;
 }
 
 export interface StepContent {
@@ -130,6 +132,8 @@ export interface DivisionOption {
   title: string;
   badge: string;
   description: string;
+  color: string;
+  line: string;
 }
 
 export interface NextStepItem {
@@ -142,11 +146,12 @@ export interface RegistrantRoleOption {
   badge: string;
   title: string;
   description: string;
+  color: string;
 }
 
 const ACCOUNT_GRADES = ["6", "7", "8", "9", "10", "11", "12", "13"];
 
-export const gradeOptionsForAccount: SelectOption[] = ACCOUNT_GRADES.map(
+export const gradeOptionsForAccount: FieldOption[] = ACCOUNT_GRADES.map(
   (grade) => ({ label: `Grade ${grade}`, value: grade })
 );
 
@@ -154,9 +159,21 @@ export const registerHero = {
   kicker: "TEAM REGISTRATION",
   title: "Register your team.",
   pills: [
-    { label: "Junior · Grades 6–8", tone: "mint" },
-    { label: "Senior · Grades 9–13", tone: "volt" },
-    { label: "3–5 students per team", tone: "gold" },
+    {
+      label: "Junior · Grades 6–8",
+      color: "#D5E1DB",
+      line: "rgba(185,245,208,0.2)",
+    },
+    {
+      label: "Senior · Grades 9–13",
+      color: "#52FF3D",
+      line: "rgba(82,255,61,0.3)",
+    },
+    {
+      label: "3–5 students per team",
+      color: "#F0D875",
+      line: "rgba(212,175,55,0.3)",
+    },
   ],
 } satisfies { kicker: string; title: string; pills: HeroPill[] };
 
@@ -239,6 +256,7 @@ export const accountRoles: RegistrantRoleOption[] = [
     badge: "TEAM LEADER",
     title: "Team leader",
     description: "I lead my team and will register it on our school's behalf.",
+    color: "#52FF3D",
   },
   {
     value: "mic",
@@ -246,6 +264,7 @@ export const accountRoles: RegistrantRoleOption[] = [
     title: "MIC (teacher in charge)",
     description:
       "I am the teacher in charge and register the team for my school.",
+    color: "#F0D875",
   },
 ];
 
@@ -254,6 +273,7 @@ export const accountCopy = {
     "Letters, digits, dots, underscores or hyphens. This is how you sign in.",
   passwordHint: "At least 8 characters.",
   birthdayHint: "Use the YYYY-MM-DD format.",
+  studentsTitle: "Students don't register here.",
   studentsNote:
     "Students do not register their own team. They sign in and ask to join yours.",
   gradeOptions: gradeOptionsForAccount,
@@ -330,7 +350,7 @@ const provinceNames = [
   "Sabaragamuwa",
 ];
 
-export const provinceOptions: SelectOption[] = provinceNames.map((name) => ({
+export const provinceOptions: FieldOption[] = provinceNames.map((name) => ({
   value: name,
   label: name,
 }));
@@ -342,12 +362,16 @@ export const divisionOptions: DivisionOption[] = [
     badge: "GRADES 6–8",
     description:
       "Create a game or application that makes learning fun or solves a daily problem.",
+    color: "#B9F5D0",
+    line: "rgba(185,245,208,0.3)",
   },
   {
     value: "senior",
     title: "Senior",
     badge: "GRADES 9–13",
     description: "Innovate for the Sustainable Development Goals.",
+    color: "#52FF3D",
+    line: "rgba(82,255,61,0.3)",
   },
 ];
 
@@ -366,7 +390,7 @@ export const platformsByDivision: Record<Division, string[]> = {
   senior: ["Web", "Mobile", "Python", "AI", "IoT", "Robotics", "Desktop"],
 };
 
-const gradeOptionsByDivision: Record<Division, SelectOption[]> = {
+const gradeOptionsByDivision: Record<Division, FieldOption[]> = {
   junior: divisionGrades.junior.map((grade) => ({
     value: grade,
     label: `Grade ${grade}`,
@@ -379,10 +403,9 @@ const gradeOptionsByDivision: Record<Division, SelectOption[]> = {
 
 export const gradeOptionsForDivision = (
   division: Division | null
-): SelectOption[] =>
-  division === null ? [] : gradeOptionsByDivision[division];
+): FieldOption[] => (division === null ? [] : gradeOptionsByDivision[division]);
 
-export const teamSizeOptions: SelectOption[] = ["3", "4", "5"].map((size) => ({
+export const teamSizeOptions: FieldOption[] = ["3", "4", "5"].map((size) => ({
   value: size,
   label: size,
 }));

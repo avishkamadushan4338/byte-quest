@@ -1,32 +1,35 @@
-import { PageHero } from "@/components/site/page-hero";
+import { SubpageHero } from "@/components/site/subpage-hero";
 
-import { aboutBreadcrumb, aboutLead, crestAlt, presenter } from "./data";
+import { aboutLead, crestAlt, presenter } from "./data";
 
 const CREST_SRC = "/assets/crest.png";
 
 export const Hero = () => (
-  <div id="about">
-    <PageHero
-      aside={
-        <div className="border-line-soft bg-ink/50 flex items-center gap-4 rounded-2xl border p-4">
-          <img alt={crestAlt} className="h-14 w-auto" src={CREST_SRC} />
-          <div className="text-muted-2 text-[12.5px] leading-[1.45]">
+  <SubpageHero
+    aside={
+      <div className="flex flex-col gap-6">
+        <p className="text-muted m-0 max-w-[520px] text-[17px] leading-[1.65] text-pretty">
+          {aboutLead}
+        </p>
+        <div className="flex w-fit max-w-full items-center gap-3.5 rounded-[14px] border border-[rgba(185,245,208,0.1)] bg-[rgba(2,8,7,0.6)] px-[18px] py-3.5">
+          <img alt={crestAlt} className="h-10 w-auto" src={CREST_SRC} />
+          <div className="text-muted-2 text-[13px] leading-[1.45]">
             <span className="text-fg font-semibold">{presenter.line1}</span>
             <br />
             {presenter.line2}
           </div>
         </div>
-      }
-      breadcrumb={aboutBreadcrumb}
-      kicker="ABOUT BYTE QUEST"
-      kickerTone="volt"
-      lead={aboutLead}
-      title={
-        <>
-          Don&apos;t just learn technology.{" "}
-          <span className="text-volt">Build with it.</span>
-        </>
-      }
-    />
-  </div>
+      </div>
+    }
+    className="overflow-hidden pt-[clamp(56px,8vw,112px)] pb-[clamp(48px,6vw,80px)]"
+    crumb="ABOUT"
+    gridClassName="gap-y-10"
+    kicker="ABOUT BYTE QUEST"
+    title={
+      <>
+        Don&apos;t just learn technology.{" "}
+        <span className="text-volt">Build with it.</span>
+      </>
+    }
+  />
 );

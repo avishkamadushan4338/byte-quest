@@ -1,21 +1,15 @@
-import { StatStrip } from "@byte-quest/ui/components/stat-strip";
+import { FactStrip } from "@/components/site/fact-strip";
+import { SubpageHero } from "@/components/site/subpage-hero";
 
-import { PageHero } from "@/components/site/page-hero";
-
-import { journeyStats } from "./data";
+import { journeyFacts } from "./data";
 
 export const JourneyHero = () => (
-  <PageHero
-    breadcrumb={[{ label: "Home", to: "/" }, { label: "Journey" }]}
-    id="journey"
+  <SubpageHero
+    crumb="JOURNEY"
     kicker="THE BYTE QUEST JOURNEY"
     lead="A three-month innovation and coding accelerator in three phases, with two hackathons and a Grand Final along the way. Official dates will be announced."
     title="Twelve weeks from idea to impact."
   >
-    <StatStrip
-      className="mt-12"
-      columns="minmax(min(100%,160px),1fr)"
-      items={journeyStats}
-    />
-  </PageHero>
+    <FactStrip facts={journeyFacts} />
+  </SubpageHero>
 );

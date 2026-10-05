@@ -1,9 +1,4 @@
-import { DataItem, DataList } from "@byte-quest/ui/components/data-list";
-import { CheckboxField } from "@byte-quest/ui/components/fields";
-import { Button } from "@byte-quest/ui/primitives/button";
-import type { ReactNode } from "react";
-
-import type { RegisterErrors, RegisterState } from "./data";
+import type { RegisterErrors, RegisterState, StepKey } from "./data";
 import {
   consentCopy,
   divisionSummary,
@@ -18,125 +13,118 @@ import {
 interface StepReviewProps {
   errors: RegisterErrors;
   onConsentChange: (checked: boolean) => void;
-  onEdit: (step: number) => void;
+  onEdit: (step: StepKey) => void;
   state: RegisterState;
 }
 
-interface ReviewSection {
-  key: string;
-  title: string;
-  step: number;
-  items: ReactNode;
+interface ReviewRow {
+  label: string;
+  value: string;
 }
+
+interface ReviewSection {
+  title: string;
+  step: StepKey;
+  rows: ReviewRow[];
+}
+
+const EMPTY_VALUE = "—";
+
+const buildSections = (state: RegisterState): ReviewSection[] => [
+  {
+    title: reviewTitles.school,
+    step: "school",
+    rows: [
+      { label: "School", value: state.school.name },
+      { label: "Province", value: state.school.province ?? "" },
+      { label: "District / city", value: state.school.district },
+    ],
+  },
+  {
+    title: reviewTitles.division,
+    step: "division",
+    rows: [{ label: "Division", value: divisionSummary(state.division) }],
+  },
+  {
+    title: reviewTitles.team,
+    step: "team",
+    rows: [
+      { label: "Team name", value: state.team.name },
+      { label: "Team size", value: teamSizeSummary(state.team.size) },
+      { label: "Idea", value: state.team.idea },
+    ],
+  },
+  {
+    title: reviewTitles.students,
+    step: "students",
+    rows: state.students.map((member, index) => ({
+      label:
+        index === state.leaderIndex ? leaderLabel(index) : studentLabel(index),
+      value: memberSummary(member),
+    })),
+  },
+  {
+    title: reviewTitles.teacher,
+    step: "teacher",
+    rows: [
+      { label: "Teacher", value: state.teacher.name },
+      { label: "Designation", value: state.teacher.designation },
+      { label: "Phone", value: state.teacher.phone },
+      { label: "Email", value: state.teacher.email },
+    ],
+  },
+];
 
 export const StepReview = ({
   errors,
   onConsentChange,
   onEdit,
   state,
-}: StepReviewProps) => {
-  const sections: ReviewSection[] = [
-    {
-      key: "school",
-      title: reviewTitles.school,
-      step: 0,
-      items: (
-        <>
-          <DataItem label="School name" value={state.school.name} />
-          <DataItem label="Province" value={state.school.province ?? ""} />
-          <DataItem label="District or city" value={state.school.district} />
-        </>
-      ),
-    },
-    {
-      key: "division",
-      title: reviewTitles.division,
-      step: 1,
-      items: (
-        <DataItem label="Division" value={divisionSummary(state.division)} />
-      ),
-    },
-    {
-      key: "team",
-      title: reviewTitles.team,
-      step: 2,
-      items: (
-        <>
-          <DataItem label="Team name" value={state.team.name} />
-          <DataItem
-            label="Team size"
-            value={teamSizeSummary(state.team.size)}
-          />
-          <DataItem label="Idea" value={state.team.idea} />
-        </>
-      ),
-    },
-    {
-      key: "students",
-      title: reviewTitles.students,
-      step: 3,
-      items: state.students.map((member, index) => (
-        <DataItem
-          key={String(index)}
-          label={
-            index === state.leaderIndex
-              ? leaderLabel(index)
-              : studentLabel(index)
-          }
-          value={memberSummary(member)}
-        />
-      )),
-    },
-    {
-      key: "teacher",
-      title: reviewTitles.teacher,
-      step: 4,
-      items: (
-        <>
-          <DataItem label="Teacher" value={state.teacher.name} />
-          <DataItem label="Designation" value={state.teacher.designation} />
-          <DataItem label="Phone" value={state.teacher.phone} />
-          <DataItem label="Email" value={state.teacher.email} />
-        </>
-      ),
-    },
-  ];
-
-  return (
-    <div className="grid gap-6">
-      <div className="grid gap-2.5">
-        {sections.map((section) => (
-          <div
-            className="border-line-soft bg-ink rounded-[14px] border p-4"
-            key={section.key}
-          >
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <span className="text-muted-2 font-mono text-[11px] tracking-[0.16em]">
-                {section.title}
-              </span>
-              <Button
-                aria-label={`Edit ${section.title.toLowerCase()} section`}
-                onClick={() => onEdit(section.step)}
-                size="sm"
-                variant="link"
-              >
-                {reviewEditLabel}
-              </Button>
-            </div>
-            <DataList columns="minmax(min(100%,200px),1fr)">
-              {section.items}
-            </DataList>
+}: StepReviewProps) => (
+  <>
+    <div className="grid gap-2.5">
+      {buildSections(state).map((section) => (
+        <div
+          className="bg-ink rounded-[14px] border border-[rgba(185,245,208,0.08)] px-[18px] py-4"
+          key={section.title}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-muted-2 font-mono text-[10.5px] tracking-[0.14em]">
+              {section.title}
+            </span>
+            <button
+              aria-label={`Edit ${section.title.toLowerCase()} section`}
+              className="text-volt cursor-pointer border-none bg-transparent p-0 font-mono text-[11px] tracking-[0.08em]"
+              onClick={() => onEdit(section.step)}
+              type="button"
+            >
+              {reviewEditLabel}
+            </button>
           </div>
-        ))}
-      </div>
-
-      <CheckboxField
-        checked={state.consent}
-        error={errors.consent}
-        id="register-consent"
-        label={consentCopy}
-        onCheckedChange={onConsentChange}
-      />
+          <div className="mt-2.5 grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-x-[18px] gap-y-2">
+            {section.rows.map((row) => (
+              <div className="min-w-0" key={row.label}>
+                <div className="text-faint text-[11.5px]">{row.label}</div>
+                <div className="text-fg-strong mt-0.5 text-[14px] [overflow-wrap:anywhere]">
+                  {row.value.trim() || EMPTY_VALUE}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
-  );
-};
+    <label className="text-muted mt-[18px] flex cursor-pointer items-start gap-3 text-[13.5px] leading-[1.5]">
+      <input
+        checked={state.consent}
+        className="accent-volt mt-[3px] size-4 shrink-0"
+        onChange={(event) => onConsentChange(event.target.checked)}
+        type="checkbox"
+      />
+      <span>{consentCopy}</span>
+    </label>
+    <div className="mt-1.5 min-h-4 text-[12px] text-[#FF8A7A]" role="alert">
+      {errors.consent}
+    </div>
+  </>
+);

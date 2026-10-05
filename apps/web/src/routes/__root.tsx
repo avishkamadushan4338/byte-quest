@@ -17,7 +17,7 @@ import { SiteHeader } from "../components/site/site-header";
 import appCss from "../index.css?url";
 
 const FONT_STYLESHEET =
-  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap";
+  "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Unbounded:wght@700;800&display=swap";
 
 export interface RouterAppContext {
   orpc: typeof orpc;

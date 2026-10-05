@@ -1,7 +1,3 @@
-import type { BreadcrumbItem } from "@byte-quest/ui/components/breadcrumb";
-
-export type AccentTone = "teal" | "volt" | "lime" | "gold" | "mint";
-
 export interface PhilosophyWord {
   n: string;
   label: string;
@@ -11,7 +7,7 @@ export interface PhilosophyWord {
 export interface VisionMissionCard {
   id: string;
   kicker: string;
-  tone: AccentTone;
+  color: string;
   copy: string;
   background: string;
   border: string;
@@ -61,11 +57,6 @@ export interface Gain {
   hoverShadow: string;
 }
 
-export const aboutBreadcrumb: BreadcrumbItem[] = [
-  { label: "Home", to: "/" },
-  { label: "About" },
-];
-
 export const aboutLead =
   "BYTE QUEST is an inter-school innovation and coding programme: a three-month accelerator where students learn, experiment, build, receive mentorship and turn ideas into meaningful technology solutions.";
 
@@ -80,7 +71,7 @@ export const visionMission: VisionMissionCard[] = [
   {
     id: "vision",
     kicker: "VISION",
-    tone: "volt",
+    color: "#52FF3D",
     copy: "A generation of Sri Lankan students who use technology to solve real problems.",
     background: "linear-gradient(160deg,#0a2a20,#030f0b)",
     border: "rgba(82,255,61,0.18)",
@@ -89,7 +80,7 @@ export const visionMission: VisionMissionCard[] = [
   {
     id: "mission",
     kicker: "MISSION",
-    tone: "gold",
+    color: "#F0D875",
     copy: "To help students learn, build, innovate and inspire through a structured, mentored innovation journey.",
     background: "linear-gradient(160deg,#1a190c,#030f0b)",
     border: "rgba(212,175,55,0.22)",

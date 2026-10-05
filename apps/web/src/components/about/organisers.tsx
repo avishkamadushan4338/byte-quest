@@ -1,42 +1,40 @@
-import { Card } from "@byte-quest/ui/components/card";
-import { Container } from "@byte-quest/ui/components/container";
-import { Kicker } from "@byte-quest/ui/components/kicker";
-import { Section } from "@byte-quest/ui/components/section";
-
 import { crestAlt, organiser } from "./data";
 
 const CREST_SRC = "/assets/crest.png";
 
 export const Organisers = () => (
-  <Section id="organisers" tone="gold">
-    <Container>
-      <Card
-        className="grid gap-10 rounded-[28px] p-[clamp(26px,3.5vw,44px)] lg:grid-cols-[auto_minmax(0,1fr)] lg:items-center lg:gap-[56px]"
-        style={{
-          background:
-            "radial-gradient(60% 80% at 0% 0%, rgba(212,175,55,0.1), transparent 60%), linear-gradient(160deg,#071d16,#030f0b)",
-          border: "1px solid rgba(212,175,55,0.24)",
-        }}
-      >
+  <section
+    className="px-[clamp(20px,5vw,64px)] pb-[clamp(64px,8vw,112px)]"
+    id="organisers"
+  >
+    <div
+      className="mx-auto grid max-w-[1280px] [grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))] items-center overflow-hidden rounded-[28px] border border-[rgba(212,175,55,0.2)]"
+      style={{
+        background:
+          "radial-gradient(60% 80% at 0% 0%, rgba(212,175,55,0.1), transparent 60%), linear-gradient(160deg,#071D16,#030F0B)",
+      }}
+    >
+      <div className="flex justify-center p-[clamp(28px,4vw,56px)]">
         <img
           alt={crestAlt}
-          className="w-[min(220px,60%)] drop-shadow-[0_10px_40px_rgba(212,175,55,0.35)]"
+          className="h-auto w-[min(220px,60%)] drop-shadow-[0_20px_50px_rgba(212,175,55,0.25)]"
           src={CREST_SRC}
         />
-
-        <div>
-          <Kicker tone="gold">{organiser.kicker}</Kicker>
-          <h2 className="mt-5 text-[clamp(28px,3.2vw,44px)] leading-[1.02] tracking-[-0.04em]">
-            {organiser.title}
-          </h2>
-          <p className="text-muted mt-5 max-w-[560px] text-[16px] leading-[1.6]">
-            {organiser.body}
-          </p>
-          <div className="text-gold-bright mt-7 font-mono text-[12px] tracking-[0.24em]">
-            {organiser.motto}
-          </div>
+      </div>
+      <div className="flex flex-col gap-[18px] p-[clamp(28px,4vw,56px)]">
+        <div className="text-gold font-mono text-[11px] tracking-[0.16em]">
+          {organiser.kicker}
         </div>
-      </Card>
-    </Container>
-  </Section>
+        <h2 className="m-0 text-[clamp(28px,3.2vw,44px)] leading-[1.05] tracking-[-0.03em]">
+          {organiser.title}
+        </h2>
+        <p className="text-muted m-0 max-w-[480px] text-[15.5px] leading-[1.6]">
+          {organiser.body}
+        </p>
+        <div className="text-gold-bright font-mono text-[12px] tracking-[0.14em]">
+          {organiser.motto}
+        </div>
+      </div>
+    </div>
+  </section>
 );

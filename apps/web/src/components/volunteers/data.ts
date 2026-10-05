@@ -105,7 +105,7 @@ export const idCard = {
   chip: "VOLUNTEER",
   idLabel: "ID NUMBER",
   classLabel: "CLASS",
-  admissionLabel: "ADM NO.",
+  admissionLabel: "ADM NO",
   schoolLabel: "SCHOOL",
   tagline: "LEARN. BUILD. INNOVATE. INSPIRE.",
   photoAlt: "Volunteer photo",
@@ -216,7 +216,6 @@ export const applicationChecklist = (
 
   const hasGuardianDetails = [
     state.guardian.name,
-    state.guardian.relationship ?? "",
     state.guardian.contactNumber,
   ].every((entry) => entry.trim().length > 0);
 

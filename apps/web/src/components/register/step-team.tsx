@@ -1,7 +1,8 @@
-import { TextField, TextareaField } from "@byte-quest/ui/components/fields";
-import { cn } from "@byte-quest/ui/lib/utils";
-import { Field } from "@byte-quest/ui/primitives/field";
-import { Radio, RadioGroup } from "@byte-quest/ui/primitives/radio";
+import {
+  fieldGridClass,
+  InputField,
+  TextareaField,
+} from "@/components/site/design-fields";
 
 import type { RegisterErrors, TeamDetails } from "./data";
 import { teamSizeHint, teamSizeOptions } from "./data";
@@ -13,24 +14,21 @@ interface StepTeamProps {
   team: TeamDetails;
 }
 
-const sizeButtonClasses =
-  "relative flex h-auto w-[72px] cursor-pointer items-center justify-center rounded-[12px] border py-3.5";
-
 export const StepTeam = ({
   errors,
   onChange,
   onSizeChange,
   team,
 }: StepTeamProps) => (
-  <div className="grid gap-6">
-    <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))] gap-4">
-      <TextField
+  <>
+    <div className={fieldGridClass}>
+      <InputField
         error={errors.team?.name}
         id="team-name"
         label="Team name"
         onValueChange={(value) => onChange({ name: value })}
         placeholder="Something memorable"
-        required
+        requirement="required"
         value={team.name}
       />
       <TextareaField
@@ -38,51 +36,43 @@ export const StepTeam = ({
         label="Initial project idea"
         onValueChange={(value) => onChange({ idea: value })}
         placeholder="A sentence or two — this can change."
-        rows={3}
+        requirement="optional"
         value={team.idea}
       />
     </div>
-
-    <Field className="grid gap-3">
-      <div className="flex items-center gap-2">
-        <span className="text-muted-2 font-mono text-[11px] tracking-[0.16em] uppercase">
-          Team size
-        </span>
-        <span className="text-faint-2 ml-auto font-mono text-[10px] tracking-[0.1em]">
-          REQUIRED
-        </span>
-      </div>
-      <RadioGroup
-        className="flex flex-wrap gap-2.5"
-        name="team-size"
-        onValueChange={(value) => onSizeChange(String(value))}
-        value={team.size}
+    <div className="mt-1.5">
+      <div className="text-fg-dim text-[13px] font-semibold">Team size</div>
+      <div
+        aria-label="Team size"
+        className="mt-2.5 flex gap-2"
+        role="radiogroup"
       >
         {teamSizeOptions.map((option) => {
           const selected = team.size === option.value;
           return (
             <label
-              className={cn(
-                sizeButtonClasses,
-                selected
-                  ? "border-volt bg-volt text-ink"
-                  : "border-line-strong bg-ink text-muted"
-              )}
+              className="font-display has-[:focus-visible]:outline-volt w-[72px] cursor-pointer rounded-[12px] py-3.5 text-center text-[22px] font-bold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-[3px]"
               key={option.value}
+              style={{
+                background: selected ? "#52FF3D" : "#020807",
+                color: selected ? "#020807" : "#B9C9C1",
+                border: `1px solid ${selected ? "#52FF3D" : "rgba(185,245,208,0.14)"}`,
+              }}
             >
-              <span className="font-display text-[22px] leading-none">
-                {option.label}
-              </span>
-              <Radio
+              <input
                 aria-label={`${option.value} students`}
-                className="absolute top-1.5 right-1.5 size-3.5"
-                value={option.value}
+                checked={selected}
+                className="sr-only"
+                name="team-size"
+                onChange={() => onSizeChange(option.value)}
+                type="radio"
               />
+              {option.label}
             </label>
           );
         })}
-      </RadioGroup>
-      <p className="text-muted-2 text-[12.5px]">{teamSizeHint}</p>
-    </Field>
-  </div>
+      </div>
+      <div className="text-muted-2 mt-2 text-[12.5px]">{teamSizeHint}</div>
+    </div>
+  </>
 );
