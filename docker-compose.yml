@@ -19,6 +19,18 @@ services:
       TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN:-eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTEyOTIyNjUsImlkIjoiMDFhMTExNTYtODUwMS03YTU2LWExZmQtMjFlMjdlNGMxMzU3Iiwia2lkIjoiWHVlS0NQUW9wNVliUnU4Y2ZONzM5a2NrcnNkQmdDZVpUdDlRSDBBRndSRSIsInJpZCI6IjgzNzJjYzE0LTQ4NzMtNGFjYy1iM2UzLThlYzNkM2RmMjZhOCJ9.lPH1-xx65aYyyu36riEv1yzbT2_5vgfVuwj5E8RcA8dyJRIYC8Cd8GETq-biK6P-5TFIzTIm1ywLUEfu7Ac-Cg}
     volumes:
       - db-data:/app/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:4001/').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
 
 volumes:
