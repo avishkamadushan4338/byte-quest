@@ -1,34 +1,27 @@
-import { defineRelationsPart } from "drizzle-orm";
+import { relations } from "drizzle-orm";
 
 import { school } from "../schools/school";
 import { joinRequest, team, teamMember } from "./team";
 
-export const teamRelations = defineRelationsPart(
-  { school, team, teamMember, joinRequest },
-  (r) => ({
-    team: {
-      school: r.one.school({
-        from: r.team.schoolId,
-        to: r.school.id,
-      }),
-      // `many` relations derive their columns from the reverse `one`.
-      members: r.many.teamMember(),
-      joinRequests: r.many.joinRequest(),
-    },
-    teamMember: {
-      team: r.one.team({
-        from: r.teamMember.teamId,
-        to: r.team.id,
-      }),
-    },
-    joinRequest: {
-      team: r.one.team({
-        from: r.joinRequest.teamId,
-        to: r.team.id,
-      }),
-    },
-    school: {
-      teams: r.many.team(),
-    },
-  })
-);
+export const teamRelations = relations(team, ({ one, many }) => ({
+  school: one(school, {
+    fields: [team.schoolId],
+    references: [school.id],
+  }),
+  members: many(teamMember),
+  joinRequests: many(joinRequest),
+}));
+
+export const teamMemberRelations = relations(teamMember, ({ one }) => ({
+  team: one(team, {
+    fields: [teamMember.teamId],
+    references: [team.id],
+  }),
+}));
+
+export const joinRequestRelations = relations(joinRequest, ({ one }) => ({
+  team: one(team, {
+    fields: [joinRequest.teamId],
+    references: [team.id],
+  }),
+}));

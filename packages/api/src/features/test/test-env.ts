@@ -1,13 +1,20 @@
 import { randomUUID } from "node:crypto";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import {
+  mkdtempSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  statSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
 import type { Session } from "@byte-quest/auth";
+import type { Database } from "@byte-quest/db";
+import { createDb } from "@byte-quest/db";
 import type { AnyProcedure, InferSchemaOutput, Procedure } from "@orpc/server";
 import { createProcedureClient } from "@orpc/server";
 import { sql } from "drizzle-orm";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { drizzle } from "drizzle-orm/node-postgres";
 
 /** Output type a procedure resolves to, read off its output schema. */
 type ProcedureOutput<P> =
@@ -21,10 +28,6 @@ type ProcedureOutput<P> =
   >
     ? InferSchemaOutput<OutputSchema>
     : never;
-
-const CONNECTION_STRING =
-  process.env.TEST_DATABASE_URL ??
-  "postgresql://postgres:password@localhost:4000/byte_quest_test";
 
 const exists = (target: string): boolean => {
   try {
@@ -59,7 +62,7 @@ const resolveMigrationsDir = (): string => {
   );
 };
 
-/** Run an ordered list of statements sequentially (DDL depends on order). */
+/** Run an ordered list of statements sequentially. */
 const runSequentially = async (
   run: (statement: string) => Promise<unknown>,
   statements: string[]
@@ -73,40 +76,28 @@ const runSequentially = async (
 };
 
 /**
- * Pin `search_path` on the connection string so every pooled connection
- * resolves to the per-test schema. A plain `SET search_path` would only apply
- * to whichever connection happened to run it, which breaks under concurrency.
- */
-const withSearchPath = (
-  connectionString: string,
-  schemaName: string
-): string => {
-  const url = new URL(connectionString);
-  url.searchParams.set("options", `-c search_path=${schemaName}`);
-  return url.toString();
-};
-
-/**
- * Creates a fresh PostgreSQL schema per test run and applies the migration
- * DDL into it, so tests run against the real schema without colliding.
+ * Creates a fresh SQLite file per test run and applies the migration DDL into it.
  */
 export const createTestDb = async (): Promise<TestDb> => {
-  const schemaName = `test_${randomUUID().replaceAll("-", "")}`;
-  const admin = drizzle(CONNECTION_STRING);
-  await admin.execute(sql.raw(`CREATE SCHEMA IF NOT EXISTS "${schemaName}"`));
+  const dir = mkdtempSync(path.join(tmpdir(), "bq-test-db-"));
+  const dbPath = path.join(dir, "test.db");
 
-  const db = drizzle(withSearchPath(CONNECTION_STRING, schemaName));
+  const db = await createDb({ TURSO_DATABASE_URL: `file:${dbPath}` });
 
   const migrationsDir = resolveMigrationsDir();
   const migrationDirs = readdirSync(migrationsDir, {
     withFileTypes: true,
   }).toSorted((a, b) => a.name.localeCompare(b.name));
 
-  const statements = migrationDirs.flatMap((dir) => {
-    if (!dir.isDirectory()) {
+  const statements = migrationDirs.flatMap((dirEntry) => {
+    if (!dirEntry.isDirectory()) {
       return [];
     }
-    const migrationSql = path.join(migrationsDir, dir.name, "migration.sql");
+    const migrationSql = path.join(
+      migrationsDir,
+      dirEntry.name,
+      "migration.sql"
+    );
     if (!existsFile(migrationSql)) {
       return [];
     }
@@ -116,32 +107,24 @@ export const createTestDb = async (): Promise<TestDb> => {
       .filter(Boolean);
   });
 
-  await runSequentially(
-    (statement) => db.execute(sql.raw(statement)),
-    statements
-  );
+  await runSequentially((statement) => db.run(sql.raw(statement)), statements);
 
   return {
     db,
-    schemaName,
-    cleanup: async () => {
-      await admin.execute(
-        sql.raw(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`)
-      );
-      const adminClient = (
-        admin as unknown as { $client: { end: () => Promise<void> } }
-      ).$client;
-      const dbClient = (
-        db as unknown as { $client: { end: () => Promise<void> } }
-      ).$client;
-      await adminClient.end();
-      await dbClient.end();
+    schemaName: dbPath,
+    cleanup: () => {
+      try {
+        rmSync(dir, { recursive: true, force: true });
+      } catch {
+        // Temp dirs are cleaned by OS eventually
+      }
+      return Promise.resolve();
     },
   };
 };
 
 export interface TestDb {
-  db: NodePgDatabase;
+  db: Database;
   schemaName: string;
   cleanup: () => Promise<void>;
 }
@@ -184,10 +167,7 @@ export interface MakeContextOptions {
 }
 
 /** Build the API Context shape used by procedure handlers. */
-export const makeContext = (
-  db: NodePgDatabase,
-  options?: MakeContextOptions
-) => {
+export const makeContext = (db: Database, options?: MakeContextOptions) => {
   const profile = options?.profile;
   return {
     db,
@@ -210,8 +190,7 @@ export const makeContext = (
 
 /**
  * Invoke a procedure through oRPC's own client pipeline (middleware +
- * validation included) with a synthetic context. Input/output types are
- * inferred from the procedure itself.
+ * validation included) with a synthetic context.
  */
 export const call = async <P extends AnyProcedure, R = ProcedureOutput<P>>(
   procedure: P,

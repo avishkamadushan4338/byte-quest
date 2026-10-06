@@ -1,48 +1,55 @@
 import { sql } from "drizzle-orm";
 import {
-  pgEnum,
-  pgTable,
+  sqliteTable,
   text,
-  timestamp,
-  unique,
+  integer,
   uniqueIndex,
-  uuid,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/sqlite-core";
 
 import { userProfile } from "../access/user-profile";
 import { school } from "../schools/school";
 
-/** Team division: primary (grades 6-9) or secondary (grades 10-13). */
-export const divisionEnum = pgEnum("division", ["primary", "secondary"]);
+export const divisions = ["primary", "secondary"] as const;
+export type Division = (typeof divisions)[number];
 
-/** Specialties a member brings to the team. */
-export const memberSpecialtyEnum = pgEnum("member_specialty", [
-  "ui",
-  "architecture",
-  "business",
-]);
+export const divisionEnum = {
+  enumValues: divisions,
+};
 
-/** Role inside the team: exactly one leader per team, everyone is a developer. */
-export const teamRoleEnum = pgEnum("team_role", ["leader", "developer"]);
+export const memberSpecialties = ["ui", "architecture", "business"] as const;
+export type MemberSpecialty = (typeof memberSpecialties)[number];
 
-/** Join-request status. Approved requests create the team membership row. */
-export const joinRequestStatusEnum = pgEnum("join_request_status", [
-  "pending",
-  "approved",
-  "rejected",
-]);
+export const memberSpecialtyEnum = {
+  enumValues: memberSpecialties,
+};
+
+export const teamRoles = ["leader", "developer"] as const;
+export type TeamRole = (typeof teamRoles)[number];
+
+export const teamRoleEnum = {
+  enumValues: teamRoles,
+};
+
+export const joinRequestStatuses = ["pending", "approved", "rejected"] as const;
+export type JoinRequestStatus = (typeof joinRequestStatuses)[number];
+
+export const joinRequestStatusEnum = {
+  enumValues: joinRequestStatuses,
+};
 
 /**
  * A hackathon team. Each school fields at most one team per division,
  * enforced by the unique index on (schoolId, division).
  */
-export const team = pgTable(
+export const team = sqliteTable(
   "team",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     name: text("name").notNull(),
-    division: divisionEnum("division").notNull(),
-    schoolId: uuid("school_id")
+    division: text("division").$type<Division>().notNull(),
+    schoolId: text("school_id")
       .notNull()
       .references(() => school.id, { onDelete: "cascade" }),
     idea: text("idea"),
@@ -52,56 +59,62 @@ export const team = pgTable(
     teacherEmail: text("teacher_email"),
     principalName: text("principal_name"),
     /**
-     * Opaque token handed to the registrant on submission (and kept in
-     * their browser's local storage) so they can reopen and edit this
-     * team's registration without an account, up to the closing date.
+     * Opaque token handed to the registrant on submission so they can reopen
+     * and edit this team's registration without an account.
      */
     editToken: text("edit_token").unique(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
-      .defaultNow()
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .$defaultFn(() => new Date())
       .$onUpdate(() => new Date())
       .notNull(),
   },
   (table) => [
-    unique("team_school_division_unique").on(table.schoolId, table.division),
+    uniqueIndex("team_school_division_unique").on(
+      table.schoolId,
+      table.division
+    ),
   ]
 );
 
 /**
- * Team membership. All members are developers; exactly one is the leader
- * (validated by the API layer and this partial unique index). Member
- * personal data (full name, grade, class, admission number) is a snapshot
- * taken at team registration time. `userId` is null for members added
- * directly by the school (no account required); it is only set when a
- * member joins by requesting to join their own account's team.
+ * Team membership. All members are developers; exactly one is the leader.
  */
-export const teamMember = pgTable(
+export const teamMember = sqliteTable(
   "team_member",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    teamId: uuid("team_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    teamId: text("team_id")
       .notNull()
       .references(() => team.id, { onDelete: "cascade" }),
     userId: text("user_id").references(() => userProfile.userId, {
       onDelete: "cascade",
     }),
-    teamRole: teamRoleEnum("team_role").default("developer").notNull(),
-    specialty: memberSpecialtyEnum("specialty"),
+    teamRole: text("team_role")
+      .$type<TeamRole>()
+      .default("developer")
+      .notNull(),
+    specialty: text("specialty").$type<MemberSpecialty>(),
     grade: text("grade").notNull(),
     fullName: text("full_name").notNull(),
     className: text("class_name"),
     admissionNumber: text("admission_number"),
     nationalId: text("national_id"),
     birthday: text("birthday"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
-      .defaultNow()
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .$defaultFn(() => new Date())
       .$onUpdate(() => new Date())
       .notNull(),
   },
   (table) => [
-    unique("team_member_team_user_unique").on(table.teamId, table.userId),
+    uniqueIndex("team_member_team_user_unique").on(table.teamId, table.userId),
     uniqueIndex("team_member_leader_unique")
       .on(table.teamId)
       .where(sql`${table.teamRole} = 'leader'`),
@@ -109,38 +122,39 @@ export const teamMember = pgTable(
 );
 
 /**
- * A user asking to join a team. The team leader approves or rejects;
- * approval turns the request into a membership.
+ * A user asking to join a team. The team leader approves or rejects.
  */
-export const joinRequest = pgTable(
+export const joinRequest = sqliteTable(
   "join_request",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    teamId: uuid("team_id")
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    teamId: text("team_id")
       .notNull()
       .references(() => team.id, { onDelete: "cascade" }),
     userId: text("user_id")
       .notNull()
       .references(() => userProfile.userId, { onDelete: "cascade" }),
-    status: joinRequestStatusEnum("status").default("pending").notNull(),
+    status: text("status")
+      .$type<JoinRequestStatus>()
+      .default("pending")
+      .notNull(),
     grade: text("grade").notNull(),
-    specialty: memberSpecialtyEnum("specialty"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
-      .defaultNow()
+    specialty: text("specialty").$type<MemberSpecialty>(),
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .$defaultFn(() => new Date())
       .$onUpdate(() => new Date())
       .notNull(),
   },
   (table) => [
-    unique("join_request_team_user_unique").on(table.teamId, table.userId),
+    uniqueIndex("join_request_team_user_unique").on(table.teamId, table.userId),
   ]
 );
 
-export type Division = (typeof divisionEnum.enumValues)[number];
-export type MemberSpecialty = (typeof memberSpecialtyEnum.enumValues)[number];
-export type TeamRole = (typeof teamRoleEnum.enumValues)[number];
-export type JoinRequestStatus =
-  (typeof joinRequestStatusEnum.enumValues)[number];
 export type Team = typeof team.$inferSelect;
 export type NewTeam = typeof team.$inferInsert;
 export type TeamMember = typeof teamMember.$inferSelect;

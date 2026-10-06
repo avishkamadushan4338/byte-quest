@@ -1,32 +1,36 @@
 import { sql } from "drizzle-orm";
 import {
   index,
-  pgEnum,
-  pgTable,
+  sqliteTable,
   text,
-  timestamp,
+  integer,
   uniqueIndex,
-  uuid,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/sqlite-core";
 
 import { userProfile } from "../access/user-profile";
 
-/** Lifecycle of an admin access request, decided by an existing admin. */
-export const adminApplicationStatusEnum = pgEnum("admin_application_status", [
+export const adminApplicationStatuses = [
   "pending",
   "approved",
   "rejected",
-]);
+] as const;
+export type AdminApplicationStatus = (typeof adminApplicationStatuses)[number];
+
+export const adminApplicationStatusEnum = {
+  enumValues: adminApplicationStatuses,
+};
 
 /**
  * An application for admin (organising committee) access. Anyone may apply;
  * an existing admin approves or rejects. Approval provisions the account with
  * the `admin` role, so this table is the only route to admin.
  */
-export const adminApplication = pgTable(
+export const adminApplication = sqliteTable(
   "admin_application",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     fullName: text("full_name").notNull(),
     email: text("email").notNull(),
     /** Requested sign-in handle; must be unique across applications. */
@@ -34,16 +38,21 @@ export const adminApplication = pgTable(
     organization: text("organization").notNull(),
     role: text("role").notNull(),
     experience: text("experience").notNull(),
-    status: adminApplicationStatusEnum("status").default("pending").notNull(),
+    status: text("status")
+      .$type<AdminApplicationStatus>()
+      .default("pending")
+      .notNull(),
     reviewedByUserId: text("reviewed_by_user_id").references(
       () => userProfile.userId,
       { onDelete: "set null" }
     ),
-    reviewedAt: timestamp("reviewed_at"),
+    reviewedAt: integer("reviewed_at", { mode: "timestamp_ms" }),
     reviewNote: text("review_note"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
-      .defaultNow()
+    createdAt: integer("created_at", { mode: "timestamp_ms" })
+      .$defaultFn(() => new Date())
+      .notNull(),
+    updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+      .$defaultFn(() => new Date())
       .$onUpdate(() => new Date())
       .notNull(),
   },
@@ -57,7 +66,5 @@ export const adminApplication = pgTable(
   ]
 );
 
-export type AdminApplicationStatus =
-  (typeof adminApplicationStatusEnum.enumValues)[number];
 export type AdminApplication = typeof adminApplication.$inferSelect;
 export type NewAdminApplication = typeof adminApplication.$inferInsert;

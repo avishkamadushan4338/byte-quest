@@ -1,11 +1,16 @@
+import dotenv from "dotenv";
 import { defineConfig } from "drizzle-kit";
-import "varlock/auto-load";
+
+dotenv.config({
+  path: "../../apps/web/.env",
+});
 
 export default defineConfig({
   schema: "./src/schema/index.ts",
   out: "./src/migrations",
-  dialect: "postgresql",
+  dialect: "turso",
   dbCredentials: {
-    url: process.env.DATABASE_URL || "",
+    url: process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || "",
+    authToken: process.env.TURSO_AUTH_TOKEN,
   },
 });

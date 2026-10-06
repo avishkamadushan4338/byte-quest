@@ -3,5 +3,5 @@ import { createDb } from "@byte-quest/db";
 
 import { ENV } from "./env.server";
 
-export const db = createDb(ENV);
+export const db = await createDb(ENV);
 export const auth = createAuth(ENV, db);

@@ -1,18 +1,22 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 /**
  * Schools participating in the hackathon. Every school can register at most
  * one primary-division team and one secondary-division team.
  */
-export const school = pgTable("school", {
-  id: uuid("id").primaryKey().defaultRandom(),
+export const school = sqliteTable("school", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   city: text("city").notNull(),
   province: text("province"),
   address: text("address"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .$defaultFn(() => new Date())
     .$onUpdate(() => new Date())
     .notNull(),
 });

@@ -1,24 +1,27 @@
-import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 
 import { userProfile } from "../access/user-profile";
 
-/** Lifecycle of a volunteer application, decided by an admin. */
-export const volunteerApplicationStatusEnum = pgEnum(
-  "volunteer_application_status",
-  ["pending", "approved", "rejected"]
-);
+export const volunteerApplicationStatuses = [
+  "pending",
+  "approved",
+  "rejected",
+] as const;
+export type VolunteerApplicationStatus =
+  (typeof volunteerApplicationStatuses)[number];
+
+export const volunteerApplicationStatusEnum = {
+  enumValues: volunteerApplicationStatuses,
+};
 
 /**
- * A student's application to volunteer on BYTE QUEST, submitted through the
- * public form (no account needed). An admin approves or rejects it; approval
- * issues a login (role `volunteer`) and links `userId` so the volunteer can
- * sign in and see their status/ID card. `teams` holds the crew identifiers
- * they'd like to join (content-creator, design-team, etc.) as free-form
- * text, matching the checkbox values on the form rather than a lookup table.
+ * A student's application to volunteer on BYTE QUEST.
  */
-export const volunteerApplication = pgTable("volunteer_application", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  teams: text("teams").array().notNull(),
+export const volunteerApplication = sqliteTable("volunteer_application", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  teams: text("teams", { mode: "json" }).$type<string[]>().notNull(),
   fullName: text("full_name").notNull(),
   school: text("school").notNull(),
   admissionNumber: text("admission_number"),
@@ -30,7 +33,10 @@ export const volunteerApplication = pgTable("volunteer_application", {
   guardianRelationship: text("guardian_relationship"),
   guardianContactNumber: text("guardian_contact_number").notNull(),
   guardianAlternateContactNumber: text("guardian_alternate_contact_number"),
-  status: volunteerApplicationStatusEnum("status").default("pending").notNull(),
+  status: text("status")
+    .$type<VolunteerApplicationStatus>()
+    .default("pending")
+    .notNull(),
   userId: text("user_id").references(() => userProfile.userId, {
     onDelete: "set null",
   }),
@@ -38,16 +44,16 @@ export const volunteerApplication = pgTable("volunteer_application", {
     () => userProfile.userId,
     { onDelete: "set null" }
   ),
-  reviewedAt: timestamp("reviewed_at"),
+  reviewedAt: integer("reviewed_at", { mode: "timestamp_ms" }),
   reviewNote: text("review_note"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
+  createdAt: integer("created_at", { mode: "timestamp_ms" })
+    .$defaultFn(() => new Date())
+    .notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" })
+    .$defaultFn(() => new Date())
     .$onUpdate(() => new Date())
     .notNull(),
 });
 
-export type VolunteerApplicationStatus =
-  (typeof volunteerApplicationStatusEnum.enumValues)[number];
 export type VolunteerApplication = typeof volunteerApplication.$inferSelect;
 export type NewVolunteerApplication = typeof volunteerApplication.$inferInsert;

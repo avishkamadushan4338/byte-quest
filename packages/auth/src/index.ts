@@ -38,7 +38,7 @@ export const createAuth = (
 ) =>
   betterAuth({
     database: drizzleAdapter(database, {
-      provider: "pg",
+      provider: "sqlite",
       schema,
     }),
     trustedOrigins: [env.BETTER_AUTH_URL],
