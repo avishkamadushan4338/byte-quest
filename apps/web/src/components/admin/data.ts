@@ -5,9 +5,10 @@ export type AdminTab =
   | "schools"
   | "teams"
   | "submissions"
-  | "applications";
+  | "applications"
+  | "volunteers";
 
-export type UserRole = "admin" | "mic" | "leader" | "student";
+export type UserRole = "admin" | "mic" | "leader" | "student" | "volunteer";
 
 export type Division = "primary" | "secondary";
 
@@ -55,6 +56,7 @@ export const adminTabs: { label: string; value: AdminTab }[] = [
   { label: "Schools", value: "schools" },
   { label: "Teams", value: "teams" },
   { label: "Submissions", value: "submissions" },
+  { label: "Volunteers", value: "volunteers" },
 ];
 
 export const roleBadgeTones: Record<UserRole, BadgeTone> = {
@@ -62,6 +64,7 @@ export const roleBadgeTones: Record<UserRole, BadgeTone> = {
   mic: "gold",
   leader: "teal",
   student: "neutral",
+  volunteer: "gold",
 };
 
 export const roleLabels: Record<UserRole, string> = {
@@ -69,6 +72,7 @@ export const roleLabels: Record<UserRole, string> = {
   mic: "MIC",
   leader: "Team Leader",
   student: "Student",
+  volunteer: "Volunteer",
 };
 
 export const usersCopy = {

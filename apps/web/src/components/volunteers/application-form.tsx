@@ -29,6 +29,7 @@ interface ApplicationFormProps {
   onStudentChange: (patch: Partial<StudentDetails>) => void;
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   onTeamsChange: (teams: string[]) => void;
+  pending?: boolean;
   photo: VolunteerPhoto | null;
   student: StudentDetails;
   teams: string[];
@@ -76,6 +77,7 @@ export const ApplicationForm = ({
   onStudentChange,
   onSubmit,
   onTeamsChange,
+  pending,
   photo,
   student,
   teams,
@@ -417,7 +419,9 @@ export const ApplicationForm = ({
             {errors.consent}
           </span>
           <button
-            className="bg-volt text-ink hover:bg-lime cursor-pointer rounded-full border-none px-[22px] py-[15px] font-sans text-[15px] font-bold"
+            aria-busy={pending}
+            className="bg-volt text-ink hover:bg-lime cursor-pointer rounded-full border-none px-[22px] py-[15px] font-sans text-[15px] font-bold disabled:cursor-default disabled:opacity-60"
+            disabled={pending}
             type="submit"
           >
             {applicationAside.submitLabel}

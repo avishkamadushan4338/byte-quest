@@ -1,5 +1,5 @@
 import { Badge } from "@byte-quest/ui/components/badge";
-import { EmptyState } from "@byte-quest/ui/components/callout";
+import { Callout, EmptyState } from "@byte-quest/ui/components/callout";
 import {
   Table,
   TableBody,
@@ -10,8 +10,11 @@ import {
   TableWrapper,
 } from "@byte-quest/ui/components/table";
 import { cn } from "@byte-quest/ui/lib/utils";
+import { Button } from "@byte-quest/ui/primitives/button";
 import { Skeleton } from "@byte-quest/ui/primitives/skeleton";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { orpc } from "@/utils/orpc";
 
@@ -25,11 +28,58 @@ import {
 const SKELETON_KEYS = ["skeleton-1", "skeleton-2", "skeleton-3"];
 
 export const TeamsPanel = () => {
+  const queryClient = useQueryClient();
   const teams = useQuery(orpc.teams.adminList.queryOptions());
   const rows = teams.data ?? [];
+  const [issued, setIssued] = useState<{
+    username: string;
+    password: string;
+  } | null>(null);
+
+  const issueCredentials = useMutation(
+    orpc.teams.issueCaptainCredentials.mutationOptions({
+      onSuccess: (result) => {
+        queryClient.invalidateQueries({
+          queryKey: orpc.teams.adminList.key(),
+        });
+        setIssued(result);
+        toast.success("Captain login created");
+      },
+      onError: (error: unknown) => {
+        toast.error(
+          error instanceof Error && error.message
+            ? error.message
+            : "We could not issue that login"
+        );
+      },
+    })
+  );
 
   return (
     <div className="grid gap-5">
+      {issued ? (
+        <Callout
+          title={`Captain login created for ${issued.username}`}
+          tone="success"
+        >
+          <p>
+            Share this one-time password with the team&apos;s captain. It is
+            shown only once.
+          </p>
+          <p className="text-volt mt-3 font-mono text-[15px] tracking-[0.06em]">
+            {issued.username} / {issued.password}
+          </p>
+          <Button
+            className="mt-3"
+            onClick={() => setIssued(null)}
+            size="sm"
+            variant="outline"
+          >
+            Done
+          </Button>
+        </Callout>
+      ) : null}
+
       {teams.isPending ? (
         <TableWrapper>
           <Table>
@@ -60,6 +110,12 @@ export const TeamsPanel = () => {
                   <TableCell>
                     <Skeleton className="h-4 w-16" />
                   </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-28" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-8 w-32 rounded-full" />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -84,6 +140,8 @@ export const TeamsPanel = () => {
                 <TableHeadCell>Division</TableHeadCell>
                 <TableHeadCell>{teamsCopy.membersHeader}</TableHeadCell>
                 <TableHeadCell>{teamsCopy.rangeHeader}</TableHeadCell>
+                <TableHeadCell>Teacher contact</TableHeadCell>
+                <TableHeadCell>Captain</TableHeadCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -116,6 +174,30 @@ export const TeamsPanel = () => {
                     <span className="text-faint-2 font-mono text-[12px]">
                       {team.minMembers}–{team.maxMembers}
                     </span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-fg-dim text-[13px]">
+                      {team.teacherName ?? "—"}
+                    </div>
+                    <div className="text-faint-2 text-[12px]">
+                      {team.teacherPhone ?? team.teacherEmail ?? "—"}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {team.captainIssued ? (
+                      <Badge tone="neutral">Login issued</Badge>
+                    ) : (
+                      <Button
+                        disabled={issueCredentials.isPending}
+                        onClick={() =>
+                          issueCredentials.mutate({ teamId: team.id })
+                        }
+                        size="sm"
+                        variant="outline"
+                      >
+                        Issue captain login
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

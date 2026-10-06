@@ -1,13 +1,9 @@
+import { Link } from "@tanstack/react-router";
+
 import { SubpageHero } from "@/components/site/subpage-hero";
 
-export type RegisterSector = "team" | "volunteer";
-
-interface SectorSelectProps {
-  onSelect: (sector: RegisterSector) => void;
-}
-
 interface SectorCardCopy {
-  value: RegisterSector;
+  href: "/register/team" | "/register/volunteer";
   kicker: string;
   title: string;
   description: string;
@@ -19,7 +15,7 @@ interface SectorCardCopy {
 
 const CARDS: SectorCardCopy[] = [
   {
-    value: "team",
+    href: "/register/team",
     kicker: "SCHOOLS",
     title: "Register a team",
     description:
@@ -34,7 +30,7 @@ const CARDS: SectorCardCopy[] = [
     cta: "Register your team →",
   },
   {
-    value: "volunteer",
+    href: "/register/volunteer",
     kicker: "ST. ALOYSIUS' COLLEGE, GALLE",
     title: "Become a volunteer",
     description:
@@ -50,7 +46,7 @@ const CARDS: SectorCardCopy[] = [
   },
 ];
 
-export const SectorSelect = ({ onSelect }: SectorSelectProps) => (
+export const SectorSelect = () => (
   <main className="bg-ink overflow-x-hidden">
     <SubpageHero
       className="pt-[clamp(48px,6vw,80px)] pb-[clamp(28px,4vw,44px)] [&_h1]:mt-4 [&_h1]:text-[clamp(40px,5.5vw,76px)]"
@@ -59,15 +55,13 @@ export const SectorSelect = ({ onSelect }: SectorSelectProps) => (
       title="How are you joining BYTE QUEST?"
     />
 
-    <section className="px-[clamp(20px,5vw,64px)] pb-[clamp(64px,8vw,112px)]">
+    <section className="px-[clamp(20px,5vw,64px)] pb-[clamp(44px,5vw,64px)]">
       <div className="mx-auto grid max-w-[1000px] [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-5">
         {CARDS.map((card) => (
-          <button
-            className="text-fg hover:border-volt focus-visible:outline-volt relative flex cursor-pointer flex-col gap-4 rounded-[22px] border border-[rgba(185,245,208,0.12)] bg-[#020807] p-[clamp(24px,3vw,32px)] text-left font-sans transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-[3px]"
-            key={card.value}
-            onClick={() => onSelect(card.value)}
-            style={{ borderColor: "rgba(185,245,208,0.12)" }}
-            type="button"
+          <Link
+            className="text-fg hover:border-volt focus-visible:outline-volt relative flex flex-col gap-4 rounded-[22px] border border-[rgba(185,245,208,0.12)] bg-[#020807] p-[clamp(24px,3vw,32px)] text-left font-sans transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-[3px]"
+            key={card.href}
+            to={card.href}
           >
             <span
               className="font-mono text-[10.5px] tracking-[0.14em]"
@@ -105,8 +99,19 @@ export const SectorSelect = ({ onSelect }: SectorSelectProps) => (
             >
               {card.cta}
             </span>
-          </button>
+          </Link>
         ))}
+      </div>
+    </section>
+
+    <section className="px-[clamp(20px,5vw,64px)] pb-[clamp(64px,8vw,112px)]">
+      <div className="mx-auto max-w-[1000px] text-center">
+        <p className="text-muted-2 m-0 text-[13.5px]">
+          Already registered, approved, or organising committee?{" "}
+          <Link className="text-volt hover:text-lime" to="/auth/login">
+            Sign in →
+          </Link>
+        </p>
       </div>
     </section>
   </main>

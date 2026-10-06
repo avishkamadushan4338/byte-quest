@@ -15,7 +15,7 @@ export const Hero = () => (
         <div className="flex flex-wrap gap-2.5">
           <Link
             className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
-            to="/register"
+            to="/register/team"
           >
             Register your team →
           </Link>

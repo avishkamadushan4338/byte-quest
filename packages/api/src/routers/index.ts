@@ -4,6 +4,7 @@ import { accessRouter } from "../features/access/router";
 import { schoolsRouter } from "../features/schools/router";
 import { submissionsRouter } from "../features/submissions/router";
 import { teamsRouter } from "../features/teams/router";
+import { volunteersRouter } from "../features/volunteers/router";
 import { protectedProcedure, publicProcedure } from "../index";
 
 export const appRouter = {
@@ -16,6 +17,7 @@ export const appRouter = {
   ...schoolsRouter,
   ...teamsRouter,
   ...submissionsRouter,
+  ...volunteersRouter,
 };
 
 export type AppRouter = typeof appRouter;

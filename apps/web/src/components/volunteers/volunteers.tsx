@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { toast } from "sonner";
 
+import { orpc } from "@/utils/orpc";
+
 import { ApplicationForm } from "./application-form";
 import type {
   ApplicationState,
@@ -26,8 +28,6 @@ const PHONE_PATTERN = /^(?:\+94|0)\d{9}$/u;
 const EMAIL_PATTERN = /^[^@\s@]+@[^\s@]+\.[^\s@]+$/u;
 const PHOTO_TYPES = new Set(["image/jpeg", "image/png"]);
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
-const REFERENCE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
 const isPhone = (value: string) =>
   PHONE_PATTERN.test(value.replaceAll(/[\s-]/gu, ""));
 
@@ -120,17 +120,8 @@ const validateApplication = (state: ApplicationState): VolunteerFormErrors => {
   return errors;
 };
 
-const createReference = () => {
-  const year = String(new Date().getFullYear()).slice(-2);
-  const number = 1000 + Math.floor(Math.random() * 9000);
-  const suffix = Array.from(
-    { length: 4 },
-    () =>
-      REFERENCE_ALPHABET[Math.floor(Math.random() * REFERENCE_ALPHABET.length)]
-  ).join("");
-
-  return `BQ${year}-V${number}-${suffix}`;
-};
+const messageFor = (error: unknown, fallback: string) =>
+  error instanceof Error && error.message ? error.message : fallback;
 
 export const Volunteers = () => {
   const [teams, setTeams] = useState<string[]>([]);
@@ -140,6 +131,7 @@ export const Volunteers = () => {
   const [photo, setPhoto] = useState<VolunteerPhoto | null>(null);
   const [errors, setErrors] = useState<VolunteerFormErrors>({});
   const [reference, setReference] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
 
   const handleStudentChange = (patch: Partial<StudentDetails>) => {
     setStudent((current) => ({ ...current, ...patch }));
@@ -178,7 +170,7 @@ export const Volunteers = () => {
     setErrors((current) => ({ ...current, photo: undefined }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextErrors = validateApplication({
       consent,
@@ -195,9 +187,35 @@ export const Volunteers = () => {
       return;
     }
 
-    setReference(createReference());
-    toast.success("Application received");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setPending(true);
+    try {
+      const result = await orpc.volunteers.apply.call({
+        teams,
+        student: {
+          fullName: student.fullName.trim(),
+          school: student.school.trim(),
+          admissionNumber: student.admissionNumber.trim() || undefined,
+          grade: student.grade ?? "",
+          className: student.className.trim(),
+          contactNumber: student.contactNumber.trim(),
+          email: student.email.trim() || undefined,
+        },
+        guardian: {
+          name: guardian.name.trim(),
+          relationship: guardian.relationship?.trim() || undefined,
+          contactNumber: guardian.contactNumber.trim(),
+          alternateContactNumber:
+            guardian.alternateContactNumber.trim() || undefined,
+        },
+      });
+      setReference(result.reference);
+      setPending(false);
+      toast.success("Application received");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (error) {
+      setPending(false);
+      toast.error(messageFor(error, "We could not submit that application"));
+    }
   };
 
   const handleReset = () => {
@@ -228,6 +246,7 @@ export const Volunteers = () => {
           onStudentChange={handleStudentChange}
           onSubmit={handleSubmit}
           onTeamsChange={handleTeamsChange}
+          pending={pending}
           photo={photo}
           student={student}
           teams={teams}

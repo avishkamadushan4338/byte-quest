@@ -17,6 +17,7 @@ import { SchoolsPanel } from "./schools-panel";
 import { SubmissionsPanel } from "./submissions-panel";
 import { TeamsPanel } from "./teams-panel";
 import { UsersPanel } from "./users-panel";
+import { VolunteersPanel } from "./volunteers-panel";
 
 export const Admin = () => {
   const [tab, setTab] = useState<AdminTab>("applications");
@@ -64,6 +65,10 @@ export const Admin = () => {
 
             <TabsPanel value="submissions">
               <SubmissionsPanel />
+            </TabsPanel>
+
+            <TabsPanel value="volunteers">
+              <VolunteersPanel />
             </TabsPanel>
           </TabsRoot>
         </Container>

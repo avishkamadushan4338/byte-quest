@@ -83,7 +83,7 @@ export const Hero = () => (
           <Button
             className="h-auto px-6 py-[15px] text-[14.5px]"
             nativeButton={false}
-            render={<Link to="/register" />}
+            render={<Link to="/register/team" />}
           >
             Register your team <span aria-hidden="true">→</span>
           </Button>

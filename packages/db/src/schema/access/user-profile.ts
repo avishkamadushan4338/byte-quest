@@ -18,12 +18,14 @@ import { user } from "../auth";
  *             register a team on the school's behalf.
  * - `leader`  team leader; allowed to register their own team.
  * - `student` ordinary team member.
+ * - `volunteer` approved student volunteer; no team, sees their volunteer card.
  */
 export const userRoleEnum = pgEnum("user_role", [
   "admin",
   "mic",
   "leader",
   "student",
+  "volunteer",
 ]);
 
 /**

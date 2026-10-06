@@ -22,7 +22,7 @@ export const CallToAction = () => (
       <div className="mt-9 flex flex-wrap justify-center gap-2.5">
         <Link
           className="bg-volt text-ink hover:bg-lime hover:text-ink inline-flex items-center rounded-full px-[30px] py-[17px] text-[15px] font-bold whitespace-nowrap shadow-[0_18px_50px_-15px_rgba(82,255,61,0.7)]"
-          to="/register"
+          to="/register/team"
         >
           Register now →
         </Link>

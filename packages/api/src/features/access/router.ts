@@ -8,6 +8,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../../index";
+import { generatePassword } from "../../lib/credentials";
 
 /** Primary division covers grades 6-9; secondary covers grades 10-13. */
 export const inferDivision = (grade: string): "primary" | "secondary" =>
@@ -74,7 +75,7 @@ const signupOutputSchema = z.object({
 const meOutputSchema = z.object({
   userId: z.string(),
   username: z.string().nullable(),
-  role: z.enum(["admin", "mic", "leader", "student"]),
+  role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
   fullName: z.string(),
   nationalId: z.string(),
   birthday: z.string(),
@@ -103,41 +104,6 @@ const adminApplicationOutputSchema = z.object({
   reviewedAt: z.string().nullable(),
   createdAt: z.string(),
 });
-
-const PASSWORD_WORDS = [
-  "anchor",
-  "beacon",
-  "circuit",
-  "delta",
-  "ember",
-  "falcon",
-  "granite",
-  "harbor",
-  "ion",
-  "juniper",
-  "kernel",
-  "lumen",
-  "meadow",
-  "nimbus",
-  "orbit",
-  "prism",
-  "quartz",
-  "ripple",
-  "summit",
-  "tidal",
-  "umbra",
-  "vector",
-  "willow",
-  "xenon",
-  "yield",
-  "zephyr",
-];
-
-const randomWord = () =>
-  PASSWORD_WORDS[Math.floor(Math.random() * PASSWORD_WORDS.length)];
-
-const generatePassword = () =>
-  `${randomWord()}-${randomWord()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
 export const accessRouter = {
   access: {
@@ -251,7 +217,7 @@ export const accessRouter = {
       .output(
         z.object({
           canRegister: z.boolean(),
-          role: z.enum(["admin", "mic", "leader", "student"]),
+          role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
           reason: z.string().nullable(),
         })
       )
@@ -275,7 +241,7 @@ export const accessRouter = {
           z.object({
             userId: z.string(),
             username: z.string().nullable(),
-            role: z.enum(["admin", "mic", "leader", "student"]),
+            role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
             fullName: z.string(),
           })
         )
@@ -301,13 +267,13 @@ export const accessRouter = {
       .input(
         z.object({
           userId: z.string(),
-          role: z.enum(["admin", "mic", "leader", "student"]),
+          role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
         })
       )
       .output(
         z.object({
           userId: z.string(),
-          role: z.enum(["admin", "mic", "leader", "student"]),
+          role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
         })
       )
       .handler(async ({ context, input }) => {

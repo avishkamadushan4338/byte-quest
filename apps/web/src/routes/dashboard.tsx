@@ -19,6 +19,12 @@ export const Route = createFileRoute("/dashboard")({
     if (!profile) {
       throw redirect({ to: "/onboarding" });
     }
+    if (profile.role === "admin") {
+      throw redirect({ to: "/admin" });
+    }
+    if (profile.role === "volunteer") {
+      throw redirect({ to: "/volunteer-portal" });
+    }
   },
   head: () => ({ meta: [{ title: "Dashboard | BYTE QUEST" }] }),
   loader: async ({ context }) => ({

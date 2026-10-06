@@ -8,7 +8,8 @@ import {
   teamMember,
   userProfile,
 } from "@byte-quest/db";
-import { and, count, eq, sql } from "drizzle-orm";
+import { ORPCError } from "@orpc/server";
+import { and, count, eq, isNotNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import {
@@ -16,6 +17,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../../index";
+import { generatePassword, generateUsername } from "../../lib/credentials";
 import { inferDivision } from "../access/router";
 import { findOrCreateSchool } from "../schools/router";
 
@@ -685,6 +687,7 @@ export const teamsRouter = {
             teacherPhone: z.string().nullable(),
             teacherEmail: z.string().nullable(),
             principalName: z.string().nullable(),
+            captainIssued: z.boolean(),
           })
         )
       )
@@ -710,7 +713,85 @@ export const teamsRouter = {
           .innerJoin(school, eq(team.schoolId, school.id))
           .leftJoin(teamMember, eq(teamMember.teamId, team.id))
           .groupBy(team.id, school.name);
-        return rows;
+
+        const leaderRows = await context.db
+          .select({ teamId: teamMember.teamId })
+          .from(teamMember)
+          .where(
+            and(eq(teamMember.teamRole, "leader"), isNotNull(teamMember.userId))
+          );
+        const issuedTeamIds = new Set(leaderRows.map((row) => row.teamId));
+
+        return rows.map((row) => ({
+          ...row,
+          captainIssued: issuedTeamIds.has(row.id),
+        }));
+      }),
+
+    /**
+     * Admin: issue a login for a team's captain (the roster's leader).
+     * Provisions a `leader`-role account with a generated username and
+     * password, returned once, and links it to the leader's existing
+     * roster row so they immediately see their team on sign-in.
+     */
+    issueCaptainCredentials: adminProcedure
+      .input(z.object({ teamId: z.string() }))
+      .output(z.object({ username: z.string(), password: z.string() }))
+      .handler(async ({ context, input }) => {
+        const [leaderMember] = await context.db
+          .select()
+          .from(teamMember)
+          .where(
+            and(
+              eq(teamMember.teamId, input.teamId),
+              eq(teamMember.teamRole, "leader")
+            )
+          );
+        if (!leaderMember) {
+          throw new ORPCError("NOT_FOUND", {
+            message: "This team has no leader on its roster",
+          });
+        }
+        if (leaderMember.userId) {
+          throw new ORPCError("CONFLICT", {
+            message: "A captain login has already been issued for this team",
+          });
+        }
+
+        const username = generateUsername(leaderMember.fullName);
+        const password = generatePassword();
+        const email = `${username}@captains.bytequest.lk`;
+
+        let userId: string;
+        try {
+          const createdUser = await context.auth.api.signUpEmail({
+            body: { email, name: leaderMember.fullName, password, username },
+          });
+          userId = createdUser.user.id;
+        } catch (error) {
+          throw new ORPCError("CONFLICT", {
+            message:
+              error instanceof Error && error.message
+                ? error.message
+                : "Could not provision the captain's account",
+          });
+        }
+
+        await context.db.insert(userProfile).values({
+          userId,
+          fullName: leaderMember.fullName,
+          nationalId: `CAP-${leaderMember.id.slice(0, 8).toUpperCase()}`,
+          birthday: "2010-01-01",
+          grade: leaderMember.grade,
+          role: "leader",
+        });
+
+        await context.db
+          .update(teamMember)
+          .set({ userId })
+          .where(eq(teamMember.id, leaderMember.id));
+
+        return { username, password };
       }),
   },
 };

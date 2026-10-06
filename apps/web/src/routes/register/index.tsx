@@ -1,11 +1,11 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { RegisterLanding } from "@/components/register/register-landing";
+import { SectorSelect } from "@/components/register/sector-select";
 import { getUser } from "@/functions/get-user";
 
-const RegisterRoute = () => <RegisterLanding />;
+const RegisterIndexRoute = () => <SectorSelect />;
 
-export const Route = createFileRoute("/register")({
+export const Route = createFileRoute("/register/")({
   beforeLoad: async () => {
     const session = await getUser();
     if (session) {
@@ -13,5 +13,5 @@ export const Route = createFileRoute("/register")({
     }
   },
   head: () => ({ meta: [{ title: "Register | BYTE QUEST" }] }),
-  component: RegisterRoute,
+  component: RegisterIndexRoute,
 });

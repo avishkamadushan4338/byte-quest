@@ -9,15 +9,14 @@ import { getUser } from "@/functions/get-user";
 const accountTypes = [
   {
     n: "01",
-    title: "Team leader or MIC",
+    title: "Team captains",
     detail:
-      "The team leader or the school's MIC (teacher in charge) registers the team.",
+      "Issued by the organising committee once your team's registration is reviewed.",
   },
   {
     n: "02",
-    title: "Students join afterwards",
-    detail:
-      "Ordinary students do not register a team — they sign in and ask to join.",
+    title: "Volunteers",
+    detail: "Issued once your volunteer application is approved.",
   },
   {
     n: "03",
@@ -45,9 +44,9 @@ const LoginRoute = () => (
             Sign in with your username.
           </h1>
           <p className="text-muted mt-5 max-w-[460px] text-[17px] leading-[1.65]">
-            BYTE QUEST uses a username and password. Team leaders and MICs
-            create an account during registration; students join their
-            leader&apos;s team afterwards.
+            BYTE QUEST uses a username and password. Schools and volunteers do
+            not create their own account — the organising committee issues one
+            once a team registration or volunteer application is reviewed.
           </p>
 
           <div className="border-line-soft mt-9 grid gap-4 border-y py-7">
@@ -77,7 +76,7 @@ const LoginRoute = () => (
             </Link>
             <Link
               className="text-muted-2 hover:text-volt inline-flex font-mono text-[11.5px] tracking-[0.1em] transition-colors"
-              to="/register"
+              to="/register/team"
             >
               REGISTER A TEAM →
             </Link>
@@ -104,11 +103,16 @@ const LoginRoute = () => (
           </div>
           <SignInForm />
           <p className="text-faint mt-6 text-[13px] leading-[1.6]">
-            No account yet? Team leaders and MICs create one during{" "}
-            <Link className="text-volt" to="/register">
-              team registration
-            </Link>
-            . Organising committee members apply for access.
+            No account yet? Register your{" "}
+            <Link className="text-volt" to="/register/team">
+              team
+            </Link>{" "}
+            or apply to{" "}
+            <Link className="text-volt" to="/register/volunteer">
+              volunteer
+            </Link>{" "}
+            and the organising committee will issue your login once it&apos;s
+            reviewed. Committee members apply for admin access.
           </p>
         </div>
       </div>
