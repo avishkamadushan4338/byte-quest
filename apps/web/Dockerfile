@@ -53,6 +53,7 @@ COPY --from=deps /app/package.json ./package.json
 COPY --from=deps /app/bun.lock ./bun.lock
 
 COPY packages/db/ packages/db/
+COPY --from=deps /app/packages/db/node_modules ./packages/db/node_modules
 
 COPY --from=builder --chown=bun:bun /app/apps/web/.output ./.output
 
