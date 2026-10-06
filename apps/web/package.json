@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "varlock codegen && tsc -b ../../packages/api && vite build",
+    "build": "varlock codegen && tsc -b ../../packages/api && vite build && node scripts/patch-ssr-react-require.mjs",
     "serve": "vite preview",
     "dev": "vite dev",
     "check-types": "varlock codegen && tsc -b ../../packages/api && vite build && tsc --noEmit",

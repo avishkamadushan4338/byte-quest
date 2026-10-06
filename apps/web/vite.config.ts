@@ -9,6 +9,12 @@ export default defineConfig({
   server: {
     port: 4001,
   },
+  optimizeDeps: {
+    include: [
+      "use-sync-external-store/shim",
+      "use-sync-external-store/shim/with-selector",
+    ],
+  },
   resolve: {
     tsconfigPaths: true,
   },

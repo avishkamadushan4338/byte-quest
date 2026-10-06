@@ -14,7 +14,7 @@ ENV NODE_ENV=production \
 
 RUN cd apps/web && bun run build
 
-FROM oven/bun:1.4.0-slim AS runner
+FROM node:24-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production \
@@ -29,6 +29,6 @@ COPY --from=builder /app /app
 EXPOSE 4001
 
 WORKDIR /app/apps/web
-USER bun
+USER node
 
-CMD ["sh", "-c", "cd /app/packages/db && bun scripts/migrate-if-configured.ts && cd /app/apps/web && exec bun .output/server/index.mjs"]
+CMD ["sh", "-c", "node /app/scripts/migrate.mjs && exec node .output/server/index.mjs"]
