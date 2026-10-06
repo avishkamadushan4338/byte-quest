@@ -1,9 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { Register } from "@/components/register/wizard";
+import { RegisterLanding } from "@/components/register/register-landing";
 import { getUser } from "@/functions/get-user";
 
-const RegisterRoute = () => <Register />;
+const RegisterRoute = () => <RegisterLanding />;
 
 export const Route = createFileRoute("/register")({
   beforeLoad: async () => {
