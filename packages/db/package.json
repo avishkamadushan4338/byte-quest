@@ -19,10 +19,12 @@
     "@libsql/client": "^0.18.0",
     "drizzle-kit": "^0.31.10",
     "drizzle-orm": "catalog:",
+    "ws": "^8.18.0",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@byte-quest/config": "workspace:*",
+    "@types/ws": "^8.5.14",
     "typescript": "catalog:",
     "varlock": "catalog:"
   }

@@ -5,11 +5,17 @@
     "": {
       "name": "byte-quest",
       "dependencies": {
+        "@libsql/client": "^0.18.0",
+        "drizzle-orm": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "ws": "catalog:",
         "zod": "catalog:",
       },
       "devDependencies": {
         "@byte-quest/config": "workspace:*",
         "@types/node": "^26.4.1",
+        "@types/ws": "^8.5.14",
         "husky": "^9.1.7",
         "lint-staged": "^17.5.1",
         "nx": "^23.2.0",
@@ -48,6 +54,7 @@
         "sonner": "catalog:",
         "tailwindcss": "catalog:",
         "varlock": "catalog:",
+        "ws": "^8.18.0",
         "zod": "catalog:",
       },
       "devDependencies": {
@@ -58,6 +65,7 @@
         "@testing-library/react": "^16.3.3",
         "@types/react": "catalog:",
         "@types/react-dom": "catalog:",
+        "@types/ws": "^8.5.14",
         "@vitejs/plugin-react": "^6.1.1",
         "jsdom": "^30.0.1",
         "typescript": "catalog:",
@@ -105,13 +113,14 @@
       "name": "@byte-quest/db",
       "dependencies": {
         "@libsql/client": "^0.18.0",
-        "dotenv": "^16.4.7",
+        "drizzle-kit": "^0.31.10",
         "drizzle-orm": "catalog:",
+        "ws": "^8.18.0",
         "zod": "catalog:",
       },
       "devDependencies": {
         "@byte-quest/config": "workspace:*",
-        "drizzle-kit": "^0.31.11",
+        "@types/ws": "^8.5.14",
         "typescript": "catalog:",
         "varlock": "catalog:",
       },
@@ -151,6 +160,7 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "varlock": "1.18.0",
+    "ws": "^8.18.0",
     "zod": "^4.5.4",
   },
   "packages": {

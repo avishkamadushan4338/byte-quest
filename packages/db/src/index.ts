@@ -22,13 +22,25 @@ export type { DatabaseConfig } from "./config";
 export type Database = LibSQLDatabase<typeof schema> & { $client: Client };
 
 export async function createDb(envConfig?: DatabaseConfig): Promise<Database> {
+  const cfg = envConfig as Record<string, string | undefined> | undefined;
+
+  const getVal = (key: string): string | undefined => {
+    if (process.env[key]) return process.env[key];
+    if (cfg) {
+      try {
+        return cfg[key];
+      } catch {
+        return undefined;
+      }
+    }
+    return undefined;
+  };
+
   const url =
-    envConfig?.TURSO_DATABASE_URL ||
-    envConfig?.DATABASE_URL ||
-    process.env.TURSO_DATABASE_URL ||
-    process.env.DATABASE_URL ||
+    getVal("TURSO_DATABASE_URL") ||
+    getVal("DATABASE_URL") ||
     "file:./local.db";
-  const authToken = envConfig?.TURSO_AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN;
+  const authToken = getVal("TURSO_AUTH_TOKEN");
 
   if (isRemoteDatabaseUrl(url)) {
     const { drizzle } = await import("drizzle-orm/libsql/web");
