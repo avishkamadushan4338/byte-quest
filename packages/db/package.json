@@ -17,13 +17,12 @@
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
-    "dotenv": "^16.4.7",
     "drizzle-orm": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
     "@byte-quest/config": "workspace:*",
-    "drizzle-kit": "^0.31.11",
+    "drizzle-kit": "^0.31.10",
     "typescript": "catalog:",
     "varlock": "catalog:"
   }

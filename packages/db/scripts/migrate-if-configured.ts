@@ -14,10 +14,11 @@ if (!url) {
 }
 
 const result = spawnSync(
-  "bunx",
-  ["drizzle-kit", "migrate", "--config=drizzle.config.ts"],
+  "bun",
+  ["x", "drizzle-kit", "migrate", "--config=drizzle.config.ts"],
   {
     stdio: "inherit",
+    env: process.env,
   }
 );
 process.exit(result.status ?? 1);
