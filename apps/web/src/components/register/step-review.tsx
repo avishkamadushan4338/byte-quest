@@ -1,7 +1,8 @@
-import type { RegisterErrors, RegisterState, StepKey } from "./data";
+import type { Division, RegisterErrors, RegisterState, StepKey } from "./data";
 import {
   consentCopy,
-  divisionSummary,
+  divisionLabels,
+  divisionOrder,
   leaderLabel,
   memberSummary,
   reviewEditLabel,
@@ -23,6 +24,7 @@ interface ReviewRow {
 }
 
 interface ReviewSection {
+  key: string;
   title: string;
   step: StepKey;
   rows: ReviewRow[];
@@ -30,50 +32,79 @@ interface ReviewSection {
 
 const EMPTY_VALUE = "—";
 
-const buildSections = (state: RegisterState): ReviewSection[] => [
-  {
-    title: reviewTitles.school,
-    step: "school",
-    rows: [
-      { label: "School", value: state.school.name },
-      { label: "Province", value: state.school.province ?? "" },
-      { label: "District / city", value: state.school.district },
-    ],
-  },
-  {
-    title: reviewTitles.division,
-    step: "division",
-    rows: [{ label: "Division", value: divisionSummary(state.division) }],
-  },
-  {
-    title: reviewTitles.team,
+const buildSections = (state: RegisterState): ReviewSection[] => {
+  const activeDivisions = divisionOrder.filter((division) =>
+    state.divisions.includes(division)
+  );
+  const suffix = (division: Division) =>
+    activeDivisions.length > 1
+      ? ` · ${divisionLabels[division].split(" ·")[0]}`
+      : "";
+
+  const teamSections: ReviewSection[] = activeDivisions.map((division) => ({
+    key: `team-${division}`,
+    title: `${reviewTitles.team}${suffix(division)}`,
     step: "team",
     rows: [
-      { label: "Team name", value: state.team.name },
-      { label: "Team size", value: teamSizeSummary(state.team.size) },
-      { label: "Idea", value: state.team.idea },
+      { label: "Team name", value: state.teams[division].name },
+      {
+        label: "Team size",
+        value: teamSizeSummary(state.teams[division].size),
+      },
+      { label: "Idea", value: state.teams[division].idea },
     ],
-  },
-  {
-    title: reviewTitles.students,
+  }));
+
+  const studentSections: ReviewSection[] = activeDivisions.map((division) => ({
+    key: `students-${division}`,
+    title: `${reviewTitles.students}${suffix(division)}`,
     step: "students",
-    rows: state.students.map((member, index) => ({
+    rows: state.students[division].map((member, index) => ({
       label:
-        index === state.leaderIndex ? leaderLabel(index) : studentLabel(index),
+        index === state.leaderIndex[division]
+          ? leaderLabel(index)
+          : studentLabel(index),
       value: memberSummary(member),
     })),
-  },
-  {
-    title: reviewTitles.teacher,
-    step: "teacher",
-    rows: [
-      { label: "Teacher", value: state.teacher.name },
-      { label: "Designation", value: state.teacher.designation },
-      { label: "Phone", value: state.teacher.phone },
-      { label: "Email", value: state.teacher.email },
-    ],
-  },
-];
+  }));
+
+  return [
+    {
+      key: "school",
+      title: reviewTitles.school,
+      step: "school",
+      rows: [
+        { label: "School", value: state.school.name },
+        { label: "Province", value: state.school.province ?? "" },
+        { label: "District / city", value: state.school.district },
+      ],
+    },
+    {
+      key: "division",
+      title: reviewTitles.division,
+      step: "division",
+      rows: [
+        {
+          label: "Division",
+          value: activeDivisions.map((d) => divisionLabels[d]).join(" + "),
+        },
+      ],
+    },
+    ...teamSections,
+    ...studentSections,
+    {
+      key: "teacher",
+      title: reviewTitles.teacher,
+      step: "teacher",
+      rows: [
+        { label: "Teacher", value: state.teacher.name },
+        { label: "Designation", value: state.teacher.designation },
+        { label: "Phone", value: state.teacher.phone },
+        { label: "Email", value: state.teacher.email },
+      ],
+    },
+  ];
+};
 
 export const StepReview = ({
   errors,
@@ -86,7 +117,7 @@ export const StepReview = ({
       {buildSections(state).map((section) => (
         <div
           className="bg-ink rounded-[14px] border border-[rgba(185,245,208,0.08)] px-[18px] py-4"
-          key={section.title}
+          key={section.key}
         >
           <div className="flex items-center justify-between gap-3">
             <span className="text-muted-2 font-mono text-[10.5px] tracking-[0.14em]">

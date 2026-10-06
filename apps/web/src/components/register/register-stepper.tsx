@@ -56,7 +56,7 @@ export const RegisterStepper = ({
         {stepOrder.map((key, index) => {
           const isCurrent = index === current;
           const isComplete = index < current || done;
-          const locked = index > maxStep || done;
+          const locked = index > maxStep;
           const colors = stepColors(isCurrent, isComplete);
           return (
             <li key={key}>

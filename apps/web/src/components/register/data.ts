@@ -41,10 +41,10 @@ export interface TeacherDetails {
 
 export interface RegisterState {
   school: SchoolDetails;
-  division: Division | null;
-  team: TeamDetails;
-  students: MemberDetails[];
-  leaderIndex: number;
+  divisions: Division[];
+  teams: Record<Division, TeamDetails>;
+  students: Record<Division, MemberDetails[]>;
+  leaderIndex: Record<Division, number>;
   teacher: TeacherDetails;
   consent: boolean;
 }
@@ -75,9 +75,9 @@ export interface TeacherErrors {
 
 export interface RegisterErrors {
   school?: SchoolErrors;
-  division?: string;
-  team?: TeamErrors;
-  students?: Record<string, StudentErrors>;
+  divisions?: string;
+  teams?: Partial<Record<Division, TeamErrors>>;
+  students?: Partial<Record<Division, Record<string, StudentErrors>>>;
   teacher?: TeacherErrors;
   consent?: string;
 }
@@ -142,12 +142,12 @@ export const registerSteps = {
     label: "Division",
     eyebrow: "02 / DIVISION",
     title: "Choose your division.",
-    body: "Every member of the team must be in the grades for that division.",
+    body: "Pick one, or both if your school is fielding a Junior and a Senior team. Every member of a team must be in the grades for that division.",
   },
   team: {
     label: "Team",
     eyebrow: "03 / TEAM",
-    title: "Name your team.",
+    title: "Name your team(s).",
     body: "You can refine your project idea later in the programme.",
   },
   students: {
@@ -198,7 +198,7 @@ export const registerAside = {
 
 export const validationCopy = {
   required: "Required",
-  division: "Choose a division.",
+  division: "Choose at least one division.",
   divisionGrade: "Not in this division",
   phone: "Enter a valid Sri Lankan number",
   email: "Enter a valid email",
@@ -291,6 +291,9 @@ export const divisionGrades: Record<Division, string[]> = {
   senior: ["9", "10", "11", "12", "13"],
 };
 
+/** Fixed display/iteration order, independent of selection order. */
+export const divisionOrder: Division[] = ["junior", "senior"];
+
 export const platformsByDivision: Record<Division, string[]> = {
   junior: ["Scratch", "MIT App Inventor"],
   senior: ["Web", "Mobile", "Python", "AI", "IoT", "Robotics", "Desktop"],
@@ -323,12 +326,20 @@ export const createEmptyMember = (): MemberDetails => ({
   admissionNumber: "",
 });
 
+const createEmptyTeam = (): TeamDetails => ({ name: "", size: "3", idea: "" });
+
+const createEmptyRoster = (): MemberDetails[] => [
+  createEmptyMember(),
+  createEmptyMember(),
+  createEmptyMember(),
+];
+
 export const initialRegisterState: RegisterState = {
   school: { name: "", province: null, district: "", address: "" },
-  division: null,
-  team: { name: "", size: "3", idea: "" },
-  students: [createEmptyMember(), createEmptyMember(), createEmptyMember()],
-  leaderIndex: 0,
+  divisions: [],
+  teams: { junior: createEmptyTeam(), senior: createEmptyTeam() },
+  students: { junior: createEmptyRoster(), senior: createEmptyRoster() },
+  leaderIndex: { junior: 0, senior: 0 },
   teacher: {
     name: "",
     designation: "",
@@ -346,8 +357,8 @@ export const leaderLabel = (index: number): string =>
 
 export const teamSizeSummary = (size: string): string => `${size} students`;
 
-export const divisionSummary = (division: Division | null): string =>
-  division === null ? "" : divisionLabels[division];
+export const divisionSummary = (division: Division): string =>
+  divisionLabels[division];
 
 export const memberSummary = (member: MemberDetails): string => {
   const grade = member.grade === null ? "" : `Grade ${member.grade}`;
@@ -356,9 +367,3 @@ export const memberSummary = (member: MemberDetails): string => {
   );
   return parts.length > 0 ? parts.join(" · ") : "";
 };
-
-export const confirmationBody = (teamName: string): string =>
-  registerSteps.confirmation.body.replaceAll(
-    "{teamName}",
-    teamName.trim().length > 0 ? teamName.trim() : confirmationCopy.fallbackTeam
-  );

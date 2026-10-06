@@ -51,6 +51,12 @@ export const team = pgTable(
     teacherPhone: text("teacher_phone"),
     teacherEmail: text("teacher_email"),
     principalName: text("principal_name"),
+    /**
+     * Opaque token handed to the registrant on submission (and kept in
+     * their browser's local storage) so they can reopen and edit this
+     * team's registration without an account, up to the closing date.
+     */
+    editToken: text("edit_token").unique(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()

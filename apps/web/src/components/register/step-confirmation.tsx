@@ -1,49 +1,59 @@
 import { Link } from "@tanstack/react-router";
 
-import type { RegisterState } from "./data";
+import type { Division, RegisterState } from "./data";
 import {
-  confirmationBody,
   confirmationCopy,
-  divisionSummary,
+  divisionLabels,
+  divisionOrder,
   registerSteps,
 } from "./data";
 
 interface StepConfirmationProps {
   onReset: () => void;
-  reference: string;
+  references: Partial<Record<Division, string>>;
   state: RegisterState;
 }
 
 export const StepConfirmation = ({
   onReset,
-  reference,
+  references,
   state,
 }: StepConfirmationProps) => {
-  const leader = state.students[state.leaderIndex];
+  const activeDivisions = divisionOrder.filter((division) =>
+    state.divisions.includes(division)
+  );
+  const multi = activeDivisions.length > 1;
+  const withDivisionTag = (base: string, division: Division) =>
+    multi
+      ? `${base} · ${divisionLabels[division].split(" ·")[0].toUpperCase()}`
+      : base;
+
+  const teamFacts = activeDivisions.flatMap((division) => {
+    const leader = state.students[division][state.leaderIndex[division]];
+    return [
+      {
+        label: withDivisionTag(confirmationCopy.referenceLabel, division),
+        value: references[division] ?? "—",
+        color: "#52FF3D",
+      },
+      {
+        label: withDivisionTag(confirmationCopy.teamLabel, division),
+        value: state.teams[division].name,
+        color: "#F2F7F4",
+      },
+      {
+        label: withDivisionTag(confirmationCopy.leaderLabel, division),
+        value: leader?.fullName || "—",
+        color: "#F2F7F4",
+      },
+    ];
+  });
+
   const facts = [
-    {
-      label: confirmationCopy.referenceLabel,
-      value: reference,
-      color: "#52FF3D",
-    },
-    {
-      label: confirmationCopy.teamLabel,
-      value: state.team.name,
-      color: "#F2F7F4",
-    },
-    {
-      label: confirmationCopy.divisionLabel,
-      value: divisionSummary(state.division),
-      color: "#F2F7F4",
-    },
+    ...teamFacts,
     {
       label: confirmationCopy.schoolLabel,
       value: state.school.name,
-      color: "#F2F7F4",
-    },
-    {
-      label: confirmationCopy.leaderLabel,
-      value: leader?.fullName || "—",
       color: "#F2F7F4",
     },
     {
@@ -52,6 +62,14 @@ export const StepConfirmation = ({
       color: "#F0D875",
     },
   ];
+
+  const teamNames = activeDivisions
+    .map((division) => state.teams[division].name.trim())
+    .filter((name) => name.length > 0);
+  const welcomeNames =
+    teamNames.length > 0
+      ? teamNames.join(" and ")
+      : confirmationCopy.fallbackTeam;
 
   return (
     <output className="flex flex-col gap-5">
@@ -66,7 +84,8 @@ export const StepConfirmation = ({
           {registerSteps.confirmation.title}
         </h2>
         <p className="text-muted mt-2.5 mb-0 max-w-[520px] text-[15px] leading-[1.6]">
-          {confirmationBody(state.team.name)}
+          Welcome to the quest, {welcomeNames}. A confirmation will be sent to
+          the teacher in charge.
         </p>
       </div>
       <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-px overflow-hidden rounded-[16px] border border-[rgba(185,245,208,0.08)] bg-[rgba(185,245,208,0.08)]">

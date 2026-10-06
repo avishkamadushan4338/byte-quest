@@ -594,3 +594,87 @@ describe("teams.register (public, no-auth school registration)", () => {
     expect(schools).toHaveLength(1);
   });
 });
+
+describe("teams.register editToken + teams.update/getByEditToken", () => {
+  test("register returns a usable editToken, and getByEditToken reads it back", async () => {
+    const noAuthContext = makeContext(testDb.db);
+
+    const result = await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload(),
+    });
+    expect(result.editToken).toBeTruthy();
+
+    const fetched = await call(teamsRouter.teams.getByEditToken, {
+      context: noAuthContext,
+      input: { editToken: result.editToken },
+    });
+    expect(fetched.teamId).toBe(result.id);
+    expect(fetched.teamName).toBe("Byte Falcons");
+    expect(fetched.members).toHaveLength(3);
+    expect(fetched.members[0]?.fullName).toBe("Student A");
+  });
+
+  test("update revises team, school, and roster in place without changing the reference", async () => {
+    const noAuthContext = makeContext(testDb.db);
+
+    const created = await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload(),
+    });
+
+    const updated = await call(teamsRouter.teams.update, {
+      context: noAuthContext,
+      input: basePayload({
+        teamName: "Byte Falcons Renamed",
+        members: [member("6", "X"), member("7", "Y"), member("8", "Z")],
+        editToken: created.editToken,
+      }),
+    });
+
+    expect(updated.id).toBe(created.id);
+    expect(updated.name).toBe("Byte Falcons Renamed");
+
+    const members = await testDb.db
+      .select()
+      .from(teamMember)
+      .where(eq(teamMember.teamId, created.id));
+    expect(members).toHaveLength(3);
+    expect(members.map((m) => m.fullName).toSorted()).toEqual([
+      "Student X",
+      "Student Y",
+      "Student Z",
+    ]);
+  });
+
+  test("update rejects an unknown edit token", async () => {
+    const noAuthContext = makeContext(testDb.db);
+
+    await expect(
+      call(teamsRouter.teams.update, {
+        context: noAuthContext,
+        input: basePayload({ editToken: "not-a-real-token" }),
+      })
+    ).rejects.toThrow("not found");
+  });
+
+  test("update rejects a payload that changes the division", async () => {
+    const noAuthContext = makeContext(testDb.db);
+
+    const created = await call(teamsRouter.teams.register, {
+      context: noAuthContext,
+      input: basePayload(),
+    });
+
+    await expect(
+      call(teamsRouter.teams.update, {
+        context: noAuthContext,
+        input: basePayload({
+          division: "secondary" as const,
+          members: [member("9", "D"), member("10", "E"), member("11", "F")],
+          editToken: created.editToken,
+        }),
+      })
+    ).rejects.toThrow("division cannot be changed");
+  });
+});

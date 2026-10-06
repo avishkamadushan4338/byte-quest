@@ -1,3 +1,4 @@
+import { Check } from "@byte-quest/ui/components/icons";
 import type { ReactNode } from "react";
 
 interface ChoiceCardProps {
@@ -8,6 +9,7 @@ interface ChoiceCardProps {
   title: string;
   description: string;
   onSelect: () => void;
+  multiple?: boolean;
   children?: ReactNode;
 }
 
@@ -19,9 +21,18 @@ export const ChoiceCard = ({
   title,
   description,
   onSelect,
+  multiple = false,
   children,
 }: ChoiceCardProps) => {
   const border = selected ? color : "rgba(185,245,208,0.12)";
+  const indicator = multiple ? (
+    selected && <Check className="size-3.5" style={{ color }} />
+  ) : (
+    <span
+      className="size-2.5 rounded-full"
+      style={{ background: selected ? color : "transparent" }}
+    />
+  );
   return (
     <label
       className="text-fg has-[:focus-visible]:outline-volt relative flex cursor-pointer flex-col gap-3 rounded-[18px] p-[22px] text-left font-sans transition-all duration-200 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-[3px]"
@@ -37,17 +48,18 @@ export const ChoiceCard = ({
         className="sr-only"
         name={name}
         onChange={onSelect}
-        type="radio"
+        type={multiple ? "checkbox" : "radio"}
       />
       <span
         aria-hidden="true"
-        className="absolute top-[18px] right-[18px] flex size-5 items-center justify-center rounded-full"
+        className={
+          multiple
+            ? "absolute top-[18px] right-[18px] flex size-5 items-center justify-center rounded-[6px]"
+            : "absolute top-[18px] right-[18px] flex size-5 items-center justify-center rounded-full"
+        }
         style={{ border: `1px solid ${border}` }}
       >
-        <span
-          className="size-2.5 rounded-full"
-          style={{ background: selected ? color : "transparent" }}
-        />
+        {indicator}
       </span>
       <span
         className="font-mono text-[10.5px] tracking-[0.14em]"

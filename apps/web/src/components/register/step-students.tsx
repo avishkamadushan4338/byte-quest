@@ -1,33 +1,43 @@
 import { InputField, SelectField } from "@/components/site/design-fields";
 
-import type { Division, MemberDetails, RegisterErrors } from "./data";
-import { gradeOptionsForDivision, studentLabel } from "./data";
+import type {
+  Division,
+  MemberDetails,
+  RegisterErrors,
+  StudentErrors,
+} from "./data";
+import {
+  divisionLabels,
+  divisionOrder,
+  gradeOptionsForDivision,
+  studentLabel,
+} from "./data";
 
-interface StepStudentsProps {
-  division: Division | null;
-  errors: RegisterErrors;
+interface RosterProps {
+  division: Division;
+  errors: Record<string, StudentErrors> | undefined;
   onLeaderChange: (index: number) => void;
   onMemberChange: (index: number, patch: Partial<MemberDetails>) => void;
   students: MemberDetails[];
   leaderIndex: number;
 }
 
-export const StepStudents = ({
+const Roster = ({
   division,
   errors,
   onLeaderChange,
   onMemberChange,
   students,
   leaderIndex,
-}: StepStudentsProps) => {
+}: RosterProps) => {
   const gradeOptions = gradeOptionsForDivision(division);
 
   return (
     <div className="grid gap-3">
       {students.map((member, index) => {
         const isLeader = index === leaderIndex;
-        const memberErrors = errors.students?.[String(index)];
-        const prefix = `student-${index}`;
+        const memberErrors = errors?.[String(index)];
+        const prefix = `student-${division}-${index}`;
 
         return (
           <div
@@ -111,6 +121,57 @@ export const StepStudents = ({
           </div>
         );
       })}
+    </div>
+  );
+};
+
+interface StepStudentsProps {
+  divisions: Division[];
+  errors: RegisterErrors;
+  onLeaderChange: (division: Division, index: number) => void;
+  onMemberChange: (
+    division: Division,
+    index: number,
+    patch: Partial<MemberDetails>
+  ) => void;
+  students: Record<Division, MemberDetails[]>;
+  leaderIndex: Record<Division, number>;
+}
+
+export const StepStudents = ({
+  divisions,
+  errors,
+  onLeaderChange,
+  onMemberChange,
+  students,
+  leaderIndex,
+}: StepStudentsProps) => {
+  const activeDivisions = divisionOrder.filter((division) =>
+    divisions.includes(division)
+  );
+  const showHeadings = activeDivisions.length > 1;
+
+  return (
+    <div className="grid gap-7">
+      {activeDivisions.map((division) => (
+        <div key={division}>
+          {showHeadings ? (
+            <div className="text-volt mb-3 font-mono text-[11px] tracking-[0.16em]">
+              {divisionLabels[division].toUpperCase()}
+            </div>
+          ) : null}
+          <Roster
+            division={division}
+            errors={errors.students?.[division]}
+            leaderIndex={leaderIndex[division]}
+            onLeaderChange={(index) => onLeaderChange(division, index)}
+            onMemberChange={(index, patch) =>
+              onMemberChange(division, index, patch)
+            }
+            students={students[division]}
+          />
+        </div>
+      ))}
     </div>
   );
 };

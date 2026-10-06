@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+
 import type { Database, MemberSpecialty } from "@byte-quest/db";
 import {
   joinRequest,
@@ -19,6 +21,19 @@ import { findOrCreateSchool } from "../schools/router";
 
 const MIN_MEMBERS = 3;
 const MAX_MEMBERS = 5;
+
+/** Registrations (new or edited) are no longer accepted after this date. */
+export const REGISTRATION_CLOSES_AT = new Date("2027-01-10T23:59:59+05:30");
+
+const generateEditToken = () => randomBytes(16).toString("hex");
+
+const assertRegistrationOpen = () => {
+  if (Date.now() > REGISTRATION_CLOSES_AT.getTime()) {
+    throw new Error(
+      "Registration closed on 10 January 2027. Contact the organising committee for changes."
+    );
+  }
+};
 
 /**
  * Grades allowed per division for the public registration form. Junior
@@ -45,6 +60,51 @@ export const teamOutputSchema = z.object({
   schoolId: z.string(),
   memberCount: z.number(),
 });
+
+const registerInputSchema = z.object({
+  teamName: z.string().min(1, "Team name is required"),
+  division: z.enum(["primary", "secondary"]),
+  idea: z.string().trim().optional(),
+  school: z.object({
+    name: z.string().min(1, "School name is required"),
+    province: z.string().min(1, "Province is required"),
+    city: z.string().min(1, "District or city is required"),
+    address: z.string().optional(),
+  }),
+  members: z
+    .array(
+      z.object({
+        fullName: z.string().min(1, "Full name is required"),
+        grade: z.string().min(1, "Grade is required"),
+        className: z.string().min(1, "Class is required"),
+        admissionNumber: z.string().min(1, "Admission number is required"),
+      })
+    )
+    .min(MIN_MEMBERS, `A team needs at least ${MIN_MEMBERS} members`)
+    .max(MAX_MEMBERS, `A team can have at most ${MAX_MEMBERS} members`),
+  leaderIndex: z.number().int().min(0),
+  teacher: z.object({
+    name: z.string().min(1, "Teacher name is required"),
+    designation: z.string().min(1, "Designation is required"),
+    phone: z.string().min(1, "Phone is required"),
+    email: z.email("Enter a valid email"),
+  }),
+  principal: z.string().optional(),
+});
+
+const assertValidRoster = (input: z.infer<typeof registerInputSchema>) => {
+  if (input.leaderIndex >= input.members.length) {
+    throw new Error("Team leader must be one of the registered members");
+  }
+  const allowedGrades = DIVISION_GRADES[input.division];
+  for (const member of input.members) {
+    if (!allowedGrades.includes(member.grade)) {
+      throw new Error(
+        `${member.fullName || "A member"}'s grade (${member.grade}) does not match the ${input.division} division`
+      );
+    }
+  }
+};
 
 const memberOutputSchema = z.object({
   id: z.string(),
@@ -84,54 +144,16 @@ export const teamsRouter = {
      * member in one go (members have no `userId`; they are not accounts).
      */
     register: publicProcedure
-      .input(
-        z.object({
-          teamName: z.string().min(1, "Team name is required"),
-          division: z.enum(["primary", "secondary"]),
-          idea: z.string().trim().optional(),
-          school: z.object({
-            name: z.string().min(1, "School name is required"),
-            province: z.string().min(1, "Province is required"),
-            city: z.string().min(1, "District or city is required"),
-            address: z.string().optional(),
-          }),
-          members: z
-            .array(
-              z.object({
-                fullName: z.string().min(1, "Full name is required"),
-                grade: z.string().min(1, "Grade is required"),
-                className: z.string().min(1, "Class is required"),
-                admissionNumber: z
-                  .string()
-                  .min(1, "Admission number is required"),
-              })
-            )
-            .min(MIN_MEMBERS, `A team needs at least ${MIN_MEMBERS} members`)
-            .max(MAX_MEMBERS, `A team can have at most ${MAX_MEMBERS} members`),
-          leaderIndex: z.number().int().min(0),
-          teacher: z.object({
-            name: z.string().min(1, "Teacher name is required"),
-            designation: z.string().min(1, "Designation is required"),
-            phone: z.string().min(1, "Phone is required"),
-            email: z.email("Enter a valid email"),
-          }),
-          principal: z.string().optional(),
+      .input(registerInputSchema)
+      .output(
+        teamOutputSchema.extend({
+          schoolName: z.string(),
+          editToken: z.string(),
         })
       )
-      .output(teamOutputSchema.extend({ schoolName: z.string() }))
       .handler(async ({ context, input }) => {
-        if (input.leaderIndex >= input.members.length) {
-          throw new Error("Team leader must be one of the registered members");
-        }
-
-        const allowedGrades = DIVISION_GRADES[input.division];
-        for (const member of input.members) {
-          if (!allowedGrades.includes(member.grade)) {
-            throw new Error(
-              `${member.fullName || "A member"}'s grade (${member.grade}) does not match the ${input.division} division`
-            );
-          }
-        }
+        assertRegistrationOpen();
+        assertValidRoster(input);
 
         const resolved = await findOrCreateSchool(context.db, {
           name: input.school.name,
@@ -153,6 +175,7 @@ export const teamsRouter = {
           throw new Error(`This school already has a ${input.division} team`);
         }
 
+        const editToken = generateEditToken();
         const [created] = await context.db
           .insert(team)
           .values({
@@ -165,6 +188,7 @@ export const teamsRouter = {
             teacherPhone: input.teacher.phone.trim(),
             teacherEmail: input.teacher.email.trim(),
             principalName: input.principal?.trim() || null,
+            editToken,
           })
           .returning();
         if (!created) {
@@ -188,6 +212,144 @@ export const teamsRouter = {
           ...created,
           memberCount: input.members.length,
           schoolName: resolved.name,
+          editToken,
+        };
+      }),
+
+    /**
+     * Look up a previously-submitted registration by its edit token, for
+     * prefilling the wizard so the MIC/principal can revise it before the
+     * closing date.
+     */
+    getByEditToken: publicProcedure
+      .input(z.object({ editToken: z.string().min(1) }))
+      .output(
+        registerInputSchema.extend({
+          teamId: z.string(),
+          editToken: z.string(),
+        })
+      )
+      .handler(async ({ context, input }) => {
+        const [teamRow] = await context.db
+          .select()
+          .from(team)
+          .where(eq(team.editToken, input.editToken));
+        if (!teamRow) {
+          throw new Error("Registration not found");
+        }
+        const [schoolRow] = await context.db
+          .select()
+          .from(school)
+          .where(eq(school.id, teamRow.schoolId));
+        if (!schoolRow) {
+          throw new Error("School not found");
+        }
+        const members = await context.db
+          .select()
+          .from(teamMember)
+          .where(eq(teamMember.teamId, teamRow.id))
+          .orderBy(teamMember.createdAt);
+        const leaderIndex = members.findIndex((m) => m.teamRole === "leader");
+
+        return {
+          teamId: teamRow.id,
+          editToken: teamRow.editToken ?? input.editToken,
+          teamName: teamRow.name,
+          division: teamRow.division,
+          idea: teamRow.idea ?? undefined,
+          school: {
+            name: schoolRow.name,
+            province: schoolRow.province ?? "",
+            city: schoolRow.city,
+            address: schoolRow.address ?? undefined,
+          },
+          members: members.map((m) => ({
+            fullName: m.fullName,
+            grade: m.grade,
+            className: m.className ?? "",
+            admissionNumber: m.admissionNumber ?? "",
+          })),
+          leaderIndex: leaderIndex === -1 ? 0 : leaderIndex,
+          teacher: {
+            name: teamRow.teacherName ?? "",
+            designation: teamRow.teacherDesignation ?? "",
+            phone: teamRow.teacherPhone ?? "",
+            email: teamRow.teacherEmail ?? "",
+          },
+          principal: teamRow.principalName ?? undefined,
+        };
+      }),
+
+    /**
+     * Revise a previously-submitted registration (same division, same
+     * team) up to the closing date. Replaces the team/school fields and the
+     * full member roster; the edit token and reference stay the same.
+     */
+    update: publicProcedure
+      .input(registerInputSchema.extend({ editToken: z.string().min(1) }))
+      .output(teamOutputSchema.extend({ schoolName: z.string() }))
+      .handler(async ({ context, input }) => {
+        assertRegistrationOpen();
+        assertValidRoster(input);
+
+        const [existing] = await context.db
+          .select()
+          .from(team)
+          .where(eq(team.editToken, input.editToken));
+        if (!existing) {
+          throw new Error("Registration not found");
+        }
+        if (existing.division !== input.division) {
+          throw new Error("A registration's division cannot be changed");
+        }
+
+        await context.db
+          .update(school)
+          .set({
+            name: input.school.name.trim(),
+            city: input.school.city.trim(),
+            province: input.school.province.trim(),
+            address: input.school.address?.trim() || null,
+          })
+          .where(eq(school.id, existing.schoolId));
+
+        const [updated] = await context.db
+          .update(team)
+          .set({
+            name: input.teamName,
+            idea: input.idea?.trim() || null,
+            teacherName: input.teacher.name.trim(),
+            teacherDesignation: input.teacher.designation.trim(),
+            teacherPhone: input.teacher.phone.trim(),
+            teacherEmail: input.teacher.email.trim(),
+            principalName: input.principal?.trim() || null,
+          })
+          .where(eq(team.id, existing.id))
+          .returning();
+        if (!updated) {
+          throw new Error("Failed to update team");
+        }
+
+        await context.db
+          .delete(teamMember)
+          .where(eq(teamMember.teamId, existing.id));
+        await context.db.insert(teamMember).values(
+          input.members.map((member, index) => ({
+            teamId: existing.id,
+            teamRole: (index === input.leaderIndex ? "leader" : "developer") as
+              | "leader"
+              | "developer",
+            grade: member.grade,
+            fullName: member.fullName.trim(),
+            className: member.className.trim(),
+            admissionNumber: member.admissionNumber.trim(),
+          }))
+        );
+
+        return {
+          ...updated,
+          memberCount: input.members.length,
+          schoolName: input.school.name.trim(),
         };
       }),
 

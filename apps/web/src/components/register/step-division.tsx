@@ -3,52 +3,51 @@ import type { Division, RegisterErrors } from "./data";
 import { divisionOptions, platformsByDivision } from "./data";
 
 interface StepDivisionProps {
-  division: Division | null;
+  divisions: Division[];
   errors: RegisterErrors;
-  onChange: (division: Division) => void;
+  onToggle: (division: Division) => void;
 }
 
 export const StepDivision = ({
-  division,
+  divisions,
   errors,
-  onChange,
+  onToggle,
 }: StepDivisionProps) => (
   <>
-    <div
-      aria-label="Division"
-      className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3"
-      role="radiogroup"
-    >
-      {divisionOptions.map((option) => (
-        <ChoiceCard
-          name="division"
-          color={option.color}
-          description={option.description}
-          key={option.value}
-          kicker={option.badge}
-          onSelect={() => onChange(option.value)}
-          selected={division === option.value}
-          title={option.title}
-        >
-          <span className="flex flex-wrap gap-[5px]">
-            {platformsByDivision[option.value].map((platform) => (
-              <span
-                className="rounded-[6px] px-2 py-1 font-mono text-[10.5px]"
-                key={platform}
-                style={{
-                  color: option.color,
-                  border: `1px solid ${option.line}`,
-                }}
-              >
-                {platform}
-              </span>
-            ))}
-          </span>
-        </ChoiceCard>
-      ))}
-    </div>
+    <fieldset aria-label="Division" className="m-0 border-0 p-0">
+      <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))] gap-3">
+        {divisionOptions.map((option) => (
+          <ChoiceCard
+            name="division"
+            color={option.color}
+            description={option.description}
+            key={option.value}
+            kicker={option.badge}
+            multiple
+            onSelect={() => onToggle(option.value)}
+            selected={divisions.includes(option.value)}
+            title={option.title}
+          >
+            <span className="flex flex-wrap gap-[5px]">
+              {platformsByDivision[option.value].map((platform) => (
+                <span
+                  className="rounded-[6px] px-2 py-1 font-mono text-[10.5px]"
+                  key={platform}
+                  style={{
+                    color: option.color,
+                    border: `1px solid ${option.line}`,
+                  }}
+                >
+                  {platform}
+                </span>
+              ))}
+            </span>
+          </ChoiceCard>
+        ))}
+      </div>
+    </fieldset>
     <div className="mt-2.5 min-h-4 text-[12px] text-[#FF8A7A]" role="alert">
-      {errors.division}
+      {errors.divisions}
     </div>
   </>
 );

@@ -4,27 +4,34 @@ import {
   TextareaField,
 } from "@/components/site/design-fields";
 
-import type { RegisterErrors, TeamDetails } from "./data";
-import { teamSizeHint, teamSizeOptions } from "./data";
+import type { Division, RegisterErrors, TeamDetails, TeamErrors } from "./data";
+import {
+  divisionLabels,
+  divisionOrder,
+  teamSizeHint,
+  teamSizeOptions,
+} from "./data";
 
-interface StepTeamProps {
-  errors: RegisterErrors;
+interface TeamFieldsProps {
+  division: Division;
+  error: TeamErrors | undefined;
   onChange: (patch: Partial<TeamDetails>) => void;
   onSizeChange: (size: string) => void;
   team: TeamDetails;
 }
 
-export const StepTeam = ({
-  errors,
+const TeamFields = ({
+  division,
+  error,
   onChange,
   onSizeChange,
   team,
-}: StepTeamProps) => (
+}: TeamFieldsProps) => (
   <>
     <div className={fieldGridClass}>
       <InputField
-        error={errors.team?.name}
-        id="team-name"
+        error={error?.name}
+        id={`team-name-${division}`}
         label="Team name"
         onValueChange={(value) => onChange({ name: value })}
         placeholder="Something memorable"
@@ -32,7 +39,7 @@ export const StepTeam = ({
         value={team.name}
       />
       <TextareaField
-        id="team-idea"
+        id={`team-idea-${division}`}
         label="Initial project idea"
         onValueChange={(value) => onChange({ idea: value })}
         placeholder="A sentence or two — this can change."
@@ -63,7 +70,7 @@ export const StepTeam = ({
                 aria-label={`${option.value} students`}
                 checked={selected}
                 className="sr-only"
-                name="team-size"
+                name={`team-size-${division}`}
                 onChange={() => onSizeChange(option.value)}
                 type="radio"
               />
@@ -76,3 +83,45 @@ export const StepTeam = ({
     </div>
   </>
 );
+
+interface StepTeamProps {
+  divisions: Division[];
+  errors: RegisterErrors;
+  onChange: (division: Division, patch: Partial<TeamDetails>) => void;
+  onSizeChange: (division: Division, size: string) => void;
+  teams: Record<Division, TeamDetails>;
+}
+
+export const StepTeam = ({
+  divisions,
+  errors,
+  onChange,
+  onSizeChange,
+  teams,
+}: StepTeamProps) => {
+  const activeDivisions = divisionOrder.filter((division) =>
+    divisions.includes(division)
+  );
+  const showHeadings = activeDivisions.length > 1;
+
+  return (
+    <div className="grid gap-7">
+      {activeDivisions.map((division) => (
+        <div key={division}>
+          {showHeadings ? (
+            <div className="text-volt mb-3 font-mono text-[11px] tracking-[0.16em]">
+              {divisionLabels[division].toUpperCase()}
+            </div>
+          ) : null}
+          <TeamFields
+            division={division}
+            error={errors.teams?.[division]}
+            onChange={(patch) => onChange(division, patch)}
+            onSizeChange={(size) => onSizeChange(division, size)}
+            team={teams[division]}
+          />
+        </div>
+      ))}
+    </div>
+  );
+};

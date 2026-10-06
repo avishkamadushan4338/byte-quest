@@ -124,7 +124,7 @@ function ComboboxList({ className, ...props }: ComboboxListProps) {
   return (
     <ComboboxPrimitive.List
       className={cn(
-        "max-h-[min(18rem,var(--available-height))] scroll-py-1 overflow-y-auto overscroll-contain",
+        "max-h-[min(18rem,var(--available-height))] scroll-py-1 overflow-y-auto overscroll-contain [scrollbar-color:rgba(185,245,208,0.25)_transparent] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[rgba(185,245,208,0.25)] [&::-webkit-scrollbar-track]:bg-transparent",
         className
       )}
       {...props}

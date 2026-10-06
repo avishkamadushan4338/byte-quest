@@ -272,6 +272,14 @@ export const ComboboxField = ({
     setQuery(match ? match.label : "");
   };
 
+  // Base UI reverts the input to its own tracked selection on blur/escape,
+  // so that selection must mirror what we consider "confirmed": the typed
+  // query itself when free text is allowed, or the option matching the
+  // committed value otherwise (null when nothing valid is committed).
+  const committedLabel =
+    options.find((option) => option.value === value)?.label ?? null;
+  const comboboxValue = allowFreeText ? query : committedLabel;
+
   return (
     <FieldShell
       error={error}
@@ -282,6 +290,7 @@ export const ComboboxField = ({
     >
       <ComboboxRoot
         inputValue={query}
+        value={comboboxValue}
         items={filteredLabels}
         onInputValueChange={(text) => {
           setQuery(text);
