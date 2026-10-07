@@ -61,6 +61,18 @@ export const SiteHeader = () => {
 
         <div className="flex shrink-0 items-center gap-2">
           <Link
+            className="text-muted hover:text-fg hidden px-2 text-[13px] font-semibold whitespace-nowrap min-[780px]:inline-flex"
+            to="/auth/login"
+          >
+            Sign in
+          </Link>
+          <Link
+            className="text-fg hover:border-volt hover:text-volt hidden items-center rounded-full border border-[rgba(185,245,208,0.2)] px-[18px] py-2.5 text-[13px] font-bold whitespace-nowrap min-[520px]:inline-flex"
+            to="/register/volunteer"
+          >
+            Become a volunteer
+          </Link>
+          <Link
             className="bg-volt text-ink hover:bg-lime hover:text-ink inline-flex items-center rounded-full px-[18px] py-2.5 text-[13px] font-bold whitespace-nowrap"
             to="/register"
           >

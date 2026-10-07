@@ -139,13 +139,33 @@
   animation: bq-pulse 2.4s ease-in-out infinite;
 }
 
+@keyframes bq-ambient-drift {
+  0% {
+    opacity: 0.25;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate3d(3%, -4%, 0) scale(1.18);
+  }
+  100% {
+    opacity: 0.25;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@utility animate-ambient-drift {
+  animation: bq-ambient-drift 4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
   .animate-marquee,
-  .animate-pulse-dot {
+  .animate-pulse-dot,
+  .animate-ambient-drift {
     animation: none !important;
   }
 }

@@ -1,9 +1,4 @@
-export const crestAlt = "St. Aloysius' College crest";
-
-export const heroPresenter = {
-  line1: "St. Aloysius' College, Galle",
-  line2: "Old Boys' Association",
-};
+export const crestAlt = "SACOBA — St. Aloysius' College Old Boys' Association";
 
 export const pillars = [
   {

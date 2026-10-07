@@ -36,14 +36,19 @@ for (const file of files) {
   }
 
   const filePath = join(ssrDir, file);
-  const content = await readFile(filePath, "utf8");
+  const content = await readFile(filePath, "utf-8");
 
-  if (!(content.includes('__require("react")') && content.includes("require_react"))) {
+  if (
+    !(
+      content.includes('__require("react")') &&
+      content.includes("require_react")
+    )
+  ) {
     continue;
   }
 
   const patched = content.replaceAll('__require("react")', "require_react()");
-  await writeFile(filePath, patched, "utf8");
+  await writeFile(filePath, patched, "utf-8");
   patchedCount += 1;
   console.log(`[patch-ssr-react-require] patched ${file}`);
 }

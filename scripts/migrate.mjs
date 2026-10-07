@@ -1,8 +1,9 @@
 import path from "node:path";
+
 import { createClient } from "@libsql/client";
+import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { readMigrationFiles } from "drizzle-orm/migrator";
-import { sql } from "drizzle-orm";
 
 const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL;
 const authToken = process.env.TURSO_AUTH_TOKEN;
@@ -17,7 +18,10 @@ if (!url) {
 const client = createClient({ url, authToken });
 const db = drizzle(client);
 
-const migrationsFolder = path.join(import.meta.dirname, "../packages/db/src/migrations");
+const migrationsFolder = path.join(
+  import.meta.dirname,
+  "../packages/db/src/migrations"
+);
 
 /**
  * drizzle-orm's built-in `drizzle-orm/libsql/migrator` creates the bookkeeping
@@ -47,7 +51,10 @@ async function migrateLibsql(dbInstance, { migrationsFolder: folder }) {
 
   const statementToBatch = [];
   for (const migration of migrations) {
-    if (!lastDbMigration || Number(lastDbMigration[2]) < migration.folderMillis) {
+    if (
+      !lastDbMigration ||
+      Number(lastDbMigration[2]) < migration.folderMillis
+    ) {
       for (const stmt of migration.sql) {
         statementToBatch.push(dbInstance.run(sql.raw(stmt)));
       }

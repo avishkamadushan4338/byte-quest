@@ -2,11 +2,11 @@ import { Container } from "@byte-quest/ui/components/container";
 import { Button } from "@byte-quest/ui/primitives/button";
 import { Link } from "@tanstack/react-router";
 
-import { crestAlt, heroPresenter } from "./data";
+import { crestAlt } from "./data";
 import { HeroDots } from "./hero-dots";
 
 const AVATAR_SRC = "/assets/hero-avatar.png";
-const CREST_SRC = "/assets/crest.png";
+const CREST_SRC = "/assets/sacoba-logo.png";
 
 export const Hero = () => (
   <section
@@ -21,7 +21,7 @@ export const Hero = () => (
 
     <div
       aria-hidden="true"
-      className="absolute bottom-0 left-[-16%] z-[1] aspect-[1024/1536] h-[min(78%,calc(100%_-_110px))] opacity-42 min-[980px]:left-[clamp(-40px,-1vw,20px)] min-[980px]:h-[min(calc(100%_-_160px),1240px)] min-[980px]:opacity-100"
+      className="absolute bottom-0 left-1/2 z-[1] aspect-[1024/1536] h-[min(78%,calc(100%_-_110px))] -translate-x-1/2 opacity-42 min-[980px]:left-[28%] min-[980px]:h-[min(calc(100%_-_160px),1240px)] min-[980px]:opacity-100"
     >
       <div
         className="absolute top-[40%] left-1/2 aspect-square w-[180%] -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -32,7 +32,7 @@ export const Hero = () => (
       />
       <img
         alt=""
-        className="relative block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_78%,transparent_100%)] object-contain object-bottom [-webkit-mask-image:linear-gradient(180deg,#000_0%,#000_78%,transparent_100%)]"
+        className="relative block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_66%,transparent_80%)] object-contain object-bottom [-webkit-mask-image:linear-gradient(180deg,#000_0%,#000_66%,transparent_80%)]"
         src={AVATAR_SRC}
       />
     </div>
@@ -47,7 +47,7 @@ export const Hero = () => (
     />
 
     <Container className="relative z-[2] flex justify-end">
-      <div className="[container-type:inline-size] -mt-[200px] mr-[clamp(-48px,-3vw,0px)] w-[min(100%,600px)]">
+      <div className="[container-type:inline-size] -mt-[150px] mr-[clamp(-48px,-3vw,0px)] w-[min(100%,600px)] pt-6">
         <h1 className="font-hero m-0 text-[min(88px,calc(100cqw/8.4))] leading-[1] font-extrabold tracking-[-0.02em] whitespace-nowrap">
           BYTE{" "}
           <span className="bg-[linear-gradient(90deg,#52FF3D,#B7F000_55%,#00A99A)] bg-clip-text text-transparent">
@@ -104,13 +104,6 @@ export const Hero = () => (
             </div>
             <div className="mt-3 flex items-center gap-4">
               <img alt={crestAlt} className="h-[54px] w-auto" src={CREST_SRC} />
-              <div className="text-muted text-[15.5px] leading-[1.45]">
-                <span className="text-fg font-semibold">
-                  {heroPresenter.line1}
-                </span>
-                <br />
-                {heroPresenter.line2}
-              </div>
             </div>
           </div>
         </div>

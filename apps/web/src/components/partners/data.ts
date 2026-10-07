@@ -18,7 +18,7 @@ export interface PartnerBenefit {
 export const partnerHero = {
   kicker: "PARTNERS & SPONSORS",
   title: "Power the next generation.",
-  lead: "Four sponsorship tiers, each with branding, exhibition space, media visibility and participation opportunities.",
+  lead: "Five sponsorship tiers, each with branding, exhibition space, media visibility and participation opportunities.",
 };
 
 export const partnerTiers: PartnerTier[] = [
@@ -29,7 +29,7 @@ export const partnerTiers: PartnerTier[] = [
     accentHover: "hover:text-[#E6F2EC]",
     border: "rgba(230,242,236,0.3)",
     background: "linear-gradient(160deg,#16231F,#030F0B)",
-    amount: "400,000+",
+    amount: "800K / 500K",
     slots: 2,
     slotHeight: "72px",
   },
@@ -40,7 +40,7 @@ export const partnerTiers: PartnerTier[] = [
     accentHover: "hover:text-gold",
     border: "rgba(212,175,55,0.38)",
     background: "linear-gradient(160deg,#1C190B,#030F0B)",
-    amount: "300,000+",
+    amount: "400,000+",
     slots: 3,
     slotHeight: "64px",
   },
@@ -51,7 +51,7 @@ export const partnerTiers: PartnerTier[] = [
     accentHover: "hover:text-[#B8C4BF]",
     border: "rgba(184,196,191,0.22)",
     background: "#030F0B",
-    amount: "200,000+",
+    amount: "300,000+",
     slots: 4,
     slotHeight: "56px",
   },
@@ -62,9 +62,20 @@ export const partnerTiers: PartnerTier[] = [
     accentHover: "hover:text-[#C98B5A]",
     border: "rgba(201,139,90,0.28)",
     background: "#030F0B",
-    amount: "100,000+",
+    amount: "200,000+",
     slots: 5,
     slotHeight: "48px",
+  },
+  {
+    name: "Title",
+    label: "TITLE",
+    accent: "#F2F7F4",
+    accentHover: "hover:text-[#F2F7F4]",
+    border: "rgba(242,247,244,0.2)",
+    background: "#030F0B",
+    amount: "100,000+",
+    slots: 6,
+    slotHeight: "44px",
   },
 ];
 

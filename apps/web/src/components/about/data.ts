@@ -282,7 +282,7 @@ export interface Organiser {
   motto: string;
 }
 
-export const crestAlt = "St. Aloysius' College crest";
+export const crestAlt = "SACOBA — St. Aloysius' College Old Boys' Association";
 
 export const presenter = {
   line1: "Presented by St. Aloysius' College, Galle",

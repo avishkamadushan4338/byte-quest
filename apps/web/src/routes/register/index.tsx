@@ -1,9 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-import { SectorSelect } from "@/components/register/sector-select";
-
-const RegisterIndexRoute = () => <SectorSelect />;
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/register/")({
-  component: RegisterIndexRoute,
+  beforeLoad: () => {
+    throw redirect({ to: "/register/team" });
+  },
 });

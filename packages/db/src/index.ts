@@ -37,9 +37,7 @@ export async function createDb(envConfig?: DatabaseConfig): Promise<Database> {
   };
 
   const url =
-    getVal("TURSO_DATABASE_URL") ||
-    getVal("DATABASE_URL") ||
-    "file:./local.db";
+    getVal("TURSO_DATABASE_URL") || getVal("DATABASE_URL") || "file:./local.db";
   const authToken = getVal("TURSO_AUTH_TOKEN");
 
   if (isRemoteDatabaseUrl(url)) {

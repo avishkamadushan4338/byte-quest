@@ -11,6 +11,10 @@ import { Toaster } from "sonner";
 
 import type { orpc } from "@/utils/orpc";
 
+import {
+  AmbientGlow,
+  generateAmbientBlobs,
+} from "../components/site/ambient-glow";
 import { SiteFooter } from "../components/site/site-footer";
 import { SiteHeader } from "../components/site/site-header";
 
@@ -24,24 +28,30 @@ export interface RouterAppContext {
   queryClient: QueryClient;
 }
 
-const RootDocument = () => (
-  <html lang="en">
-    <head>
-      <HeadContent />
-    </head>
-    <body className="bg-ink text-fg min-h-svh">
-      <SiteHeader />
-      <Outlet />
-      <SiteFooter />
-      <Toaster richColors theme="dark" />
-      <TanStackRouterDevtools position="bottom-left" />
-      <ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
-      <Scripts />
-    </body>
-  </html>
-);
+const RootDocument = () => {
+  const { ambientBlobs } = Route.useLoaderData();
+
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body className="bg-ink text-fg min-h-svh">
+        <AmbientGlow blobs={ambientBlobs} />
+        <SiteHeader />
+        <Outlet />
+        <SiteFooter />
+        <Toaster richColors theme="dark" />
+        <TanStackRouterDevtools position="bottom-left" />
+        <ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />
+        <Scripts />
+      </body>
+    </html>
+  );
+};
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
+  loader: () => ({ ambientBlobs: generateAmbientBlobs() }),
   head: () => ({
     meta: [
       { charSet: "utf-8" },

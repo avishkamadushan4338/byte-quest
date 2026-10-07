@@ -4,30 +4,25 @@ export interface NavLink {
 }
 
 export const primaryNavLinks: NavLink[] = [
-  { label: "Programme", href: "/programme" },
   { label: "Journey", href: "/journey" },
-  { label: "Projects", href: "/projects" },
   { label: "Mentors", href: "/mentors" },
   { label: "Partners", href: "/partners" },
   { label: "About", href: "/about" },
 ];
 
 export const menuLinks: NavLink[] = [
-  { label: "Programme", href: "/programme" },
   { label: "Journey", href: "/journey" },
   { label: "Divisions", href: "/#divisions" },
-  { label: "Projects", href: "/projects" },
   { label: "Mentors", href: "/mentors" },
   { label: "Awards", href: "/#awards" },
   { label: "Timeline", href: "/#timeline" },
   { label: "Partners", href: "/partners" },
   { label: "Volunteer", href: "/volunteers" },
   { label: "Register", href: "/register" },
+  { label: "Sign in", href: "/auth/login" },
 ];
 
 export const footerNavLinks: NavLink[] = [
-  { label: "Programme", href: "/programme" },
-  { label: "Projects", href: "/projects" },
   { label: "Mentors", href: "/mentors" },
   { label: "Partners", href: "/partners" },
   { label: "Volunteer", href: "/volunteers" },
