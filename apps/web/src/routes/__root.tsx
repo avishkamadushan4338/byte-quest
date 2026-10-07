@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   createRootRouteWithContext,
+  useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { Toaster } from "sonner";
@@ -32,6 +33,10 @@ export interface RouterAppContext {
 
 const RootDocument = () => {
   const { ambientBlobs, isSignedIn, isAdmin } = Route.useLoaderData();
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
+  const isAdminRoute = pathname.startsWith("/admin");
 
   return (
     <html lang="en">
@@ -40,7 +45,9 @@ const RootDocument = () => {
       </head>
       <body className="bg-ink text-fg min-h-svh">
         <AmbientGlow blobs={ambientBlobs} />
-        <SiteHeader isAdmin={isAdmin} isSignedIn={isSignedIn} />
+        {isAdminRoute ? null : (
+          <SiteHeader isAdmin={isAdmin} isSignedIn={isSignedIn} />
+        )}
         <Outlet />
         <SiteFooter />
         <Toaster richColors theme="dark" />
