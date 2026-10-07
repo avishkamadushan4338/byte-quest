@@ -19,7 +19,6 @@ export const menuLinks: NavLink[] = [
   { label: "Partners", href: "/partners" },
   { label: "Volunteer", href: "/volunteers" },
   { label: "Register", href: "/register" },
-  { label: "Sign in", href: "/auth/login" },
 ];
 
 export const footerNavLinks: NavLink[] = [

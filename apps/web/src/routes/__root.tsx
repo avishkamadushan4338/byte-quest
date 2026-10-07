@@ -17,6 +17,8 @@ import {
 } from "../components/site/ambient-glow";
 import { SiteFooter } from "../components/site/site-footer";
 import { SiteHeader } from "../components/site/site-header";
+import { getProfile } from "../functions/get-profile";
+import { getUser } from "../functions/get-user";
 
 import appCss from "../index.css?url";
 
@@ -29,7 +31,7 @@ export interface RouterAppContext {
 }
 
 const RootDocument = () => {
-  const { ambientBlobs } = Route.useLoaderData();
+  const { ambientBlobs, isSignedIn, isAdmin } = Route.useLoaderData();
 
   return (
     <html lang="en">
@@ -38,7 +40,7 @@ const RootDocument = () => {
       </head>
       <body className="bg-ink text-fg min-h-svh">
         <AmbientGlow blobs={ambientBlobs} />
-        <SiteHeader />
+        <SiteHeader isAdmin={isAdmin} isSignedIn={isSignedIn} />
         <Outlet />
         <SiteFooter />
         <Toaster richColors theme="dark" />
@@ -51,7 +53,15 @@ const RootDocument = () => {
 };
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
-  loader: () => ({ ambientBlobs: generateAmbientBlobs() }),
+  loader: async () => {
+    const session = await getUser();
+    const profile = session ? await getProfile() : null;
+    return {
+      ambientBlobs: generateAmbientBlobs(),
+      isSignedIn: Boolean(session),
+      isAdmin: profile?.role === "admin",
+    };
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },

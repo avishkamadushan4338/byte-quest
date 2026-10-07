@@ -18,6 +18,7 @@
     "@orpc/server": "catalog:",
     "@orpc/zod": "catalog:",
     "drizzle-orm": "catalog:",
+    "sharp": "^0.35.5",
     "zod": "catalog:"
   },
   "devDependencies": {

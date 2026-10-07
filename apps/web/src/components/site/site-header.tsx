@@ -19,10 +19,23 @@ const navLinkClass = "text-muted hover:text-fg whitespace-nowrap";
 const menuLinkClass =
   "font-display text-fg hover:text-volt flex items-baseline gap-4 border-b border-[rgba(185,245,208,0.08)] py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em]";
 
-export const SiteHeader = () => {
+export interface SiteHeaderProps {
+  isSignedIn: boolean;
+  isAdmin: boolean;
+}
+
+export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
   const scrolled = useScrolled();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
+
+  let authMenuLink = { label: "Sign in", href: "/auth/login" };
+  if (isAdmin) {
+    authMenuLink = { label: "Admin", href: "/admin" };
+  } else if (isSignedIn) {
+    authMenuLink = { label: "Dashboard", href: "/dashboard" };
+  }
+  const mobileMenuLinks = [...menuLinks, authMenuLink];
 
   return (
     <header
@@ -60,12 +73,30 @@ export const SiteHeader = () => {
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
-          <Link
-            className="text-muted hover:text-fg hidden px-2 text-[13px] font-semibold whitespace-nowrap min-[780px]:inline-flex"
-            to="/auth/login"
-          >
-            Sign in
-          </Link>
+          {isAdmin ? (
+            <Link
+              className="text-muted hover:text-fg hidden px-2 text-[13px] font-semibold whitespace-nowrap min-[780px]:inline-flex"
+              to="/admin"
+            >
+              Admin
+            </Link>
+          ) : null}
+          {!isAdmin && isSignedIn ? (
+            <Link
+              className="text-muted hover:text-fg hidden px-2 text-[13px] font-semibold whitespace-nowrap min-[780px]:inline-flex"
+              to="/dashboard"
+            >
+              Dashboard
+            </Link>
+          ) : null}
+          {isSignedIn ? null : (
+            <Link
+              className="text-muted hover:text-fg hidden px-2 text-[13px] font-semibold whitespace-nowrap min-[780px]:inline-flex"
+              to="/auth/login"
+            >
+              Sign in
+            </Link>
+          )}
           <Link
             className="text-fg hover:border-volt hover:text-volt hidden items-center rounded-full border border-[rgba(185,245,208,0.2)] px-[18px] py-2.5 text-[13px] font-bold whitespace-nowrap min-[520px]:inline-flex"
             to="/register/volunteer"
@@ -107,7 +138,7 @@ export const SiteHeader = () => {
                 </DialogClose>
               </div>
               <div className="grid flex-1 [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))] content-center gap-x-12 gap-y-1">
-                {menuLinks.map((link, index) => {
+                {mobileMenuLinks.map((link, index) => {
                   const number = (
                     <span className="text-teal font-mono text-[11px] tracking-[0.1em]">
                       {String(index + 1).padStart(2, "0")}

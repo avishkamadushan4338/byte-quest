@@ -1,13 +1,5 @@
 import type { BadgeTone } from "@byte-quest/ui/components/badge";
 
-export type AdminTab =
-  | "users"
-  | "schools"
-  | "teams"
-  | "submissions"
-  | "applications"
-  | "volunteers";
-
 export type UserRole = "admin" | "mic" | "leader" | "student" | "volunteer";
 
 export type Division = "primary" | "secondary";
@@ -49,15 +41,6 @@ export const adminHero = {
 export const adminCopy = {
   tabsLabel: "Admin sections",
 };
-
-export const adminTabs: { label: string; value: AdminTab }[] = [
-  { label: "Applications", value: "applications" },
-  { label: "Users", value: "users" },
-  { label: "Schools", value: "schools" },
-  { label: "Teams", value: "teams" },
-  { label: "Submissions", value: "submissions" },
-  { label: "Volunteers", value: "volunteers" },
-];
 
 export const roleBadgeTones: Record<UserRole, BadgeTone> = {
   admin: "volt",

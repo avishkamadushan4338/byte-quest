@@ -1,10 +1,14 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
-import { Admin } from "@/components/admin/admin";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { getProfile } from "@/functions/get-profile";
 import { getUser } from "@/functions/get-user";
 
-const AdminRoute = () => <Admin />;
+const AdminRoute = () => (
+  <AdminShell>
+    <Outlet />
+  </AdminShell>
+);
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async () => {
