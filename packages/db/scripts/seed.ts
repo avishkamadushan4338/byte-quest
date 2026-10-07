@@ -44,12 +44,26 @@ const ensureUser = async (
   password: string
 ): Promise<string> => {
   const [existing] = await db.select().from(user).where(eq(user.email, email));
+  // Local-part of the seeded `@hack.local` email, used as the login username.
+  const username = email.split("@")[0]?.toLowerCase();
   if (existing) {
+    if (!existing.username) {
+      await db
+        .update(user)
+        .set({ username, displayUsername: username })
+        .where(eq(user.id, existing.id));
+    }
     return existing.id;
   }
   const [created] = await db
     .insert(user)
-    .values({ id: randomUUID(), name, email })
+    .values({
+      id: randomUUID(),
+      name,
+      email,
+      username,
+      displayUsername: username,
+    })
     .returning();
   if (!created) {
     throw new Error(`Failed to create user ${email}`);
