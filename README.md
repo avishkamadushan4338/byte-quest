@@ -10,7 +10,7 @@ This project was created with [Better-T-Stack](https://github.com/AmanVarshney01
 - **Shared UI package** - Custom reusable components live in `packages/ui`
 - **oRPC** - End-to-end type-safe APIs with OpenAPI integration
 - **Drizzle** - TypeScript-first ORM
-- **PostgreSQL** - Database engine
+- **SQLite** - Database engine (local `local.db` file; Turso/libSQL in production)
 - **Authentication** - Better-Auth
 - **Nx** - Smart monorepo task orchestration and caching
 
@@ -24,12 +24,11 @@ bun install
 
 ## Database Setup
 
-This project uses PostgreSQL with Drizzle ORM.
+This project uses SQLite (libSQL) with Drizzle ORM.
 
-1. Make sure you have a PostgreSQL database set up.
-2. Update your `apps/web/.env` file with your PostgreSQL connection details.
+1. Local development uses a SQLite file at the repo root (`local.db`) — no database server needed. It is configured via `DATABASE_URL=file:./local.db` in `apps/web/.env`.
 
-3. Apply the schema to your database:
+2. Apply the schema to your database:
 
 ```bash
 bun run db:push
@@ -41,7 +40,7 @@ Then, run the development server:
 bun run dev
 ```
 
-Open [http://localhost:4001](http://localhost:4001) in your browser to see the fullstack application.
+Open [http://localhost:5001](http://localhost:5001) in your browser to see the fullstack application.
 
 ## UI Customization
 

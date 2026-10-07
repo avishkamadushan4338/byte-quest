@@ -9,11 +9,11 @@ services:
   web:
     image: tenuka22/byte-quest:${IMAGE_TAG:-latest}
     ports:
-      - "4001:4001"
+      - "5001:5001"
     environment:
       NODE_ENV: production
       TZ: UTC
-      PORT: "4001"
+      PORT: "5001"
       BETTER_AUTH_URL: ${SITE_URL:-https://bytequest.aloysiuscollege.lk}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-REPLACE_ME_32_CHAR_SECRET}
       TURSO_DATABASE_URL: ${TURSO_DATABASE_URL:-libsql://byte-quest-tenuka22.aws-ap-northeast-1.turso.io}

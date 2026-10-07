@@ -8,11 +8,11 @@
   "scripts": {
     "build": "tsc -b",
     "check-types": "tsc -b",
-    "db:push": "drizzle-kit push",
+    "db:push": "varlock run -- drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate:deploy": "bun scripts/migrate-if-configured.ts",
-    "db:studio": "drizzle-kit studio",
-    "db:migrate": "bun scripts/migrate-if-configured.ts",
+    "db:studio": "varlock run -- drizzle-kit studio",
+    "db:migrate": "varlock run -- bun scripts/migrate-if-configured.ts",
     "db:seed": "varlock run -- bun run scripts/seed.ts"
   },
   "dependencies": {

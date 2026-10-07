@@ -2,9 +2,9 @@ import { randomBytes, randomUUID, scrypt } from "node:crypto";
 import { promisify } from "node:util";
 
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/node-postgres";
 
 import {
+  createDb,
   account,
   school,
   submission,
@@ -36,13 +36,7 @@ const hashPassword = async (password: string): Promise<string> => {
   return `${salt}:${key.toString("hex")}`;
 };
 
-const env = {
-  DATABASE_URL:
-    process.env.DATABASE_URL ??
-    "postgresql://postgres:password@localhost:4000/postgres",
-};
-
-const db = drizzle(env.DATABASE_URL);
+const db = await createDb();
 
 const ensureUser = async (
   email: string,

@@ -9,7 +9,7 @@ ENV NODE_ENV=production \
     VARLOCK_SKIP_VALIDATION=1 \
     VARLOCK_SKIP_CODEGEN=1 \
     BETTER_AUTH_SECRET=jzhHZQmHEdvyScLuQ3vcaGUB7HNV8PJb \
-    BETTER_AUTH_URL=http://localhost:4001 \
+    BETTER_AUTH_URL=http://localhost:5001 \
     TURSO_DATABASE_URL=libsql://byte-quest-tenuka22.aws-ap-northeast-1.turso.io
 
 RUN cd apps/web && bun run build
@@ -19,14 +19,14 @@ WORKDIR /app
 
 ENV NODE_ENV=production \
     TZ=UTC \
-    PORT=4001 \
+    PORT=5001 \
     HOST=0.0.0.0 \
     VARLOCK_SKIP_VALIDATION=1 \
     VARLOCK_SKIP_CODEGEN=1
 
 COPY --from=builder /app /app
 
-EXPOSE 4001
+EXPOSE 5001
 
 WORKDIR /app/apps/web
 USER node

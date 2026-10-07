@@ -5,6 +5,8 @@ import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { readMigrationFiles } from "drizzle-orm/migrator";
 
+import { resolveDatabaseUrl } from "../src/path";
+
 /**
  * Deploy-time migration runner for build pipelines.
  * Skips gracefully instead of failing when no database URL is set.
@@ -19,7 +21,7 @@ if (!url) {
   process.exit(0);
 }
 
-const client = createClient({ url, authToken });
+const client = createClient({ url: resolveDatabaseUrl(url), authToken });
 const db = drizzle(client);
 
 const migrationsFolder = path.join(import.meta.dirname, "../src/migrations");

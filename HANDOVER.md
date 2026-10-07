@@ -1,6 +1,6 @@
 # BYTE QUEST — Handover
 
-Inter-school innovation and coding programme for St. Aloysius' College, Galle (OBA). Bun + Nx monorepo, TanStack Start, PostgreSQL + Drizzle, Better Auth, oRPC, Tailwind v4, Base UI.
+Inter-school innovation and coding programme for St. Aloysius' College, Galle (OBA). Bun + Nx monorepo, TanStack Start, SQLite (libSQL) + Drizzle, Better Auth, oRPC, Tailwind v4, Base UI.
 
 Last commit: `d1964d9` on `master`, pushed to `origin`.
 
@@ -10,9 +10,8 @@ Last commit: `d1964d9` on `master`, pushed to `origin`.
 
 ```bash
 bun install
-docker compose up -d      # Postgres on :4000
-bun run db:migrate        # apply migrations
-bun run dev:web           # http://localhost:4001
+bun run db:migrate        # apply migrations to ./local.db (SQLite file at repo root)
+bun run dev:web           # http://localhost:5001
 ```
 
 Useful checks:
@@ -72,15 +71,19 @@ There is no bootstrap admin, so create the first one directly, then use `/apply-
 ```sql
 -- create the auth user first (any username/password you choose)
 INSERT INTO "user" (id, name, email, "email_verified", username, "created_at", "updated_at")
-VALUES ('u_admin', 'Committee Admin', 'admin@bytequest.lk', true, 'admin',
-        now(), now());
+VALUES ('u_admin', 'Committee Admin', 'admin@bytequest.lk', 1, 'admin',
+        unixepoch('subsec') * 1000, unixepoch('subsec') * 1000);
 
 INSERT INTO session (id, "expires_at", token, "created_at", "updated_at", "user_id")
-VALUES ('s_seed', now() + interval '1 day', 'seed-token', now(), now(), 'u_admin');
+VALUES ('s_seed', unixepoch('subsec') * 1000 + 86400000, 'seed-token',
+        unixepoch('subsec') * 1000, unixepoch('subsec') * 1000, 'u_admin');
 
 INSERT INTO user_profile (id, "user_id", role, "full_name", "national_id", birthday, grade, "created_at", "updated_at")
-VALUES (gen_random_uuid(), 'u_admin', 'admin', 'Committee Admin', 'SEED', '1970-01-01', '13', now(), now());
+VALUES (lower(hex(randomblob(16))), 'u_admin', 'admin', 'Committee Admin', 'SEED', '1970-01-01', '13',
+        unixepoch('subsec') * 1000, unixepoch('subsec') * 1000);
 ```
+
+Timestamps are `integer` columns in `timestamp_ms` mode — milliseconds since epoch, hence the `* 1000`.
 
 The `user_profile` row must exist or every protected procedure throws `UNAUTHORIZED` — the API resolves the profile separately from the session.
 
