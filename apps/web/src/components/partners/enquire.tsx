@@ -1,3 +1,5 @@
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 import { enquireSection, partnerBenefits } from "./data";
 
 export const Enquire = () => (
@@ -27,7 +29,7 @@ export const Enquire = () => (
             className="bg-gold text-ink hover:bg-gold-bright hover:text-ink rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
             href={`mailto:?subject=${enquireSection.sponsorSubject}`}
           >
-            {enquireSection.sponsorAction}
+            <ArrowLabel>{enquireSection.sponsorAction}</ArrowLabel>
           </a>
           <a
             className="text-fg hover:border-gold hover:text-fg rounded-full border border-[rgba(242,247,244,0.22)] px-[22px] py-3.5 text-[14px] font-semibold whitespace-nowrap"
