@@ -90,15 +90,15 @@ export const applicationAside = {
 };
 
 export const successPanel = {
-  kicker: "APPLICATION RECEIVED",
-  titleStart: "Thank you,",
-  body: "Your application has been received and is currently pending review by the organizing committee. Once approved, your volunteer account credentials will be issued, allowing you to log in and access your official volunteer ID card.",
+  kicker: "YOU'RE ON THE CREW",
+  titleStart: "Welcome,",
+  body: "Your application has been received and you're registered with the BYTE QUEST crew! The organizing committee will review your submission and issue your login credentials once approved. Please log in with your assigned account to view and download your official volunteer ID card.",
   statusLabel: "STATUS",
-  statusValue: "Pending Review",
+  statusValue: "Pending Approval",
   idLabel: "APPLICATION REF",
   downloadLabel: "Download ID card ↓",
   resetLabel: "Submit another response",
-  fallbackName: "applicant",
+  fallbackName: "crew member",
 };
 
 export const idCard = {

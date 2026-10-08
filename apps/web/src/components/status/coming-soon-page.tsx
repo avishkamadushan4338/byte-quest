@@ -4,15 +4,9 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 
-import {
-  StatusHeader,
-  StatusShell,
-  statusSecondaryButton,
-} from "./status-shell";
+import { StatusShell, statusSecondaryButton } from "./status-shell";
 
 const BRAND_SRC = "/assets/bq-logo.png";
-const CREST_SRC = "/assets/crest.png";
-const CURRENT_YEAR = new Date().getFullYear();
 const DEFAULT_DESCRIPTION =
   "A three-month innovation and coding programme for Sri Lanka's young innovators. Get notified the moment registrations open.";
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/u;
@@ -59,25 +53,17 @@ export const ComingSoonPage = ({
   return (
     <StatusShell
       background="radial-gradient(45% 55% at 50% 40%, rgba(82,255,61,.13), rgba(0,169,154,.05) 50%, transparent 80%), #020807"
-      className="flex min-h-svh flex-col"
+      className="flex min-h-svh flex-col pt-[clamp(104px,12vw,150px)]"
     >
-      <StatusHeader
-        label=""
-        linkHome={false}
-        showBrand={false}
-        trailing={
-          <span className="text-gold-bright inline-flex items-center gap-2 font-mono text-[10.5px] tracking-[0.16em] whitespace-nowrap">
+      <main className="flex flex-1 items-center justify-center px-[clamp(20px,5vw,64px)] pt-8 pb-12">
+        <div className="flex w-full max-w-[720px] flex-col items-center text-center">
+          <span className="text-gold-bright mb-8 inline-flex items-center gap-2 font-mono text-[10.5px] tracking-[0.16em] whitespace-nowrap">
             <span
               aria-hidden="true"
               className="bg-volt animate-pulse-dot size-1.5 rounded-full shadow-[0_0_10px_var(--color-volt)] motion-reduce:animate-none"
             />
             LAUNCHING SOON
           </span>
-        }
-      />
-
-      <main className="flex flex-1 items-center justify-center px-[clamp(20px,5vw,64px)] pt-8 pb-12">
-        <div className="flex w-full max-w-[720px] flex-col items-center text-center">
           <img
             alt="BYTE QUEST"
             className="block h-auto w-[min(100%,560px)]"
@@ -148,22 +134,6 @@ export const ComingSoonPage = ({
           </Link>
         </div>
       </main>
-
-      <footer className="flex flex-wrap items-center justify-between gap-5 border-t border-[rgba(185,245,208,0.07)] px-[clamp(20px,5vw,64px)] pt-6 pb-8">
-        <div className="flex items-center gap-4">
-          <span className="text-faint font-mono text-[10px] tracking-[0.14em]">
-            PRESENTED BY
-          </span>
-          <img
-            alt="St. Aloysius' College Galle crest"
-            className="h-10 w-auto"
-            src={CREST_SRC}
-          />
-        </div>
-        <span className="text-faint-2 font-mono text-[10.5px] tracking-[0.1em]">
-          © {CURRENT_YEAR} BYTE QUEST
-        </span>
-      </footer>
     </StatusShell>
   );
 };

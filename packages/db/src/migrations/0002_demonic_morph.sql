@@ -1,0 +1,1 @@
+ALTER TABLE `volunteer_application` ADD `photo_data_url` text;

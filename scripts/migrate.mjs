@@ -5,15 +5,12 @@ import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 import { readMigrationFiles } from "drizzle-orm/migrator";
 
-const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL;
+const rawUrl = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL || "file:./local.db";
 const authToken = process.env.TURSO_AUTH_TOKEN;
 
-if (!url) {
-  console.log(
-    "[migrate] Neither TURSO_DATABASE_URL nor DATABASE_URL set, skipping migration"
-  );
-  process.exit(0);
-}
+const url = rawUrl.startsWith("file:") && !path.isAbsolute(rawUrl.replace(/^file:/u, ""))
+  ? `file:${path.resolve(process.cwd(), rawUrl.replace(/^file:/u, ""))}`
+  : rawUrl;
 
 const client = createClient({ url, authToken });
 const db = drizzle(client);
