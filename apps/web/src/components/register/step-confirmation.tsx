@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 import type { Division, RegisterState } from "./data";
 import {
   confirmationCopy,
@@ -124,7 +126,7 @@ export const StepConfirmation = ({
           className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
           to="/journey"
         >
-          {confirmationCopy.journeyLabel}
+          <ArrowLabel>{confirmationCopy.journeyLabel}</ArrowLabel>
         </Link>
         <button
           className="text-fg hover:border-volt cursor-pointer rounded-full border border-[rgba(242,247,244,0.25)] bg-transparent px-[22px] py-3.5 font-sans text-[14px] font-semibold"
