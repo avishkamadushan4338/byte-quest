@@ -8,6 +8,8 @@ services:
   web:
     image: registry.gitlab.com/tenuka22/byte-quest:${IMAGE_TAG:-latest}
     init: true
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     ports:
       - "${PORT:-5001}:5001"
     environment:
