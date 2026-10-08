@@ -1,3 +1,5 @@
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 import type { StudentDetails, VolunteerPhoto } from "./data";
 import { successPanel } from "./data";
 import { renderVolunteerIdCard, VolunteerIdCard } from "./volunteer-id-card";
@@ -68,7 +70,7 @@ export const SuccessPanel = ({
               onClick={handleDownload}
               type="button"
             >
-              {successPanel.downloadLabel}
+              <ArrowLabel>{successPanel.downloadLabel}</ArrowLabel>
             </button>
             <button
               className="text-fg hover:border-volt cursor-pointer rounded-full border border-[rgba(242,247,244,0.25)] bg-transparent px-[22px] py-3.5 font-sans text-[14px] font-semibold whitespace-nowrap"

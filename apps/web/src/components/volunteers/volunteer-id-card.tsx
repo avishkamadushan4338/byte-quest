@@ -4,6 +4,8 @@ import { cn } from "@byte-quest/ui/lib/utils";
 import type { StudentDetails, VolunteerPhoto } from "./data";
 import { idCard, validationCopy } from "./data";
 
+const BRAND_LOGO_SRC = "/assets/bq-logo.png";
+
 interface VolunteerIdCardProps {
   photo: VolunteerPhoto | null;
   reference: string;
@@ -157,7 +159,8 @@ const drawBackground = (ctx: CanvasRenderingContext2D) => {
 
 const drawHeader = (
   ctx: CanvasRenderingContext2D,
-  crest: HTMLImageElement | null
+  crest: HTMLImageElement | null,
+  logo: HTMLImageElement | null
 ) => {
   if (crest) {
     const height = 58;
@@ -165,26 +168,11 @@ const drawHeader = (
     ctx.drawImage(crest, CARD_MARGIN, 56, width, height);
   }
 
-  const wordmarkX = CARD_MARGIN + 78;
-  fillText(ctx, "BYTE", wordmarkX, 96, {
-    colour: "#f2f7f4",
-    font: DISPLAY_FONT,
-    size: 32,
-    weight: 700,
-  });
-  const byteWidth = ctx.measureText("BYTE").width;
-  fillText(ctx, "/", wordmarkX + byteWidth, 96, {
-    colour: "#52ff3d",
-    font: DISPLAY_FONT,
-    size: 32,
-    weight: 700,
-  });
-  fillText(ctx, "QUEST", wordmarkX + byteWidth + 14, 96, {
-    colour: "#f2f7f4",
-    font: DISPLAY_FONT,
-    size: 32,
-    weight: 700,
-  });
+  if (logo) {
+    const logoHeight = 34;
+    const logoWidth = logo.width * (logoHeight / logo.height);
+    ctx.drawImage(logo, CARD_MARGIN + 78, 68, logoWidth, logoHeight);
+  }
 
   const chipText = idCard.chip;
   setFont(ctx, { size: 15, weight: 700 });
@@ -264,13 +252,14 @@ export const renderVolunteerIdCard = async (options: IdCardRenderOptions) => {
   }
 
   await document.fonts.ready;
-  const [crest, photo] = await Promise.all([
+  const [crest, logo, photo] = await Promise.all([
     loadImage(idCard.crestSrc),
+    loadImage(BRAND_LOGO_SRC),
     options.photoUrl ? loadImage(options.photoUrl) : Promise.resolve(null),
   ]);
 
   drawBackground(ctx);
-  drawHeader(ctx, crest);
+  drawHeader(ctx, crest, logo);
   drawPhoto(ctx, photo, CARD_MARGIN, 150, 236, 295);
 
   const infoX = CARD_MARGIN + 268;
@@ -380,7 +369,7 @@ export const VolunteerIdCard = ({
               src={idCard.crestSrc}
             />
             <div className="min-w-0 leading-none">
-              <Brand className="text-[clamp(13px,3.4vw,17px)]" />
+              <Brand className="h-[clamp(12px,3vw,16px)]" />
               <div className="text-muted-2 mt-1 font-mono text-[clamp(7px,1.6vw,8.5px)] tracking-[0.14em] whitespace-nowrap">
                 {idCard.schoolLine}
               </div>
