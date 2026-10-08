@@ -35,7 +35,7 @@ export const generateAmbientBlobs = (count = 7): AmbientBlob[] =>
 export const AmbientGlow = ({ blobs }: { blobs: AmbientBlob[] }) => (
   <div
     aria-hidden="true"
-    className="pointer-events-none fixed inset-0 z-[3] mix-blend-screen"
+    className="pointer-events-none fixed inset-0 -z-10 mix-blend-screen"
   >
     {blobs.map((blob) => (
       <span
