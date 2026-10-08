@@ -87,7 +87,7 @@ function AlertDialogPopup({ className, ...props }: AlertDialogPopupProps) {
   return (
     <AlertDialogPrimitive.Popup
       className={cn(
-        "border-line-strong bg-surface-2 w-full max-w-[440px] rounded-3xl border p-[clamp(24px,3vw,32px)] shadow-[0_40px_100px_-30px_rgba(0,0,0,0.9)] transition-[transform,opacity] duration-200 outline-none data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
+        "border-line-strong bg-surface-2 max-h-[calc(100dvh-2rem)] w-full max-w-[440px] overflow-y-auto overscroll-contain rounded-3xl border p-[clamp(24px,3vw,32px)] shadow-[0_40px_100px_-30px_rgba(0,0,0,0.9)] transition-[transform,opacity] duration-200 outline-none data-[ending-style]:scale-95 data-[ending-style]:opacity-0 data-[starting-style]:scale-95 data-[starting-style]:opacity-0",
         className
       )}
       {...props}
