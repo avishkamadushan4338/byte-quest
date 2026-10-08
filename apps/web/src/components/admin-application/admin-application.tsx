@@ -10,6 +10,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { toast } from "sonner";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
 import { PageHero } from "@/components/site/page-hero";
 import { orpc } from "@/utils/orpc";
 
@@ -135,10 +136,10 @@ export const AdminApplication = () => {
                   Submit another application
                 </Button>
                 <Link
-                  className="text-muted-2 hover:text-volt inline-flex items-center font-mono text-[11.5px] tracking-[0.1em] transition-colors"
+                  className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[11.5px] tracking-[0.1em] transition-colors"
                   to="/"
                 >
-                  ← BACK TO HOME
+                  <ArrowLabel>← BACK TO HOME</ArrowLabel>
                 </Link>
               </div>
             </div>
@@ -230,7 +231,11 @@ export const AdminApplication = () => {
               </div>
 
               <Button aria-busy={pending} disabled={pending} type="submit">
-                {pending ? "Submitting…" : adminApplyCopy.submit}
+                {pending ? (
+                  "Submitting…"
+                ) : (
+                  <ArrowLabel>{adminApplyCopy.submit}</ArrowLabel>
+                )}
               </Button>
             </form>
 
