@@ -17,7 +17,7 @@ export const Organisers = () => (
       <div className="flex justify-center p-[clamp(28px,4vw,56px)]">
         <img
           alt={crestAlt}
-          className="h-auto w-[min(220px,60%)] drop-shadow-[0_20px_50px_rgba(212,175,55,0.25)]"
+          className="h-auto w-full max-w-[440px] drop-shadow-[0_20px_50px_rgba(212,175,55,0.25)]"
           src={CREST_SRC}
         />
       </div>
