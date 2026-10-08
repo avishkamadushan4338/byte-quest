@@ -1,3 +1,5 @@
+import { ArrowRightIcon } from "@phosphor-icons/react";
+
 import {
   categoryTints,
   divisionMeta,
@@ -59,7 +61,7 @@ export const ProjectCard = ({ project, onSelect }: ProjectCardProps) => {
           onClick={() => onSelect(project.id)}
           type="button"
         >
-          View project <span className="text-volt">→</span>
+          View project <ArrowRightIcon className="text-volt" weight="bold" />
         </button>
       </div>
     </article>
