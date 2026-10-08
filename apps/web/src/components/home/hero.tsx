@@ -2,6 +2,8 @@ import { Container } from "@byte-quest/ui/components/container";
 import { Button } from "@byte-quest/ui/primitives/button";
 import { Link } from "@tanstack/react-router";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 import { crestAlt } from "./data";
 import { HeroDots } from "./hero-dots";
 
@@ -10,7 +12,7 @@ const CREST_SRC = "/assets/sacoba-logo.png";
 
 export const Hero = () => (
   <section
-    className="relative flex min-h-[max(100vh,860px)] items-center overflow-hidden px-[clamp(20px,5vw,64px)] pt-[160px] pb-14"
+    className="relative flex min-h-[max(100svh,860px)] items-center overflow-hidden px-[clamp(20px,5vw,64px)] pt-[120px] pb-14"
     id="top"
     style={{
       background:
@@ -21,7 +23,7 @@ export const Hero = () => (
 
     <div
       aria-hidden="true"
-      className="absolute bottom-0 left-1/2 z-[1] aspect-[1024/1536] h-[min(78%,calc(100%_-_110px))] -translate-x-1/2 opacity-42 min-[980px]:left-[28%] min-[980px]:h-[min(calc(100%_-_160px),1240px)] min-[980px]:opacity-100"
+      className="pointer-events-none absolute bottom-0 left-[-6%] z-[1] aspect-[1024/1536] h-[82%] opacity-42 min-[980px]:left-[clamp(40px,5vw,120px)] min-[980px]:h-[min(calc(100%_-_86px),1240px)] min-[980px]:opacity-100"
     >
       <div
         className="absolute top-[40%] left-1/2 aspect-square w-[180%] -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -30,11 +32,13 @@ export const Hero = () => (
             "radial-gradient(circle closest-side, rgba(82,255,61,0.30) 0%, rgba(0,169,154,0.16) 30%, rgba(0,169,154,0.06) 58%, rgba(0,169,154,0.015) 80%, rgba(0,169,154,0) 100%)",
         }}
       />
-      <img
-        alt=""
-        className="relative block h-full w-full [mask-image:linear-gradient(180deg,#000_0%,#000_66%,transparent_80%)] object-contain object-bottom [-webkit-mask-image:linear-gradient(180deg,#000_0%,#000_66%,transparent_80%)]"
-        src={AVATAR_SRC}
-      />
+      <div className="relative size-full overflow-hidden [mask-image:linear-gradient(180deg,#000_0%,#000_58%,rgba(0,0,0,0.75)_72%,rgba(0,0,0,0.35)_84%,rgba(0,0,0,0.1)_93%,transparent_100%)] [-webkit-mask-image:linear-gradient(180deg,#000_0%,#000_58%,rgba(0,0,0,0.75)_72%,rgba(0,0,0,0.35)_84%,rgba(0,0,0,0.1)_93%,transparent_100%)]">
+        <img
+          alt=""
+          className="absolute top-0 left-0 block h-auto w-full origin-[50%_0] scale-[1.28]"
+          src={AVATAR_SRC}
+        />
+      </div>
     </div>
 
     <div
@@ -43,19 +47,17 @@ export const Hero = () => (
     />
     <div
       aria-hidden="true"
-      className="absolute inset-x-0 bottom-[-1px] z-[1] h-[28%] bg-[linear-gradient(180deg,rgba(2,8,7,0),#020807)]"
+      className="absolute inset-x-0 bottom-[-1px] z-[1] h-[34%] bg-[linear-gradient(180deg,rgba(2,8,7,0),rgba(2,8,7,0.7)_60%,#020807)]"
     />
 
     <Container className="relative z-[2] flex justify-end">
-      <div className="[container-type:inline-size] -mt-[150px] mr-[clamp(-48px,-3vw,0px)] w-[min(100%,600px)] pt-6">
-        <h1 className="font-hero m-0 text-[min(88px,calc(100cqw/8.4))] leading-[1] font-extrabold tracking-[-0.02em] whitespace-nowrap">
-          BYTE{" "}
-          <span className="bg-[linear-gradient(90deg,#52FF3D,#B7F000_55%,#00A99A)] bg-clip-text text-transparent">
-            QUEST
-          </span>
-          <span className="text-volt ml-[6px] inline-block align-top text-[0.38em] leading-[1]">
-            /
-          </span>
+      <div className="[container-type:inline-size] -mt-[70px] w-[min(100%,600px)] min-[980px]:mr-[clamp(-48px,-3vw,0px)]">
+        <h1 className="m-0 leading-none">
+          <img
+            alt="BYTE QUEST"
+            className="block h-auto w-full max-w-[600px]"
+            src="/assets/bq-logo.png"
+          />
         </h1>
 
         <div className="font-display text-muted mt-6 flex flex-wrap gap-x-[18px] gap-y-2 text-[clamp(15px,1.5vw,20px)] font-semibold tracking-[0.16em]">
@@ -73,10 +75,9 @@ export const Hero = () => (
           <span className="text-lime">2026</span>
         </div>
 
-        <p className="text-fg-dim mt-[22px] max-w-[500px] text-[clamp(15.5px,1.25vw,17.5px)] leading-[1.65] text-pretty">
-          A three-month innovation and coding programme where Sri Lanka&apos;s
-          young innovators learn, build and turn ideas into impact — guided by
-          mentors and celebrated at the Innovation Expo.
+        <p className="text-fg-dim mt-[22px] max-w-[540px] text-[clamp(17px,1.5vw,20px)] leading-[1.65] text-pretty">
+          A three month innovation and coding programme where Sri Lanka&apos;s
+          young innovators learn, build and turn ideas into impact.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-2.5">
@@ -85,7 +86,7 @@ export const Hero = () => (
             nativeButton={false}
             render={<Link to="/register/team" />}
           >
-            Register your team <span aria-hidden="true">→</span>
+            <ArrowLabel>Register your team →</ArrowLabel>
           </Button>
           <Button
             className="h-auto px-6 py-[15px] text-[14.5px]"
@@ -102,9 +103,11 @@ export const Hero = () => (
             <div className="text-muted-2 font-mono text-[11.5px] tracking-[0.14em]">
               PROUDLY PRESENTED BY
             </div>
-            <div className="mt-3 flex items-center gap-4">
-              <img alt={crestAlt} className="h-[54px] w-auto" src={CREST_SRC} />
-            </div>
+            <img
+              alt={crestAlt}
+              className="mt-3.5 block h-16 w-auto"
+              src={CREST_SRC}
+            />
           </div>
         </div>
       </div>
