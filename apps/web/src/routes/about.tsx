@@ -1,10 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { About } from "@/components/about/about";
+import { buildSeoMeta } from "@/utils/seo";
 
 const AboutRoute = () => <About />;
 
 export const Route = createFileRoute("/about")({
-  head: () => ({ meta: [{ title: "About | BYTE QUEST" }] }),
+  head: () => ({
+    meta: buildSeoMeta({
+      description:
+        "Learn about BYTE QUEST, presented by the Old Boys' Association of St. Aloysius' College Galle (SACOBA) to cultivate digital innovators across Sri Lanka.",
+      path: "/about",
+      title: "About",
+    }),
+  }),
   component: AboutRoute,
 });

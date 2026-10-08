@@ -23,6 +23,7 @@ import { SiteHeader } from "../components/site/site-header";
 import { LoadingScreen } from "../components/status/loading-screen";
 import { getProfile } from "../functions/get-profile";
 import { getUser } from "../functions/get-user";
+import { buildSeoMeta, getOrganizationJsonLd } from "../utils/seo";
 
 import appCss from "../index.css?url";
 
@@ -85,13 +86,12 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
+      ...buildSeoMeta(),
+    ],
+    scripts: [
       {
-        title: "BYTE QUEST | St. Aloysius' College Galle",
-      },
-      {
-        name: "description",
-        content:
-          "A national school innovation and coding programme empowering students to learn, build, innovate and inspire.",
+        type: "application/ld+json",
+        children: getOrganizationJsonLd(),
       },
     ],
     links: [

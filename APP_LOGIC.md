@@ -101,3 +101,34 @@ This document describes the core architecture, data flows, operational rules, an
    - Core subpages (`/mentors`, `/programme`, `/projects`, etc.) render clean SSR placeholder headers / skeletons preventing layout shifts before dynamic content hydrates.
 3. **Scrollbar & Layout Polishing**:
    - Fixed dual-scrollbar issues by ensuring only the top-level viewport (`html, body`) controls primary scroll, removing nested `overflow-y-scroll` on child containers.
+
+---
+
+## 6. Continuous Deployment & Docker Releases (`.github/workflows/release.yml`)
+
+1. **Triggering Conditions**:
+   - Pushes to `master` branch.
+   - Pushes of version tags (`v*.*.*` or `[0-9]+.[0-9]+.[0-9]+`).
+   - Manual workflow dispatch with optional custom tag name.
+2. **Docker Hub Publishing**:
+   - Builds multi-layer image with Buildx and GitHub Actions layer caching (`type=gha`).
+   - Pushes tags: `latest` (on `master`), short git commit sha, and semantic version.
+   - **Required GitHub Secrets**:
+     - `DOCKERHUB_USERNAME`: Docker Hub account handle (e.g. `tenuka22`).
+     - `DOCKERHUB_TOKEN`: Personal Access Token created in Docker Hub Account Security.
+
+---
+
+## 7. Search Engine Optimization (SEO) & Geo-Targeting
+
+1. **Geo-Location Targeting**:
+   - Pinned to St. Aloysius' College, Galle, Southern Province, Sri Lanka:
+     - `geo.region`: `LK-31`
+     - `geo.placename`: `Galle, Sri Lanka`
+     - `geo.position`: `6.0367;80.2170`
+     - `ICBM`: `6.0367, 80.2170`
+2. **Social Graph Metadata**:
+   - Open Graph tags (`og:site_name`, `og:title`, `og:description`, `og:url`, `og:locale`, `og:image`).
+   - Twitter Card meta (`summary_large_image`).
+3. **Structured Data (JSON-LD)**:
+   - Root document injects Schema.org `EducationalOrganization` linking BYTE QUEST, St. Aloysius' College Galle, and SACOBA.
