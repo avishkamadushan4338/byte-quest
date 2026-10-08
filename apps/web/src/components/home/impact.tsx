@@ -1,3 +1,5 @@
+import { ArrowRightIcon } from "@phosphor-icons/react";
+
 import { impactSteps } from "./data";
 import { HomeHeading } from "./home-heading";
 
@@ -43,7 +45,7 @@ export const Impact = () => (
                   color: index === LAST_STEP ? "transparent" : "#5E7469",
                 }}
               >
-                →
+                <ArrowRightIcon weight="bold" />
               </span>
             </div>
             <div className="font-display text-fg text-[clamp(40px,4.6vw,68px)] leading-[0.9] font-bold tracking-[-0.05em]">
