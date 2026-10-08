@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
 import { SubpageHero } from "@/components/site/subpage-hero";
 import { orpc } from "@/utils/orpc";
 
@@ -702,7 +703,7 @@ export const Register = () => {
                   onClick={handleNext}
                   type="button"
                 >
-                  {advanceLabel}
+                  <ArrowLabel>{advanceLabel}</ArrowLabel>
                 </button>
               </div>
             )}
