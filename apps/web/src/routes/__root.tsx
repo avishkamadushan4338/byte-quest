@@ -16,6 +16,7 @@ import {
   AmbientGlow,
   generateAmbientBlobs,
 } from "../components/site/ambient-glow";
+import { MotionProvider, PageTransition } from "../components/site/motion";
 import { SiteFooter } from "../components/site/site-footer";
 import { SiteHeader } from "../components/site/site-header";
 import { getProfile } from "../functions/get-profile";
@@ -48,7 +49,11 @@ const RootDocument = () => {
         {isAdminRoute ? null : (
           <SiteHeader isAdmin={isAdmin} isSignedIn={isSignedIn} />
         )}
-        <Outlet />
+        <MotionProvider>
+          <PageTransition routeKey={pathname.split("/")[1] ?? ""}>
+            <Outlet />
+          </PageTransition>
+        </MotionProvider>
         <SiteFooter />
         <Toaster richColors theme="dark" />
         <TanStackRouterDevtools position="bottom-left" />
@@ -74,7 +79,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       { charSet: "utf-8" },
       {
         name: "viewport",
-        content: "width=device-width, initial-scale=1",
+        content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
       {
         title: "BYTE QUEST | St. Aloysius' College Galle",
@@ -87,6 +92,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/png", href: "/assets/bq-logo.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "preconnect",
