@@ -29,17 +29,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub
+      - name: Log in to GitLab Container Registry
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME || 'tenuka22' }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          registry: registry.gitlab.com
+          username: ${{ secrets.GITLAB_REGISTRY_USER }}
+          password: ${{ secrets.GITLAB_REGISTRY_TOKEN }}
 
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: tenuka22/byte-quest
+          images: registry.gitlab.com/tenuka22/byte-quest
           flavor: |
             latest=auto
           tags: |
