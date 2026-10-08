@@ -11,3 +11,9 @@ Measured in headless Chromium at 320, 360, 390, 430, 600, 768, 820, 1024, 1280, 
 ## Critical
 
 - Header: Register button clipped and menu button off-screen at <=600px. Fixed with responsive logo sizing and breakpoint-gated CTAs.
+
+## High
+
+- Home hero negative margin clipped the title on phones.
+- DataTable used overflow-hidden and clipped columns.
+- Programme comparison table and milestone rows clipped at 320-375px.
