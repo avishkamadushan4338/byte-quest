@@ -1,6 +1,4 @@
-import { crestAlt, organiser } from "./data";
-
-const CREST_SRC = "/assets/crest.png";
+import { organiser } from "./data";
 
 export const Organisers = () => (
   <section
@@ -8,19 +6,12 @@ export const Organisers = () => (
     id="organisers"
   >
     <div
-      className="mx-auto grid max-w-[1280px] [grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))] items-center overflow-hidden rounded-[28px] border border-[rgba(212,175,55,0.2)]"
+      className="mx-auto max-w-[760px] overflow-hidden rounded-[28px] border border-[rgba(212,175,55,0.2)]"
       style={{
         background:
           "radial-gradient(60% 80% at 0% 0%, rgba(212,175,55,0.1), transparent 60%), linear-gradient(160deg,#071D16,#030F0B)",
       }}
     >
-      <div className="flex justify-center p-[clamp(28px,4vw,56px)]">
-        <img
-          alt={crestAlt}
-          className="h-auto w-full max-w-[440px] drop-shadow-[0_20px_50px_rgba(212,175,55,0.25)]"
-          src={CREST_SRC}
-        />
-      </div>
       <div className="flex flex-col gap-[18px] p-[clamp(28px,4vw,56px)]">
         <div className="text-gold font-mono text-[11px] tracking-[0.16em]">
           {organiser.kicker}

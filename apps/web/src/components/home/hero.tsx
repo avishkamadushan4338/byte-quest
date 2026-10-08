@@ -4,11 +4,9 @@ import { Link } from "@tanstack/react-router";
 
 import { ArrowLabel } from "@/components/site/arrow-label";
 
-import { crestAlt } from "./data";
 import { HeroDots } from "./hero-dots";
 
 const AVATAR_SRC = "/assets/hero-avatar.png";
-const CREST_SRC = "/assets/crest.png";
 
 export const Hero = () => (
   <section
@@ -104,12 +102,6 @@ export const Hero = () => (
               PROUDLY PRESENTED BY
             </div>
             <div className="mt-3.5 flex flex-wrap items-center gap-6">
-              <img
-                alt={crestAlt}
-                className="block h-16 w-auto"
-                src={CREST_SRC}
-              />
-              <span aria-hidden="true" className="bg-line-strong h-10 w-px" />
               <img
                 alt="SACOBA — Old Boys' Association, St. Aloysius' College"
                 className="block h-14 w-auto"

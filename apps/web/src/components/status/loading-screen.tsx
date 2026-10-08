@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { StatusOverlay } from "./status-shell";
 
 const BRAND_SRC = "/assets/bq-logo.png";
-const CREST_SRC = "/assets/crest.png";
 const TICK_MS = 110;
 const HOLD_TICKS = 8;
 const STEP_SIZE = 25;
@@ -63,12 +62,7 @@ export const LoadingScreen = () => {
           className="animate-breath pointer-events-none absolute top-[46%] left-1/2 aspect-square w-[min(110vw,1100px)] rounded-full bg-[radial-gradient(circle_closest-side,rgba(82,255,61,0.14),rgba(0,169,154,0.05)_50%,transparent)] motion-reduce:animate-none"
         />
 
-        <header className="relative flex items-center justify-between gap-4">
-          <img
-            alt="St. Aloysius' College Galle crest"
-            className="h-[clamp(30px,3.4vw,40px)] w-auto"
-            src={CREST_SRC}
-          />
+        <header className="relative flex items-center justify-end gap-4">
           <span className="text-faint font-mono text-[10.5px] tracking-[0.2em] whitespace-nowrap">
             INTER SCHOOL · 2026
           </span>

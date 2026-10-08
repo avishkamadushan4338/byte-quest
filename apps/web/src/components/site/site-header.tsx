@@ -1,4 +1,4 @@
-import { BrandLockup } from "@byte-quest/ui/components/brand";
+import { Brand } from "@byte-quest/ui/components/brand";
 import { useScrolled } from "@byte-quest/ui/hooks/use-scrolled";
 import { cn } from "@byte-quest/ui/lib/utils";
 import {
@@ -13,8 +13,6 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 import { isInternalHref, menuLinks, primaryNavLinks } from "./navigation";
-
-const CREST_SRC = "/assets/crest.png";
 
 const navLinkClass =
   "text-muted hover:text-fg relative inline-flex items-center rounded-full px-3.5 py-2 text-[13.5px] font-medium tracking-[0.01em] whitespace-nowrap transition-colors duration-200 hover:bg-[rgba(185,245,208,0.06)] data-[status=active]:text-fg data-[status=active]:after:absolute data-[status=active]:after:bottom-[3px] data-[status=active]:after:left-1/2 data-[status=active]:after:size-1 data-[status=active]:after:-translate-x-1/2 data-[status=active]:after:rounded-full data-[status=active]:after:bg-volt data-[status=active]:after:shadow-[0_0_8px_var(--color-volt)] data-[status=active]:after:content-['']";
@@ -74,19 +72,12 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
           className="text-fg hover:text-fg flex shrink-0 items-center gap-3"
           to="/"
         >
-          <BrandLockup
-            className="gap-2 sm:gap-3"
-            crestClassName={
-              scrolled
-                ? "h-7 min-[380px]:h-[30px]"
-                : "h-8 min-[380px]:h-9 sm:h-10"
-            }
-            logoClassName={
+          <Brand
+            className={
               scrolled
                 ? "h-6 min-[380px]:h-[26px]"
                 : "h-6 min-[380px]:h-7 sm:h-8"
             }
-            crestSrc={CREST_SRC}
           />
         </Link>
 
