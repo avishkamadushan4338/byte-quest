@@ -1,22 +1,20 @@
-import type { HTMLAttributes } from "react";
+import type { ImgHTMLAttributes } from "react";
 import { cn } from "@byte-quest/ui/lib/utils";
 
-type BrandProps = HTMLAttributes<HTMLSpanElement> & {
+const BRAND_LOGO_SRC = "/assets/bq-logo.png";
+
+type BrandProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt"> & {
   size?: "sm" | "lg";
 };
 
 function Brand({ size = "sm", className, ...props }: BrandProps) {
   return (
-    <span
-      className={cn(
-        "inline-flex items-baseline font-display font-bold whitespace-nowrap",
-        size === "lg" ? "text-[28px] tracking-[-0.03em]" : "text-[17px] tracking-[-0.01em]",
-        className
-      )}
+    <img
+      alt="BYTE QUEST"
+      className={cn("block w-auto", size === "lg" ? "h-[30px]" : "h-7", className)}
+      src={BRAND_LOGO_SRC}
       {...props}
-    >
-      BYTE<span className="text-volt">/</span>QUEST
-    </span>
+    />
   );
 }
 
@@ -26,6 +24,7 @@ type BrandLockupProps = {
   size?: "sm" | "lg";
   tagline?: string;
   crestClassName?: string;
+  logoClassName?: string;
   className?: string;
 };
 
@@ -33,12 +32,13 @@ function BrandLockup({
   crestSrc,
   crestAlt = "St. Aloysius' College crest",
   size = "sm",
-  tagline = "SACG · OBA",
+  tagline,
   crestClassName,
+  logoClassName,
   className,
 }: BrandLockupProps) {
   return (
-    <span className={cn("inline-flex items-center gap-3", className)}>
+    <span className={cn("inline-flex min-w-0 items-center gap-3", className)}>
       <img
         alt={crestAlt}
         className={cn(
@@ -53,10 +53,12 @@ function BrandLockup({
         className={cn("bg-line-strong", size === "lg" ? "h-7 w-px" : "h-6 w-px")}
       />
       <span className="flex flex-col leading-none">
-        <Brand size={size} />
-        <span className="mt-[5px] font-mono text-[9px] tracking-[0.14em] text-muted-2">
-          {tagline}
-        </span>
+        <Brand className={logoClassName} size={size} />
+        {tagline ? (
+          <span className="mt-[5px] font-mono text-[9px] tracking-[0.14em] text-muted-2">
+            {tagline}
+          </span>
+        ) : null}
       </span>
     </span>
   );
