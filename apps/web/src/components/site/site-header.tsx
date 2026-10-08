@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@byte-quest/ui/primitives/dialog";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
@@ -15,7 +16,8 @@ import { isInternalHref, menuLinks, primaryNavLinks } from "./navigation";
 
 const CREST_SRC = "/assets/crest.png";
 
-const navLinkClass = "text-muted hover:text-fg whitespace-nowrap";
+const navLinkClass =
+  "text-muted hover:text-fg relative inline-flex items-center rounded-full px-3.5 py-2 text-[13.5px] font-medium tracking-[0.01em] whitespace-nowrap transition-colors duration-200 hover:bg-[rgba(185,245,208,0.06)] data-[status=active]:text-fg data-[status=active]:after:absolute data-[status=active]:after:bottom-[3px] data-[status=active]:after:left-1/2 data-[status=active]:after:size-1 data-[status=active]:after:-translate-x-1/2 data-[status=active]:after:rounded-full data-[status=active]:after:bg-volt data-[status=active]:after:shadow-[0_0_8px_var(--color-volt)] data-[status=active]:after:content-['']";
 const menuLinkClass =
   "font-display text-fg hover:text-volt flex items-baseline gap-4 border-b border-[rgba(185,245,208,0.08)] py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em]";
 
@@ -39,32 +41,52 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
 
   return (
     <header
-      className="fixed inset-x-0 top-0 z-50 flex justify-center transition-[padding] duration-[350ms] ease-in-out"
-      style={{ padding: scrolled ? "10px 16px" : "20px 24px" }}
+      className="fixed inset-x-0 top-0 z-50 flex justify-center transition-[padding] duration-[350ms] ease-out"
+      style={{
+        padding: scrolled
+          ? "10px clamp(8px,2vw,16px)"
+          : "clamp(10px,2vw,18px) clamp(10px,3vw,24px)",
+      }}
     >
       <nav
         aria-label="Primary"
-        className="flex w-full max-w-[1280px] items-center justify-between gap-6 rounded-[16px] border backdrop-blur-[18px] transition-all duration-[350ms] ease-in-out"
+        className={cn(
+          "relative flex w-full max-w-[1240px] items-center justify-between gap-3 rounded-full border backdrop-blur-xl backdrop-saturate-150 transition-all duration-[350ms] ease-out min-[1920px]:max-w-[1560px] sm:gap-6",
+          scrolled
+            ? "border-[rgba(185,245,208,0.14)] bg-[rgba(2,8,7,0.72)] shadow-[0_18px_50px_-18px_rgba(0,0,0,0.85),0_0_0_1px_rgba(2,8,7,0.6),inset_0_1px_0_rgba(255,255,255,0.06)]"
+            : "border-[rgba(185,245,208,0.07)] bg-[rgba(2,8,7,0.28)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+        )}
         style={{
-          padding: scrolled ? "7px 8px 7px 14px" : "10px 12px 10px 18px",
-          background: scrolled ? "rgba(2,8,7,0.78)" : "rgba(2,8,7,0)",
-          borderColor: scrolled
-            ? "rgba(185,245,208,0.1)"
-            : "rgba(185,245,208,0)",
+          padding: scrolled
+            ? "6px 6px 6px clamp(12px,3vw,18px)"
+            : "9px 9px 9px clamp(14px,3.5vw,22px)",
         }}
       >
+        <span
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute inset-x-12 -top-px h-px bg-gradient-to-r from-transparent via-[rgba(82,255,61,0.55)] to-transparent transition-opacity duration-[350ms]",
+            scrolled ? "opacity-100" : "opacity-0"
+          )}
+        />
         <Link
           aria-label="BYTE QUEST home"
           className="text-fg hover:text-fg flex shrink-0 items-center gap-3"
           to="/"
         >
           <BrandLockup
-            crestClassName={scrolled ? "h-[30px]" : "h-10"}
+            className="gap-2 sm:gap-3"
+            crestClassName={
+              scrolled
+                ? "h-7 min-[380px]:h-[30px]"
+                : "h-8 min-[380px]:h-9 sm:h-10"
+            }
+            logoClassName="h-4 min-[380px]:h-5 min-[480px]:h-6 sm:h-7"
             crestSrc={CREST_SRC}
           />
         </Link>
 
-        <div className="hidden gap-7 text-[13.5px] font-medium min-[1100px]:flex">
+        <div className="hidden items-center gap-1 min-[1100px]:flex">
           {primaryNavLinks.map((link) => (
             <Link className={navLinkClass} key={link.label} to={link.href}>
               {link.label}
@@ -72,47 +94,42 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
           ))}
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
-          {isAdmin ? (
-            <Link
-              className="text-muted hover:text-fg hidden px-2 text-[13px] font-semibold whitespace-nowrap min-[780px]:inline-flex"
-              to="/admin"
-            >
-              Admin
-            </Link>
+        <div className="flex shrink-0 items-center gap-1.5">
+          {isSignedIn ? (
+            <>
+              <Link
+                className={cn(navLinkClass, "hidden min-[900px]:inline-flex")}
+                to={authMenuLink.href}
+              >
+                {authMenuLink.label}
+              </Link>
+              <span
+                aria-hidden="true"
+                className="mx-1 hidden h-4 w-px bg-[rgba(185,245,208,0.16)] min-[900px]:block"
+              />
+            </>
           ) : null}
-          {!isAdmin && isSignedIn ? (
-            <Link
-              className="text-muted hover:text-fg hidden px-2 text-[13px] font-semibold whitespace-nowrap min-[780px]:inline-flex"
-              to="/dashboard"
-            >
-              Dashboard
-            </Link>
-          ) : null}
-          {isSignedIn ? null : (
-            <Link
-              className="text-muted hover:text-fg hidden px-2 text-[13px] font-semibold whitespace-nowrap min-[780px]:inline-flex"
-              to="/auth/login"
-            >
-              Sign in
-            </Link>
-          )}
           <Link
-            className="text-fg hover:border-volt hover:text-volt hidden items-center rounded-full border border-[rgba(185,245,208,0.2)] px-[18px] py-2.5 text-[13px] font-bold whitespace-nowrap min-[520px]:inline-flex"
+            className="text-fg hover:text-fg hidden items-center rounded-full border border-[rgba(185,245,208,0.18)] bg-[rgba(185,245,208,0.03)] px-[18px] py-2.5 text-[13px] font-semibold tracking-[0.01em] whitespace-nowrap transition-all duration-200 hover:border-[rgba(82,255,61,0.55)] hover:bg-[rgba(82,255,61,0.07)] min-[760px]:inline-flex"
             to="/register/volunteer"
           >
             Become a volunteer
           </Link>
           <Link
-            className="bg-volt text-ink hover:bg-lime hover:text-ink inline-flex items-center rounded-full px-[18px] py-2.5 text-[13px] font-bold whitespace-nowrap"
+            className="group bg-volt text-ink hover:text-ink hover:bg-lime hidden items-center gap-1.5 rounded-full px-5 py-2.5 text-[13px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)] min-[540px]:inline-flex"
             to="/register"
           >
             Register Now
+            <ArrowRightIcon
+              aria-hidden="true"
+              className="transition-transform duration-200 group-hover:translate-x-0.5"
+              weight="bold"
+            />
           </Link>
           <DialogRoot onOpenChange={setMenuOpen} open={menuOpen}>
             <DialogTrigger
               aria-label={menuOpen ? "Close menu" : "Open menu"}
-              className="flex size-10 shrink-0 cursor-pointer flex-col items-center justify-center gap-[5px] rounded-full border border-[rgba(185,245,208,0.2)] bg-transparent min-[1100px]:hidden"
+              className="flex size-11 shrink-0 cursor-pointer flex-col items-center justify-center gap-[5px] rounded-full border border-[rgba(185,245,208,0.18)] bg-[rgba(185,245,208,0.03)] transition-colors duration-200 hover:border-[rgba(82,255,61,0.55)] min-[1100px]:hidden"
             >
               <span
                 className={cn(
@@ -127,7 +144,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 )}
               />
             </DialogTrigger>
-            <DialogContent className="px-[clamp(20px,5vw,64px)] py-6 sm:px-[clamp(20px,5vw,64px)] sm:py-6">
+            <DialogContent className="overflow-y-auto px-[clamp(20px,5vw,64px)] py-6 sm:px-[clamp(20px,5vw,64px)] sm:py-6">
               <div className="flex items-center justify-between">
                 <DialogTitle>Menu</DialogTitle>
                 <DialogClose
@@ -169,6 +186,23 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                     </a>
                   );
                 })}
+              </div>
+              <div className="flex flex-wrap gap-2.5 min-[540px]:hidden">
+                <Link
+                  className="bg-volt text-ink hover:text-ink hover:bg-lime inline-flex min-h-11 items-center gap-1.5 rounded-full px-5 text-[14px] font-bold"
+                  onClick={closeMenu}
+                  to="/register"
+                >
+                  Register Now
+                  <ArrowRightIcon aria-hidden="true" weight="bold" />
+                </Link>
+                <Link
+                  className="text-fg hover:text-fg inline-flex min-h-11 items-center rounded-full border border-[rgba(185,245,208,0.18)] px-5 text-[14px] font-semibold"
+                  onClick={closeMenu}
+                  to="/register/volunteer"
+                >
+                  Become a volunteer
+                </Link>
               </div>
               <div className="text-muted-2 flex flex-wrap justify-between gap-3 font-mono text-[11px] tracking-[0.08em]">
                 <span>LEARN. BUILD. INNOVATE. INSPIRE.</span>
