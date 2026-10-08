@@ -24,3 +24,8 @@ Measured in headless Chromium at 320, 360, 390, 430, 600, 768, 820, 1024, 1280, 
 - Footer, back-to-home, password toggle and milestone links below 24px target size.
 - Hero used 100vh instead of 100svh.
 - No ultra-wide scaling or safe-area support.
+
+## Low
+
+- Alert dialogs could not scroll in landscape.
+- text-size-adjust and touch-action not set.
