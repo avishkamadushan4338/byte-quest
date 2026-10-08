@@ -12,7 +12,7 @@ import type { NavLink } from "./navigation";
 
 const CREST_SRC = "/assets/crest.png";
 const BRAND_SRC = "/assets/bq-logo.png";
-const SACOBA_SRC = "/assets/sacoba-logo.png";
+const BRAND_MARK_SRC = "/assets/bq-logo-mark.png";
 const CURRENT_YEAR = new Date().getFullYear();
 
 const pillars = [
@@ -195,15 +195,9 @@ export const SiteFooter = () => (
           <span className={eyebrowClass}>Proudly presented by</span>
           <div className="flex items-center gap-4">
             <img
-              alt="St. Aloysius' College crest"
+              alt="BYTE QUEST"
               className="h-10 w-auto"
-              src={CREST_SRC}
-            />
-            <span aria-hidden="true" className="bg-line-strong h-6 w-px" />
-            <img
-              alt="SACOBA — Old Boys' Association, St. Aloysius' College"
-              className="h-11 w-auto"
-              src={SACOBA_SRC}
+              src={BRAND_MARK_SRC}
             />
           </div>
         </div>
