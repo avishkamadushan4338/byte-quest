@@ -1,3 +1,4 @@
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 
 import { SectionHeading } from "@/components/site/section-heading";
@@ -89,7 +90,7 @@ export const Milestones = () => {
                   key={step}
                 >
                   <span aria-hidden="true" style={{ color: moment.color }}>
-                    {index > 0 ? "→" : ""}
+                    {index > 0 ? <ArrowRightIcon weight="bold" /> : null}
                   </span>
                   {step}
                 </span>
@@ -99,7 +100,7 @@ export const Milestones = () => {
           <div className="grid gap-px self-start overflow-hidden rounded-[16px] bg-[rgba(185,245,208,0.08)]">
             {moment.rows.map((row) => (
               <div
-                className="bg-ink grid grid-cols-[130px_1fr] gap-3.5 px-[18px] py-3.5 text-[14px]"
+                className="bg-ink grid grid-cols-1 gap-1 px-[18px] py-3.5 text-[14px] sm:grid-cols-[130px_minmax(0,1fr)] sm:gap-3.5"
                 key={row.label}
               >
                 <span className="text-faint pt-0.5 font-mono text-[10.5px] tracking-[0.12em]">

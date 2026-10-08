@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
 import { FactStrip } from "@/components/site/fact-strip";
 import { SubpageHero } from "@/components/site/subpage-hero";
 
@@ -17,7 +18,7 @@ export const Hero = () => (
             className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
             to="/register/team"
           >
-            Register your team →
+            <ArrowLabel>Register your team →</ArrowLabel>
           </Link>
           <Link
             className="text-fg hover:border-volt hover:text-fg rounded-full border border-[rgba(242,247,244,0.24)] px-[22px] py-3.5 text-[14px] font-semibold whitespace-nowrap"
