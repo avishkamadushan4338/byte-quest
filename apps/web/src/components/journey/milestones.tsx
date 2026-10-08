@@ -1,3 +1,5 @@
+import { ArrowRightIcon } from "@phosphor-icons/react";
+
 import { SectionHeading } from "@/components/site/section-heading";
 
 import { milestones } from "./data";
@@ -48,7 +50,7 @@ export const Milestones = () => (
                   key={step}
                 >
                   <span aria-hidden="true" style={{ color: item.accent }}>
-                    {index > 0 ? "→" : ""}
+                    {index > 0 ? <ArrowRightIcon weight="bold" /> : null}
                   </span>
                   {step}
                 </span>
