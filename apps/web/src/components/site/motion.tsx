@@ -26,6 +26,7 @@ export const PageTransition = ({ children, routeKey }: PageTransitionProps) => {
   return (
     <motion.div
       animate={{ opacity: 1, y: 0 }}
+      className="min-h-screen"
       initial={hasNavigated ? { opacity: 0, y: 14 } : false}
       key={routeKey}
       transition={{ duration: PAGE_DURATION, ease: EASE_OUT }}
