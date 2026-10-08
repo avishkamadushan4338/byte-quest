@@ -1,7 +1,7 @@
 import { cn } from "@byte-quest/ui/lib/utils";
 import type { ReactNode } from "react";
 
-import { ChevronDown, ChevronUp } from "@byte-quest/ui/components/icons";
+import { ChevronDown, ChevronRight, ChevronUp } from "@byte-quest/ui/components/icons";
 
 export type SortDirection = "asc" | "desc";
 
@@ -168,7 +168,7 @@ function DataTable<Row>({
                 className="text-muted-2 hover:text-volt text-lg leading-none"
                 href={href}
               >
-                ›
+                <ChevronRight className="size-4" />
               </a>
             </td>
           ) : null}
@@ -195,7 +195,7 @@ function DataTable<Row>({
       <div
         aria-busy={isFetching || undefined}
         className={cn(
-          "border-line-soft overflow-hidden rounded-[20px] border",
+          "border-line-soft overflow-x-auto overscroll-x-contain rounded-[20px] border",
           isFetching && "opacity-70 transition-opacity"
         )}
       >
