@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 /**
  * Sits directly above the Register/Volunteers page's own hero (which
  * supplies its own header clearance), so this only needs enough top
@@ -14,7 +16,7 @@ export const BackToSectors = () => (
         className="text-muted-2 hover:text-volt font-mono text-[11px] tracking-[0.1em]"
         to="/register"
       >
-        ← CHOOSE A DIFFERENT OPTION
+        <ArrowLabel>← CHOOSE A DIFFERENT OPTION</ArrowLabel>
       </Link>
     </div>
   </div>
