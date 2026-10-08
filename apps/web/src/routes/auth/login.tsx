@@ -4,6 +4,7 @@ import { Kicker } from "@byte-quest/ui/components/kicker";
 import { Link, createFileRoute, redirect } from "@tanstack/react-router";
 
 import { SignInForm } from "@/components/auth/sign-in-form";
+import { ArrowLabel } from "@/components/site/arrow-label";
 import { getUser } from "@/functions/get-user";
 
 const accountTypes = [
@@ -69,22 +70,22 @@ const LoginRoute = () => (
 
           <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
             <Link
-              className="text-muted-2 hover:text-volt inline-flex font-mono text-[11.5px] tracking-[0.1em] transition-colors"
+              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[11.5px] tracking-[0.1em] transition-colors"
               to="/"
             >
-              ← BACK TO HOME
+              <ArrowLabel>← BACK TO HOME</ArrowLabel>
             </Link>
             <Link
-              className="text-muted-2 hover:text-volt inline-flex font-mono text-[11.5px] tracking-[0.1em] transition-colors"
+              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[11.5px] tracking-[0.1em] transition-colors"
               to="/register/team"
             >
-              REGISTER A TEAM →
+              <ArrowLabel>REGISTER A TEAM →</ArrowLabel>
             </Link>
             <Link
-              className="text-muted-2 hover:text-volt inline-flex font-mono text-[11.5px] tracking-[0.1em] transition-colors"
+              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[11.5px] tracking-[0.1em] transition-colors"
               to="/apply-admin"
             >
-              APPLY FOR ADMIN →
+              <ArrowLabel>APPLY FOR ADMIN →</ArrowLabel>
             </Link>
           </div>
         </div>
@@ -99,7 +100,7 @@ const LoginRoute = () => (
                 Enter the quest
               </div>
             </div>
-            <Brand className="text-[15px]" />
+            <Brand className="h-4" />
           </div>
           <SignInForm />
           <p className="text-faint mt-6 text-[13px] leading-[1.6]">
