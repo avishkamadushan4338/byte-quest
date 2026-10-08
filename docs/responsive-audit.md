@@ -29,3 +29,7 @@ Measured in headless Chromium at 320, 360, 390, 430, 600, 768, 820, 1024, 1280, 
 
 - Alert dialogs could not scroll in landscape.
 - text-size-adjust and touch-action not set.
+
+## Result
+
+Zero page overflow, zero clipped content and no sub-24px touch targets across all public routes at every tested width.
