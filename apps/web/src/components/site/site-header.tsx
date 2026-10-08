@@ -1,4 +1,4 @@
-import { Brand } from "@byte-quest/ui/components/brand";
+import { BrandLockup } from "@byte-quest/ui/components/brand";
 import { useScrolled } from "@byte-quest/ui/hooks/use-scrolled";
 import { cn } from "@byte-quest/ui/lib/utils";
 import {
@@ -72,8 +72,14 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
           className="text-fg hover:text-fg flex shrink-0 items-center gap-3"
           to="/"
         >
-          <Brand
-            className={
+          <BrandLockup
+            crestClassName={
+              scrolled
+                ? "h-7 min-[380px]:h-[30px]"
+                : "h-7 min-[380px]:h-8 sm:h-9"
+            }
+            crestSrc="/assets/crest.png"
+            logoClassName={
               scrolled
                 ? "h-6 min-[380px]:h-[26px]"
                 : "h-6 min-[380px]:h-7 sm:h-8"
