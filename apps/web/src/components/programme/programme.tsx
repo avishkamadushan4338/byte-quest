@@ -7,7 +7,7 @@ import { Milestones } from "./milestones";
 import { Structure } from "./structure";
 
 export const Programme = () => (
-  <main className="bg-ink overflow-x-hidden">
+  <main className="bg-ink">
     <Hero />
     <Structure />
     <Milestones />

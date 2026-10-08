@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { StatusShell } from "./status-shell";
 
 const BRAND_SRC = "/assets/bq-logo.png";
-const SACOBA_SRC = "/assets/sacoba-logo.png";
+const CREST_SRC = "/assets/crest.png";
 const TICK_MS = 110;
 const HOLD_TICKS = 8;
 const STEP_SIZE = 25;
@@ -65,9 +65,9 @@ export const LoadingScreen = () => {
 
         <header className="relative flex items-center justify-between gap-4">
           <img
-            alt="SACOBA — Old Boys' Association, St. Aloysius' College"
+            alt="St. Aloysius' College Galle crest"
             className="h-[clamp(30px,3.4vw,40px)] w-auto"
-            src={SACOBA_SRC}
+            src={CREST_SRC}
           />
           <span className="text-faint font-mono text-[10.5px] tracking-[0.2em] whitespace-nowrap">
             INTER SCHOOL · 2026

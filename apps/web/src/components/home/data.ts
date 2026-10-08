@@ -1,4 +1,4 @@
-export const crestAlt = "SACOBA — St. Aloysius' College Old Boys' Association";
+export const crestAlt = "St. Aloysius' College Galle crest";
 
 export const pillars = [
   {

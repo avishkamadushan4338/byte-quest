@@ -81,7 +81,11 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 ? "h-7 min-[380px]:h-[30px]"
                 : "h-8 min-[380px]:h-9 sm:h-10"
             }
-            logoClassName="h-4 min-[380px]:h-5 min-[480px]:h-6 sm:h-7"
+            logoClassName={
+              scrolled
+                ? "h-6 min-[380px]:h-[26px]"
+                : "h-6 min-[380px]:h-7 sm:h-8"
+            }
             crestSrc={CREST_SRC}
           />
         </Link>
@@ -108,18 +112,25 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 className="mx-1 hidden h-4 w-px bg-[rgba(185,245,208,0.16)] min-[900px]:block"
               />
             </>
-          ) : null}
+          ) : (
+            <>
+              <Link
+                className={cn(navLinkClass, "hidden min-[900px]:inline-flex")}
+                to="/auth/login"
+              >
+                Sign in
+              </Link>
+              <span
+                aria-hidden="true"
+                className="mx-1 hidden h-4 w-px bg-[rgba(185,245,208,0.16)] min-[900px]:block"
+              />
+            </>
+          )}
           <Link
-            className="text-fg hover:text-fg hidden items-center rounded-full border border-[rgba(185,245,208,0.18)] bg-[rgba(185,245,208,0.03)] px-[18px] py-2.5 text-[13px] font-semibold tracking-[0.01em] whitespace-nowrap transition-all duration-200 hover:border-[rgba(82,255,61,0.55)] hover:bg-[rgba(82,255,61,0.07)] min-[760px]:inline-flex"
-            to="/register/volunteer"
+            className="group bg-volt text-ink hover:text-ink hover:bg-lime inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[13px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)]"
+            to="/volunteers"
           >
-            Become a volunteer
-          </Link>
-          <Link
-            className="group bg-volt text-ink hover:text-ink hover:bg-lime hidden items-center gap-1.5 rounded-full px-5 py-2.5 text-[13px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)] min-[540px]:inline-flex"
-            to="/register"
-          >
-            Register Now
+            Volunteer
             <ArrowRightIcon
               aria-hidden="true"
               className="transition-transform duration-200 group-hover:translate-x-0.5"
@@ -191,17 +202,10 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 <Link
                   className="bg-volt text-ink hover:text-ink hover:bg-lime inline-flex min-h-11 items-center gap-1.5 rounded-full px-5 text-[14px] font-bold"
                   onClick={closeMenu}
-                  to="/register"
+                  to="/volunteers"
                 >
-                  Register Now
+                  Volunteer with us
                   <ArrowRightIcon aria-hidden="true" weight="bold" />
-                </Link>
-                <Link
-                  className="text-fg hover:text-fg inline-flex min-h-11 items-center rounded-full border border-[rgba(185,245,208,0.18)] px-5 text-[14px] font-semibold"
-                  onClick={closeMenu}
-                  to="/register/volunteer"
-                >
-                  Become a volunteer
                 </Link>
               </div>
               <div className="text-muted-2 flex flex-wrap justify-between gap-3 font-mono text-[11px] tracking-[0.08em]">

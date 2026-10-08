@@ -1,7 +1,7 @@
 import type { ImgHTMLAttributes } from "react";
 import { cn } from "@byte-quest/ui/lib/utils";
 
-const BRAND_LOGO_SRC = "/assets/bq-logo.png";
+const BRAND_LOGO_SRC = "/assets/bq-logo-mark.png";
 
 type BrandProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt"> & {
   size?: "sm" | "lg";
@@ -11,7 +11,7 @@ function Brand({ size = "sm", className, ...props }: BrandProps) {
   return (
     <img
       alt="BYTE QUEST"
-      className={cn("block w-auto", size === "lg" ? "h-[30px]" : "h-7", className)}
+      className={cn("block w-auto", size === "lg" ? "h-8" : "h-7", className)}
       src={BRAND_LOGO_SRC}
       {...props}
     />

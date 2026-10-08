@@ -184,15 +184,6 @@ export const ApplicationForm = ({
                 value={student.fullName}
               />
               <InputField
-                error={errors.student?.school}
-                id="school"
-                label="School"
-                onValueChange={(value) => onStudentChange({ school: value })}
-                placeholder="School name"
-                requirement="required"
-                value={student.school}
-              />
-              <InputField
                 error={errors.student?.admissionNumber}
                 id="admission-number"
                 label="Admission number"

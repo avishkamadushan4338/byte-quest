@@ -1,4 +1,4 @@
-import { adminApplication, userProfile } from "@byte-quest/db";
+import { account, adminApplication, user, userProfile } from "@byte-quest/db";
 import { ORPCError } from "@orpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -8,7 +8,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../../index";
-import { generatePassword } from "../../lib/credentials";
+import { generatePassword, generateUsername } from "../../lib/credentials";
 
 /** Primary division covers grades 6-9; secondary covers grades 10-13. */
 export const inferDivision = (grade: string): "primary" | "secondary" =>
@@ -247,19 +247,86 @@ export const accessRouter = {
         )
       )
       .handler(async ({ context }) => {
-        const profiles = await context.db
+        const rows = await context.db
           .select({
             userId: userProfile.userId,
+            username: user.username,
             role: userProfile.role,
             fullName: userProfile.fullName,
           })
-          .from(userProfile);
-        return profiles.map((profile) => ({
-          userId: profile.userId,
-          username: null,
-          role: profile.role,
-          fullName: profile.fullName,
+          .from(userProfile)
+          .leftJoin(user, eq(userProfile.userId, user.id));
+        return rows.map((row) => ({
+          userId: row.userId,
+          username: row.username ?? null,
+          role: row.role,
+          fullName: row.fullName,
         }));
+      }),
+
+    /** Admin: create a new user account with a provisioned username & password. */
+    createUser: adminProcedure
+      .input(
+        z.object({
+          fullName: z.string().min(1, "Full name is required"),
+          role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
+          email: z.string().email("Invalid email").optional(),
+          grade: gradeSchema.default("10"),
+          schoolId: z.string().optional(),
+        })
+      )
+      .output(
+        z.object({
+          userId: z.string(),
+          fullName: z.string(),
+          username: z.string(),
+          password: z.string(),
+          role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
+        })
+      )
+      .handler(async ({ context, input }) => {
+        const username = generateUsername(input.fullName);
+        const password = generatePassword();
+        const email =
+          input.email?.trim() ||
+          `${username}@${input.role === "volunteer" ? "volunteers" : "users"}.bytequest.lk`;
+
+        let userId: string;
+        try {
+          const createdUser = await context.auth.api.signUpEmail({
+            body: {
+              email,
+              name: input.fullName.trim(),
+              password,
+              username,
+            },
+          });
+          userId = createdUser.user.id;
+        } catch (error) {
+          throw new ORPCError("CONFLICT", {
+            message:
+              error instanceof Error && error.message
+                ? error.message
+                : "Could not create user account",
+          });
+        }
+
+        await context.db.insert(userProfile).values({
+          userId,
+          fullName: input.fullName.trim(),
+          nationalId: `ID-${userId.slice(0, 8).toUpperCase()}`,
+          birthday: "2008-01-01",
+          grade: input.grade,
+          role: input.role,
+        });
+
+        return {
+          userId,
+          fullName: input.fullName.trim(),
+          username,
+          password,
+          role: input.role,
+        };
       }),
 
     /** Admin: change a user's role (RBAC control). */
@@ -291,6 +358,90 @@ export const accessRouter = {
         return { userId: updated.userId, role: updated.role };
       }),
 
+    /** Admin: rotate a participant's password and return the new credential. Admin accounts cannot be rotated. */
+    rotateUserPassword: adminProcedure
+      .input(
+        z.object({
+          userId: z.string(),
+        })
+      )
+      .output(
+        z.object({
+          userId: z.string(),
+          fullName: z.string(),
+          password: z.string(),
+        })
+      )
+      .handler(async ({ context, input }) => {
+        const [targetProfile] = await context.db
+          .select({
+            userId: userProfile.userId,
+            fullName: userProfile.fullName,
+            role: userProfile.role,
+          })
+          .from(userProfile)
+          .where(eq(userProfile.userId, input.userId));
+
+        if (!targetProfile) {
+          throw new ORPCError("NOT_FOUND", {
+            message: "User profile not found",
+          });
+        }
+
+        if (targetProfile.role === "admin") {
+          throw new ORPCError("FORBIDDEN", {
+            message: "Admin password rotation is not allowed.",
+          });
+        }
+
+        const newPassword = generatePassword();
+        const authContext = await context.auth.$context;
+        const hashedPassword = await authContext.password.hash(newPassword);
+
+        // Update password on account credentials
+        const updated = await context.db
+          .update(account)
+          .set({
+            password: hashedPassword,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(account.userId, input.userId),
+              eq(account.providerId, "credential")
+            )
+          )
+          .returning({ id: account.id });
+
+        if (updated.length === 0) {
+          // If no credential account row exists, also check providerId: email or insert
+          const anyAccount = await context.db
+            .select({ id: account.id, providerId: account.providerId })
+            .from(account)
+            .where(eq(account.userId, input.userId));
+
+          if (anyAccount.length > 0) {
+            await context.db
+              .update(account)
+              .set({
+                password: hashedPassword,
+                updatedAt: new Date(),
+              })
+              .where(eq(account.userId, input.userId));
+          } else {
+            throw new ORPCError("NOT_FOUND", {
+              message: "No authentication account found for this user",
+            });
+          }
+        }
+
+        return {
+          userId: targetProfile.userId,
+          fullName: targetProfile.fullName,
+          password: newPassword,
+        };
+      }),
+
     /** Public: apply for admin (organising committee) access. */
     applyForAdmin: publicProcedure
       .input(adminApplicationInputSchema)
@@ -314,6 +465,33 @@ export const accessRouter = {
         if (pending) {
           throw new ORPCError("CONFLICT", {
             message: "You already have an application awaiting review",
+          });
+        }
+
+        const [existingApproved] = await context.db
+          .select({ id: adminApplication.id })
+          .from(adminApplication)
+          .where(
+            and(
+              eq(adminApplication.email, input.email),
+              eq(adminApplication.status, "approved")
+            )
+          );
+        if (existingApproved) {
+          throw new ORPCError("CONFLICT", {
+            message:
+              "An admin account for this email is already approved. Admin password rotation is not allowed.",
+          });
+        }
+
+        const [existingUser] = await context.db
+          .select({ id: user.id })
+          .from(user)
+          .where(eq(user.email, input.email));
+        if (existingUser) {
+          throw new ORPCError("CONFLICT", {
+            message:
+              "An account with this email already exists. Admin password rotation is not allowed.",
           });
         }
 
@@ -396,7 +574,8 @@ export const accessRouter = {
         }
         if (row.status !== "pending") {
           throw new ORPCError("CONFLICT", {
-            message: "Application already decided",
+            message:
+              "Application already decided. Admin password rotation is not allowed.",
           });
         }
 

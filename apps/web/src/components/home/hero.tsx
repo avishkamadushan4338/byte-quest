@@ -8,7 +8,7 @@ import { crestAlt } from "./data";
 import { HeroDots } from "./hero-dots";
 
 const AVATAR_SRC = "/assets/hero-avatar.png";
-const CREST_SRC = "/assets/sacoba-logo.png";
+const CREST_SRC = "/assets/crest.png";
 
 export const Hero = () => (
   <section
@@ -84,9 +84,9 @@ export const Hero = () => (
           <Button
             className="h-auto px-6 py-[15px] text-[14.5px]"
             nativeButton={false}
-            render={<Link to="/register/team" />}
+            render={<Link to="/volunteers" />}
           >
-            <ArrowLabel>Register your team →</ArrowLabel>
+            <ArrowLabel>Join as Volunteer →</ArrowLabel>
           </Button>
           <Button
             className="h-auto px-6 py-[15px] text-[14.5px]"

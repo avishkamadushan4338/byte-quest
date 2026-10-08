@@ -1,6 +1,6 @@
 import { crestAlt, organiser } from "./data";
 
-const CREST_SRC = "/assets/sacoba-logo.png";
+const CREST_SRC = "/assets/crest.png";
 
 export const Organisers = () => (
   <section

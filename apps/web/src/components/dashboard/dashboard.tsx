@@ -110,7 +110,7 @@ export const Dashboard = ({ me, submission, team }: DashboardProps) => {
   };
 
   return (
-    <main className="bg-ink overflow-x-hidden">
+    <main className="bg-ink">
       <PageHero
         aside={<StatStrip items={stats} />}
         id="dashboard"

@@ -2,7 +2,7 @@ import { SubpageHero } from "@/components/site/subpage-hero";
 
 import { aboutLead, crestAlt } from "./data";
 
-const OBA_LOGO_SRC = "/assets/sacoba-logo.png";
+const OBA_LOGO_SRC = "/assets/crest.png";
 
 export const Hero = () => (
   <SubpageHero

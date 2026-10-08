@@ -50,9 +50,6 @@ const validateStudent = (student: StudentDetails): StudentErrors => {
   if (student.fullName.trim().length === 0) {
     errors.fullName = validationCopy.required;
   }
-  if (student.school.trim().length === 0) {
-    errors.school = validationCopy.required;
-  }
   if (student.admissionNumber.trim().length === 0) {
     errors.admissionNumber = validationCopy.required;
   }
@@ -233,7 +230,7 @@ export const Volunteers = () => {
   };
 
   return (
-    <main className="bg-ink overflow-x-hidden">
+    <main className="bg-ink">
       <Hero />
       {reference === null ? (
         <ApplicationForm

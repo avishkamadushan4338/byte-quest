@@ -19,14 +19,15 @@ export const CallToAction = () => (
         Your idea could be next.
       </h2>
       <p className="text-muted mx-auto mt-6 mb-0 max-w-[460px] text-[17px] leading-[1.6]">
-        Register your team. Build something meaningful.
+        Team registration is currently closed. You can still get involved by
+        joining as a student volunteer or reading the programme.
       </p>
       <div className="mt-9 flex flex-wrap justify-center gap-2.5">
         <Link
           className="bg-volt text-ink hover:bg-lime hover:text-ink inline-flex items-center rounded-full px-[30px] py-[17px] text-[15px] font-bold whitespace-nowrap shadow-[0_18px_50px_-15px_rgba(82,255,61,0.7)]"
-          to="/register/team"
+          to="/volunteers"
         >
-          <ArrowLabel>Register now →</ArrowLabel>
+          <ArrowLabel>Volunteer with us →</ArrowLabel>
         </Link>
         <Link
           className="text-fg hover:border-volt hover:text-fg inline-flex items-center rounded-full border border-[rgba(242,247,244,0.26)] px-[30px] py-[17px] text-[15px] font-semibold whitespace-nowrap"
@@ -36,7 +37,7 @@ export const CallToAction = () => (
         </Link>
       </div>
       <p className="text-muted-2 mt-6 mb-0 font-mono text-[11px] tracking-[0.1em]">
-        REGISTRATION DATES TO BE ANNOUNCED
+        TEAM REGISTRATION CLOSED · VOLUNTEER APPLICATIONS OPEN
       </p>
     </div>
   </section>

@@ -12,7 +12,7 @@ import { WhatIs } from "@/components/home/what-is";
 import { Reveal } from "@/components/site/motion";
 
 const HomeComponent = () => (
-  <main className="bg-ink overflow-x-hidden">
+  <main className="bg-ink">
     <Hero />
     <Reveal>
       <WhatIs />

@@ -606,7 +606,7 @@ export const Register = () => {
 
   if (isClosed && !submitted) {
     return (
-      <main className="bg-ink overflow-x-hidden">
+      <main className="bg-ink">
         <SubpageHero
           className="pt-[clamp(48px,6vw,80px)] pb-[clamp(28px,4vw,44px)] [&_h1]:mt-4 [&_h1]:text-[clamp(40px,5.5vw,76px)]"
           kicker={registerHero.kicker}
@@ -626,7 +626,7 @@ export const Register = () => {
   }
 
   return (
-    <main className="bg-ink overflow-x-hidden">
+    <main className="bg-ink">
       <SubpageHero
         aside={
           <div className="flex flex-wrap gap-2">

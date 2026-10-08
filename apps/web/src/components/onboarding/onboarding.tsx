@@ -96,7 +96,7 @@ export const Onboarding = () => {
   }));
 
   return (
-    <main className="bg-ink overflow-x-hidden">
+    <main className="bg-ink">
       <PageHero
         id="onboarding"
         kicker={onboardingHero.kicker}

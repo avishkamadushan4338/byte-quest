@@ -9,7 +9,7 @@ import { Philosophy } from "./philosophy";
 import { VisionMission } from "./vision-mission";
 
 export const About = () => (
-  <main className="bg-ink overflow-x-hidden">
+  <main className="bg-ink">
     <Hero />
     <Philosophy />
     <VisionMission />

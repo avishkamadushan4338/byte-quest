@@ -12,7 +12,7 @@ const navLinkClass =
 const navLinkActiveClass = "bg-volt/10 border-volt/30 text-volt";
 
 export const AdminShell = ({ children }: { children: ReactNode }) => (
-  <main className="bg-ink overflow-x-hidden">
+  <main className="bg-ink">
     <PageHero
       glow="gold"
       id="admin"

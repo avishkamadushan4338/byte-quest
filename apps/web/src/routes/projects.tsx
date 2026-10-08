@@ -1,13 +1,15 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { Projects } from "@/components/projects/projects";
+import { ComingSoonPage } from "@/components/status/coming-soon-page";
 
-const ProjectsRoute = () => <Projects />;
+const ProjectsRoute = () => (
+  <ComingSoonPage
+    description="Student showcase and innovation projects will be featured here as teams build and publish their solutions."
+    heading="Explore the projects, soon."
+  />
+);
 
 export const Route = createFileRoute("/projects")({
-  beforeLoad: () => {
-    throw redirect({ to: "/" });
-  },
   head: () => ({ meta: [{ title: "Projects | BYTE QUEST" }] }),
   component: ProjectsRoute,
 });

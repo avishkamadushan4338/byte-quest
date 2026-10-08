@@ -4,7 +4,7 @@ import { PartnerWall } from "./partner-wall";
 import { Tiers } from "./tiers";
 
 export const Partners = () => (
-  <main className="bg-ink overflow-x-hidden">
+  <main className="bg-ink">
     <Hero />
     <Tiers />
     <PartnerWall />

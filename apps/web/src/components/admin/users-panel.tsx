@@ -1,5 +1,6 @@
 import { Badge } from "@byte-quest/ui/components/badge";
 import { EmptyState } from "@byte-quest/ui/components/callout";
+import { TextField } from "@byte-quest/ui/components/fields";
 import {
   Table,
   TableBody,
@@ -9,9 +10,26 @@ import {
   TableRow,
   TableWrapper,
 } from "@byte-quest/ui/components/table";
+import {
+  AlertDialogBackdrop,
+  AlertDialogClose,
+  AlertDialogDescription,
+  AlertDialogPopup,
+  AlertDialogPortal,
+  AlertDialogRoot,
+  AlertDialogTitle,
+  AlertDialogViewport,
+} from "@byte-quest/ui/primitives/alert-dialog";
 import { Button } from "@byte-quest/ui/primitives/button";
 import { Skeleton } from "@byte-quest/ui/primitives/skeleton";
+import {
+  CheckIcon,
+  CopyIcon,
+  KeyIcon,
+  UserPlusIcon,
+} from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { orpc } from "@/utils/orpc";
@@ -21,10 +39,31 @@ import { roleBadgeTones, roleLabels, usersCopy, usersEmpty } from "./data";
 
 const SKELETON_KEYS = ["skeleton-1", "skeleton-2", "skeleton-3", "skeleton-4"];
 
+interface PasswordDialogState {
+  fullName: string;
+  open: boolean;
+  password: string;
+  username?: string;
+  isNewUser?: boolean;
+}
+
+interface NewUserForm {
+  email: string;
+  fullName: string;
+  open: boolean;
+  role: UserRole;
+}
+
 export const UsersPanel = () => {
   const queryClient = useQueryClient();
   const users = useQuery(orpc.access.listUsers.queryOptions());
   const me = useQuery(orpc.access.me.queryOptions());
+  const [copied, setCopied] = useState(false);
+  const [rotatedCreds, setRotatedCreds] = useState<PasswordDialogState>({
+    fullName: "",
+    open: false,
+    password: "",
+  });
 
   const setRole = useMutation(
     orpc.access.setRole.mutationOptions({
@@ -40,21 +79,106 @@ export const UsersPanel = () => {
     })
   );
 
+  const rotatePassword = useMutation(
+    orpc.access.rotateUserPassword.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message || "Failed to rotate password");
+      },
+      onSuccess: (data) => {
+        setRotatedCreds({
+          fullName: data.fullName,
+          open: true,
+          password: data.password,
+        });
+        setCopied(false);
+        toast.success(usersCopy.rotatePasswordSuccess);
+      },
+    })
+  );
+
+  const [newUser, setNewUser] = useState<NewUserForm>({
+    email: "",
+    fullName: "",
+    open: false,
+    role: "student",
+  });
+
+  const createUser = useMutation(
+    orpc.access.createUser.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message || "Failed to create user");
+      },
+      onSuccess: async (data) => {
+        setNewUser((prev) => ({ ...prev, open: false }));
+        await queryClient.invalidateQueries({
+          queryKey: orpc.access.listUsers.key(),
+        });
+        setRotatedCreds({
+          fullName: data.fullName,
+          isNewUser: true,
+          open: true,
+          password: data.password,
+          username: data.username,
+        });
+        setCopied(false);
+        toast.success(usersCopy.addUserSuccess);
+      },
+    })
+  );
+
   const handleRoleChange = (userId: string, role: UserRole) => {
     setRole.mutate({ userId, role });
+  };
+
+  const handleRotatePassword = (userId: string, role: UserRole) => {
+    if (role === "admin") {
+      toast.error(usersCopy.rotateAdminForbidden);
+      return;
+    }
+    rotatePassword.mutate({ userId });
+  };
+
+  const handleCopyPassword = async () => {
+    if (!rotatedCreds.password) {
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(rotatedCreds.password);
+      setCopied(true);
+      toast.success(usersCopy.copiedPassword);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Failed to copy to clipboard");
+    }
   };
 
   const rows = users.data ?? [];
 
   return (
     <div className="grid gap-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Button
+          onClick={() =>
+            setNewUser({
+              email: "",
+              fullName: "",
+              open: true,
+              role: "student",
+            })
+          }
+        >
+          <UserPlusIcon aria-hidden="true" className="mr-1.5 size-4" />
+          {usersCopy.addUser}
+        </Button>
+      </div>
+
       {users.isPending ? (
         <TableWrapper>
           <Table>
             <TableHead>
               <TableRow>
                 <TableHeadCell>Name</TableHeadCell>
-                <TableHeadCell>User ID</TableHeadCell>
+                <TableHeadCell>Username / ID</TableHeadCell>
                 <TableHeadCell>Role</TableHeadCell>
                 <TableHeadCell>Actions</TableHeadCell>
               </TableRow>
@@ -94,7 +218,7 @@ export const UsersPanel = () => {
             <TableHead>
               <TableRow>
                 <TableHeadCell>Name</TableHeadCell>
-                <TableHeadCell>User ID</TableHeadCell>
+                <TableHeadCell>Username / ID</TableHeadCell>
                 <TableHeadCell>Role</TableHeadCell>
                 <TableHeadCell>Actions</TableHeadCell>
               </TableRow>
@@ -116,9 +240,16 @@ export const UsersPanel = () => {
                       ) : null}
                     </TableCell>
                     <TableCell>
-                      <span className="text-muted-2 inline-block max-w-[180px] truncate align-bottom font-mono text-[12.5px]">
-                        {user.userId}
-                      </span>
+                      <div className="flex flex-col">
+                        {user.username ? (
+                          <span className="text-volt font-mono text-[13px] font-semibold">
+                            @{user.username}
+                          </span>
+                        ) : null}
+                        <span className="text-muted-2 inline-block max-w-[180px] truncate align-bottom font-mono text-[11.5px]">
+                          {user.userId}
+                        </span>
+                      </div>
                     </TableCell>
                     <TableCell>
                       <Badge tone={roleBadgeTones[user.role]}>
@@ -151,6 +282,22 @@ export const UsersPanel = () => {
                         >
                           {usersCopy.makeStudent}
                         </Button>
+                        {user.role === "admin" ? null : (
+                          <Button
+                            disabled={rotatePassword.isPending}
+                            onClick={() =>
+                              handleRotatePassword(user.userId, user.role)
+                            }
+                            size="sm"
+                            variant="outline"
+                          >
+                            <KeyIcon
+                              aria-hidden="true"
+                              className="mr-1 size-3.5"
+                            />
+                            {usersCopy.rotatePassword}
+                          </Button>
+                        )}
                       </div>
                       {isSelf ? (
                         <span className="text-faint-2 mt-2 block text-[12px]">
@@ -165,6 +312,204 @@ export const UsersPanel = () => {
           </Table>
         </TableWrapper>
       ) : null}
+
+      <AlertDialogRoot
+        onOpenChange={(open) => {
+          if (!open) {
+            setRotatedCreds((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        open={rotatedCreds.open}
+      >
+        <AlertDialogPortal>
+          <AlertDialogBackdrop />
+          <AlertDialogViewport>
+            <AlertDialogPopup className="max-w-[480px]">
+              <div className="flex items-center gap-2.5">
+                <div className="text-volt flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(82,255,61,0.12)]">
+                  <KeyIcon aria-hidden="true" className="size-5" />
+                </div>
+                <div>
+                  <AlertDialogTitle>
+                    {usersCopy.rotatePasswordTitle}
+                  </AlertDialogTitle>
+                  <p className="text-muted text-[13px] font-medium">
+                    {rotatedCreds.fullName}
+                  </p>
+                </div>
+              </div>
+
+              <AlertDialogDescription className="mt-3">
+                {usersCopy.rotatePasswordDescription}
+              </AlertDialogDescription>
+
+              <div className="bg-ink/70 mt-5 rounded-[14px] border border-[rgba(185,245,208,0.14)] p-4">
+                {rotatedCreds.username ? (
+                  <div className="mb-3 border-b border-[rgba(185,245,208,0.1)] pb-2.5">
+                    <span className="text-muted-2 block font-mono text-[11px] tracking-[0.14em] uppercase">
+                      Username (Handle)
+                    </span>
+                    <span className="text-volt mt-1 block font-mono text-[16px] font-bold">
+                      @{rotatedCreds.username}
+                    </span>
+                  </div>
+                ) : null}
+                <span className="text-muted-2 block font-mono text-[11px] tracking-[0.14em] uppercase">
+                  {rotatedCreds.isNewUser
+                    ? "Temporary Password"
+                    : "New Password"}
+                </span>
+                <div className="mt-2 flex items-center justify-between gap-3">
+                  <code className="text-volt font-mono text-[16px] font-bold tracking-wider select-all">
+                    {rotatedCreds.password}
+                  </code>
+                  <Button
+                    onClick={handleCopyPassword}
+                    size="sm"
+                    variant={copied ? "primary" : "outline"}
+                  >
+                    {copied ? (
+                      <>
+                        <CheckIcon
+                          aria-hidden="true"
+                          className="mr-1.5 size-3.5"
+                        />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <CopyIcon
+                          aria-hidden="true"
+                          className="mr-1.5 size-3.5"
+                        />
+                        {usersCopy.copyPassword}
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <AlertDialogClose
+                  render={
+                    <Button
+                      onClick={() =>
+                        setRotatedCreds((prev) => ({ ...prev, open: false }))
+                      }
+                      variant="primary"
+                    >
+                      {usersCopy.closeDialog}
+                    </Button>
+                  }
+                />
+              </div>
+            </AlertDialogPopup>
+          </AlertDialogViewport>
+        </AlertDialogPortal>
+      </AlertDialogRoot>
+
+      {/* Add User Dialog */}
+      <AlertDialogRoot
+        onOpenChange={(open) => {
+          if (!open) {
+            setNewUser((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        open={newUser.open}
+      >
+        <AlertDialogPortal>
+          <AlertDialogBackdrop />
+          <AlertDialogViewport>
+            <AlertDialogPopup className="max-w-[480px]">
+              <div className="flex items-center gap-2.5">
+                <div className="text-volt flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(82,255,61,0.12)]">
+                  <UserPlusIcon aria-hidden="true" className="size-5" />
+                </div>
+                <div>
+                  <AlertDialogTitle>{usersCopy.addUserTitle}</AlertDialogTitle>
+                  <p className="text-muted text-[13px] font-medium">
+                    {usersCopy.addUserDescription}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 grid gap-4">
+                <TextField
+                  id="new-user-fullname"
+                  label="Full Name"
+                  onValueChange={(val) =>
+                    setNewUser((prev) => ({ ...prev, fullName: val }))
+                  }
+                  placeholder="e.g. Kasun Perera"
+                  required
+                  value={newUser.fullName}
+                />
+
+                <TextField
+                  id="new-user-email"
+                  label="Email (Optional)"
+                  onValueChange={(val) =>
+                    setNewUser((prev) => ({ ...prev, email: val }))
+                  }
+                  placeholder="e.g. kasun@example.com"
+                  type="email"
+                  value={newUser.email}
+                />
+
+                <div className="flex flex-col gap-1.5">
+                  <label
+                    className="text-fg-dim text-[13px] font-semibold"
+                    htmlFor="new-user-role"
+                  >
+                    Role
+                  </label>
+                  <select
+                    className="bg-surface text-fg focus:border-volt rounded-[11px] border border-[rgba(185,245,208,0.18)] px-3 py-2.5 text-[14px] outline-none"
+                    id="new-user-role"
+                    onChange={(e) =>
+                      setNewUser((prev) => ({
+                        ...prev,
+                        role: e.target.value as UserRole,
+                      }))
+                    }
+                    value={newUser.role}
+                  >
+                    <option value="student">Student</option>
+                    <option value="leader">Team Leader</option>
+                    <option value="volunteer">Volunteer</option>
+                    <option value="mic">MIC (Teacher)</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2.5">
+                <Button
+                  onClick={() =>
+                    setNewUser((prev) => ({ ...prev, open: false }))
+                  }
+                  variant="outline"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={!newUser.fullName.trim() || createUser.isPending}
+                  onClick={() => {
+                    createUser.mutate({
+                      fullName: newUser.fullName.trim(),
+                      role: newUser.role,
+                      email: newUser.email.trim() || undefined,
+                    });
+                  }}
+                  variant="primary"
+                >
+                  Create user
+                </Button>
+              </div>
+            </AlertDialogPopup>
+          </AlertDialogViewport>
+        </AlertDialogPortal>
+      </AlertDialogRoot>
     </div>
   );
 };

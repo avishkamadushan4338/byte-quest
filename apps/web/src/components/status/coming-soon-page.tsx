@@ -11,7 +11,7 @@ import {
 } from "./status-shell";
 
 const BRAND_SRC = "/assets/bq-logo.png";
-const SACOBA_SRC = "/assets/sacoba-logo.png";
+const CREST_SRC = "/assets/crest.png";
 const CURRENT_YEAR = new Date().getFullYear();
 const DEFAULT_DESCRIPTION =
   "A three-month innovation and coding programme for Sri Lanka's young innovators. Get notified the moment registrations open.";
@@ -155,9 +155,9 @@ export const ComingSoonPage = ({
             PRESENTED BY
           </span>
           <img
-            alt="SACOBA — Old Boys' Association, St. Aloysius' College"
+            alt="St. Aloysius' College Galle crest"
             className="h-10 w-auto"
-            src={SACOBA_SRC}
+            src={CREST_SRC}
           />
         </div>
         <span className="text-faint-2 font-mono text-[10.5px] tracking-[0.1em]">

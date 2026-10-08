@@ -25,6 +25,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import {
+  findSchoolByName,
+  schoolNameOptions,
+} from "@/components/register/school-catalog";
+import { ComboboxField } from "@/components/site/design-fields";
 import { orpc } from "@/utils/orpc";
 
 import type { AdminSchool, SchoolDialogState, SchoolFormErrors } from "./data";
@@ -249,15 +254,26 @@ export const SchoolsPanel = () => {
               </AlertDialogDescription>
 
               <div className="mt-6 grid gap-4">
-                <TextField
+                <ComboboxField
+                  allowFreeText
                   error={errors.name}
                   id="school-name"
                   label="Name"
-                  onValueChange={(value) =>
-                    setDialog((current) => ({ ...current, name: value }))
-                  }
-                  placeholder="e.g. Galle Royal College"
-                  required
+                  onValueChange={(value) => {
+                    const match = findSchoolByName(value);
+                    if (match) {
+                      setDialog((current) => ({
+                        ...current,
+                        name: match.name,
+                        city: current.city || match.district,
+                      }));
+                      return;
+                    }
+                    setDialog((current) => ({ ...current, name: value }));
+                  }}
+                  options={schoolNameOptions}
+                  placeholder="e.g. Richmond College"
+                  requirement="required"
                   value={dialog.name}
                 />
                 <TextField

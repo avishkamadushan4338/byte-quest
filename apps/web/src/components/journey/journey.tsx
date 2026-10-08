@@ -13,7 +13,7 @@ export const Journey = () => {
   const [phase, setPhase] = useState<PhaseFilter>(0);
 
   return (
-    <main className="bg-ink overflow-x-hidden">
+    <main className="bg-ink">
       <JourneyHero />
       <Phases onSelect={setPhase} phase={phase} />
       <WeekByWeek onPhaseChange={setPhase} phase={phase} />

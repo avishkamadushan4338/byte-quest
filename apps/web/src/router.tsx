@@ -17,8 +17,8 @@ export const getRouter = () => {
     defaultPreloadStaleTime: 0,
     context: { orpc, queryClient },
     defaultPendingComponent: LoadingScreen,
-    defaultPendingMs: 200,
-    defaultPendingMinMs: 800,
+    defaultPendingMs: 0,
+    defaultPendingMinMs: 1200,
     defaultNotFoundComponent: NotFoundPage,
     defaultErrorComponent: ErrorPage,
   });

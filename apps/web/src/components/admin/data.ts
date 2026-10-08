@@ -59,11 +59,25 @@ export const roleLabels: Record<UserRole, string> = {
 };
 
 export const usersCopy = {
+  addUser: "Add user",
+  addUserDescription:
+    "Provision a user account directly. A username and one-time password will be automatically generated.",
+  addUserSuccess: "User account created",
+  addUserTitle: "Create user account",
+  closeDialog: "Close",
+  copyPassword: "Copy password",
+  copiedPassword: "Password copied to clipboard",
   failureMessage: "We could not update that role",
   makeAdmin: "Make admin",
   makeStudent: "Make student",
   ownRowHint: "You cannot change your own role",
   roleUpdatedMessage: "Role updated",
+  rotateAdminForbidden: "Admin password rotation is not allowed",
+  rotatePassword: "Rotate password",
+  rotatePasswordDescription:
+    "A new password has been generated. Copy and share it securely with the user. It will not be shown again.",
+  rotatePasswordSuccess: "Password rotated successfully",
+  rotatePasswordTitle: "New password generated",
   youBadge: "You",
 };
 

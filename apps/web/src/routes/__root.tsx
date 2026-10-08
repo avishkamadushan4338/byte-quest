@@ -8,6 +8,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { Suspense } from "react";
 import { Toaster } from "sonner";
 
 import type { orpc } from "@/utils/orpc";
@@ -19,6 +20,7 @@ import {
 import { MotionProvider, PageTransition } from "../components/site/motion";
 import { SiteFooter } from "../components/site/site-footer";
 import { SiteHeader } from "../components/site/site-header";
+import { LoadingScreen } from "../components/status/loading-screen";
 import { getProfile } from "../functions/get-profile";
 import { getUser } from "../functions/get-user";
 
@@ -49,11 +51,13 @@ const RootDocument = () => {
         {isAdminRoute ? null : (
           <SiteHeader isAdmin={isAdmin} isSignedIn={isSignedIn} />
         )}
-        <MotionProvider>
-          <PageTransition routeKey={pathname.split("/")[1] ?? ""}>
-            <Outlet />
-          </PageTransition>
-        </MotionProvider>
+        <Suspense fallback={<LoadingScreen />}>
+          <MotionProvider>
+            <PageTransition routeKey={pathname.split("/")[1] ?? ""}>
+              <Outlet />
+            </PageTransition>
+          </MotionProvider>
+        </Suspense>
         <SiteFooter />
         <Toaster richColors theme="dark" />
         <TanStackRouterDevtools position="bottom-left" />
@@ -92,7 +96,9 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/assets/bq-logo.png" },
+      { rel: "icon", type: "image/png", href: "/assets/favicon.png" },
+      { rel: "shortcut icon", href: "/favicon.ico" },
+      { rel: "apple-touch-icon", href: "/assets/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "preconnect",

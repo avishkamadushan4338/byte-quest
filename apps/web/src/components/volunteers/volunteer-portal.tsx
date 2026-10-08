@@ -22,7 +22,7 @@ interface VolunteerPortalProps {
 }
 
 export const VolunteerPortal = ({ application }: VolunteerPortalProps) => (
-  <main className="bg-ink min-h-svh overflow-x-hidden px-[clamp(20px,5vw,64px)] py-32">
+  <main className="bg-ink min-h-svh px-[clamp(20px,5vw,64px)] py-32">
     <Container className="max-w-[720px]">
       <Kicker tone="gold">Volunteer</Kicker>
       <h1 className="mt-5 text-[clamp(32px,5vw,52px)] leading-[0.95] tracking-[-0.04em]">

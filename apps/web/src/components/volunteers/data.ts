@@ -90,14 +90,14 @@ export const applicationAside = {
 
 export const successPanel = {
   kicker: "APPLICATION RECEIVED",
-  titleStart: "Welcome to the crew,",
-  body: "Your official BYTE QUEST volunteer ID has been generated. Save it — you'll need it at programme events. The Student Volunteer Coordinator will contact you or your parent/guardian with next steps.",
+  titleStart: "Thank you,",
+  body: "Your application has been received and is currently pending review by the organizing committee. Once approved, your volunteer account credentials will be issued, allowing you to log in and access your official volunteer ID card.",
   statusLabel: "STATUS",
-  statusValue: "Pending coordinator approval",
-  idLabel: "VOLUNTEER ID",
+  statusValue: "Pending Review",
+  idLabel: "APPLICATION REF",
   downloadLabel: "Download ID card ↓",
-  resetLabel: "New application",
-  fallbackName: "volunteer",
+  resetLabel: "Submit another response",
+  fallbackName: "applicant",
 };
 
 export const idCard = {
@@ -182,7 +182,7 @@ export const relationshipOptions = [
 
 export const initialStudent: StudentDetails = {
   fullName: "",
-  school: "",
+  school: "St. Aloysius' College, Galle",
   admissionNumber: "",
   grade: null,
   className: "",
@@ -207,7 +207,6 @@ export const applicationChecklist = (
 ): ChecklistItem[] => {
   const hasStudentDetails = [
     state.student.fullName,
-    state.student.school,
     state.student.admissionNumber,
     state.student.className,
     state.student.contactNumber,
