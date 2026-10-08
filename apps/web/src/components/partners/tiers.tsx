@@ -1,4 +1,5 @@
 import { cn } from "@byte-quest/ui/lib/utils";
+import { ArrowRightIcon } from "@phosphor-icons/react";
 
 import { partnerTiers } from "./data";
 
@@ -47,7 +48,7 @@ export const Tiers = () => (
             href="#enquire"
           >
             <span>Enquire about {tier.name}</span>
-            <span aria-hidden="true">→</span>
+            <ArrowRightIcon aria-hidden="true" weight="bold" />
           </a>
         </div>
       ))}
