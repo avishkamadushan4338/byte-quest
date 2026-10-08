@@ -6,7 +6,6 @@ export const privacyPolicy: PolicyMeta = {
   pageTitle: "Privacy | BYTE QUEST",
   kicker: "PRIVACY",
   lede: "What BYTE QUEST collects, why we collect it, and what we never do with it.",
-  updated: "1 February 2026",
   sections: [
     {
       id: "what-we-collect",
@@ -93,7 +92,6 @@ export const termsPolicy: PolicyMeta = {
   pageTitle: "Terms | BYTE QUEST",
   kicker: "TERMS",
   lede: "The ground rules every BYTE QUEST participant agrees to.",
-  updated: "1 February 2026",
   sections: [
     {
       id: "eligibility",
@@ -166,7 +164,6 @@ export const codeOfConductPolicy: PolicyMeta = {
   pageTitle: "Code of Conduct | BYTE QUEST",
   kicker: "CODE OF CONDUCT",
   lede: "How we work together for twelve weeks.",
-  updated: "1 February 2026",
   sections: [
     {
       id: "respect",
@@ -239,7 +236,6 @@ export const submissionGuidelinesPolicy: PolicyMeta = {
   pageTitle: "Submission Guidelines | BYTE QUEST",
   kicker: "SUBMISSION GUIDELINES",
   lede: "What to submit, when, and how it is judged.",
-  updated: "1 February 2026",
   sections: [
     {
       id: "what-to-submit",

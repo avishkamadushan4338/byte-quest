@@ -280,6 +280,7 @@ export interface Organiser {
   title: string;
   body: string;
   motto: string;
+  email: string;
 }
 
 export const crestAlt = "St. Aloysius' College Galle crest";
@@ -292,4 +293,5 @@ export const organiser: Organiser = {
   title: "St. Aloysius' College, Galle — Old Boys' Association",
   body: "BYTE QUEST is organised by the OBA of St. Aloysius' College, Galle. Organising committee details will be published shortly.",
   motto: "CERTA VIRILITER",
+  email: "bytequest@aloysiuscollege.lk",
 };

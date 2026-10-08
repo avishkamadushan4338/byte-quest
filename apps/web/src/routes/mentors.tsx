@@ -1,14 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { ComingSoonPage } from "@/components/status/coming-soon-page";
+import { Mentors } from "@/components/mentors/mentors";
 import { buildSeoMeta } from "@/utils/seo";
 
-const MentorsRoute = () => (
-  <ComingSoonPage
-    description="Our mentor line-up is being finalised. Get notified when the mentors are announced."
-    heading="Meet the mentors, soon."
-  />
-);
+const MentorsRoute = () => <Mentors />;
 
 export const Route = createFileRoute("/mentors")({
   head: () => ({

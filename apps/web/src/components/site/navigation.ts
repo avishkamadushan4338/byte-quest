@@ -40,8 +40,6 @@ export const footerNavLinks: NavLink[] = [
 export const footerGuidelineLinks: NavLink[] = [
   { label: "Privacy", href: "/privacy" },
   { label: "Terms", href: "/terms" },
-  { label: "Code of Conduct", href: "/code-of-conduct" },
-  { label: "Submission Guidelines", href: "/submission-guidelines" },
 ];
 
 export const isInternalHref = (href: string) =>

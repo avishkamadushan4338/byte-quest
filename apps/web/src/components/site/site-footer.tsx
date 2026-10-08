@@ -75,26 +75,6 @@ const socials: { label: string; href: string; icon: ReactNode }[] = [
       />
     ),
   },
-  {
-    label: "LinkedIn",
-    href: "#contact",
-    icon: (
-      <path
-        d="M6.5 8.5h-3V20h3V8.5ZM5 3.8a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6ZM20.5 13.4c0-3-1.6-5.1-4.4-5.1-1.5 0-2.5.8-3 1.6V8.5h-3V20h3v-6c0-1.5.6-2.8 2.2-2.8 1.5 0 2.2 1.2 2.2 2.9V20h3v-6.6Z"
-        fill="currentColor"
-      />
-    ),
-  },
-  {
-    label: "TikTok",
-    href: "#contact",
-    icon: (
-      <path
-        d="M16.5 3h-3.2v12.3a2.8 2.8 0 1 1-2-2.7V9.4a6 6 0 1 0 5.2 5.9V9.1a7.6 7.6 0 0 0 4.3 1.3V7.2a4.3 4.3 0 0 1-4.3-4.2Z"
-        fill="currentColor"
-      />
-    ),
-  },
 ];
 
 const linkClass =

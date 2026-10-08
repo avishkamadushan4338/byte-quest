@@ -1,4 +1,6 @@
-import { organiser } from "./data";
+import { obaLogoAlt, organiser } from "./data";
+
+const SACOBA_SRC = "/assets/sacoba-logo.png";
 
 export const Organisers = () => (
   <section
@@ -16,12 +18,19 @@ export const Organisers = () => (
         <div className="text-gold font-mono text-[11px] tracking-[0.16em]">
           {organiser.kicker}
         </div>
+        <img alt={obaLogoAlt} className="h-11 w-auto" src={SACOBA_SRC} />
         <h2 className="m-0 text-[clamp(28px,3.2vw,44px)] leading-[1.05] tracking-[-0.03em]">
           {organiser.title}
         </h2>
         <p className="text-muted m-0 max-w-[480px] text-[15.5px] leading-[1.6]">
           {organiser.body}
         </p>
+        <a
+          className="text-gold hover:text-gold-bright text-[20px] font-semibold tracking-[-0.01em] underline-offset-4 hover:underline"
+          href={`mailto:${organiser.email}`}
+        >
+          {organiser.email}
+        </a>
         <div className="text-gold-bright font-mono text-[12px] tracking-[0.14em]">
           {organiser.motto}
         </div>

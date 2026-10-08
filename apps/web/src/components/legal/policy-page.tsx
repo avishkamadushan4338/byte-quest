@@ -15,19 +15,12 @@ export interface PolicyMeta {
   pageTitle: string;
   kicker: string;
   lede: string;
-  updated: string;
   sections: PolicySection[];
 }
 
 export const PolicyPage = ({ meta }: { meta: PolicyMeta }) => (
   <>
     <PageHero
-      aside={
-        <div className="border-line-soft flex items-center gap-3 rounded-[14px] border px-[18px] py-4">
-          <Kicker tone="faint">Last updated</Kicker>
-          <span className="text-muted text-[13px]">{meta.updated}</span>
-        </div>
-      }
       id={meta.slug}
       kicker={meta.kicker}
       lead={meta.lede}
