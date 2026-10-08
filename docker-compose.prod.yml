@@ -1,25 +1,37 @@
 name: byte-quest
 
-# Deploys the image already published to Docker Hub
-# (tenuka22/byte-quest), rather than building from this checkout.
-# Use this with a platform that only accepts compose YAML with no build
-# context attached (Plesk's "Add Stack -> Editor", a bare Docker host, etc).
+# Deploys the image published to GitLab Container Registry
+# (registry.gitlab.com/tenuka22/byte-quest), rather than building from this checkout.
+# Use this with Portainer, Plesk Docker Extension, or any Docker host.
 
 services:
   web:
-    image: tenuka22/byte-quest:${IMAGE_TAG:-latest}
+    image: registry.gitlab.com/tenuka22/byte-quest:${IMAGE_TAG:-latest}
+    init: true
     ports:
-      - "5001:5001"
+      - "${PORT:-5001}:5001"
     environment:
       NODE_ENV: production
       TZ: UTC
       PORT: "5001"
-      BETTER_AUTH_URL: ${SITE_URL:-https://bytequest.aloysiuscollege.lk}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-REPLACE_ME_32_CHAR_SECRET}
+      BETTER_AUTH_URL: ${SITE_URL:-${BETTER_AUTH_URL:-https://bytequest.aloysiuscollege.lk}}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       TURSO_DATABASE_URL: ${TURSO_DATABASE_URL:-libsql://byte-quest-tenuka22.aws-ap-northeast-1.turso.io}
-      TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN:-REPLACE_ME_TURSO_AUTH_TOKEN}
+      TURSO_AUTH_TOKEN: ${TURSO_AUTH_TOKEN}
     volumes:
       - byte-quest_data:/app/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:5001/').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     restart: unless-stopped
 
 volumes:

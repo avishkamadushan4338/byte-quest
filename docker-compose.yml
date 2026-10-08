@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
-    image: tenuka22/byte-quest:latest
+    image: registry.gitlab.com/tenuka22/byte-quest:latest
     init: true
     ports:
       - "${WEB_PORT:-5001}:${WEB_PORT:-5001}"
