@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 export const CallToAction = () => (
   <section
     className="relative overflow-hidden px-[clamp(20px,5vw,64px)] py-[clamp(88px,12vw,160px)]"
@@ -24,7 +26,7 @@ export const CallToAction = () => (
           className="bg-volt text-ink hover:bg-lime hover:text-ink inline-flex items-center rounded-full px-[30px] py-[17px] text-[15px] font-bold whitespace-nowrap shadow-[0_18px_50px_-15px_rgba(82,255,61,0.7)]"
           to="/register/team"
         >
-          Register now →
+          <ArrowLabel>Register now →</ArrowLabel>
         </Link>
         <Link
           className="text-fg hover:border-volt hover:text-fg inline-flex items-center rounded-full border border-[rgba(242,247,244,0.26)] px-[30px] py-[17px] text-[15px] font-semibold whitespace-nowrap"

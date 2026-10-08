@@ -15,7 +15,7 @@ export const Awards = () => (
   >
     <div className="mx-auto max-w-[1280px]">
       <HomeHeading
-        kicker="10 / AWARDS & RECOGNITION"
+        kicker="07 / AWARDS & RECOGNITION"
         leadClassName="max-w-[480px] text-[16.5px]"
         kickerColor="#D4AF37"
         lead="Awarded in both the Junior and Senior divisions at the Grand Final Innovation Expo."
