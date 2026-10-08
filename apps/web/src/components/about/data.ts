@@ -72,7 +72,7 @@ export const visionMission: VisionMissionCard[] = [
     id: "vision",
     kicker: "VISION",
     color: "#52FF3D",
-    copy: "A generation of Sri Lankan students who use technology to solve real problems.",
+    copy: "A generation of Sri Lankan students who build technology not just use it.",
     background: "linear-gradient(160deg,#0a2a20,#030f0b)",
     border: "rgba(82,255,61,0.18)",
     glow: "rgba(82,255,61,0.18)",
@@ -81,7 +81,7 @@ export const visionMission: VisionMissionCard[] = [
     id: "mission",
     kicker: "MISSION",
     color: "#F0D875",
-    copy: "To help students learn, build, innovate and inspire through a structured, mentored innovation journey.",
+    copy: "Give students structured, mentored, hands-on experience turning real problems into working digital solutions.",
     background: "linear-gradient(160deg,#1a190c,#030f0b)",
     border: "rgba(212,175,55,0.22)",
     glow: "rgba(212,175,55,0.16)",
@@ -283,11 +283,6 @@ export interface Organiser {
 }
 
 export const crestAlt = "SACOBA — St. Aloysius' College Old Boys' Association";
-
-export const presenter = {
-  line1: "Presented by St. Aloysius' College, Galle",
-  line2: "Old Boys' Association",
-};
 
 export const organiser: Organiser = {
   kicker: "PRESENTED BY",
