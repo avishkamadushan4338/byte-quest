@@ -33,3 +33,8 @@ Measured in headless Chromium at 320, 360, 390, 430, 600, 768, 820, 1024, 1280, 
 ## Result
 
 Zero page overflow, zero clipped content and no sub-24px touch targets across all public routes at every tested width.
+
+## Not covered
+
+- Signed-in admin, dashboard and onboarding screens (need seeded login)
+- Real Safari, Firefox, Samsung Internet, TV and kiosk browsers
