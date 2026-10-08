@@ -5,6 +5,8 @@ import { Button } from "@byte-quest/ui/primitives/button";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 import { projectFilters, projectSlots } from "./data";
 
 export const Projects = () => {
@@ -25,7 +27,7 @@ export const Projects = () => {
             render={<Link aria-label="Explore all projects" to="/projects" />}
             variant="outline"
           >
-            Explore all projects →
+            <ArrowLabel>Explore all projects →</ArrowLabel>
           </Button>
         </div>
 
@@ -103,7 +105,7 @@ export const Projects = () => {
             className="font-mono text-[11.5px] tracking-[0.08em] whitespace-nowrap"
             to="/auth/login"
           >
-            BE AMONG THE FIRST →
+            <ArrowLabel>BE AMONG THE FIRST →</ArrowLabel>
           </Link>
         </div>
       </Container>

@@ -1,3 +1,4 @@
+import { ArrowRightIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 
 import { moments } from "./data";
@@ -90,7 +91,9 @@ export const Moments = () => {
                           aria-hidden="true"
                           style={{ color: moment.accent }}
                         >
-                          {stepIndex > 0 ? "→" : ""}
+                          {stepIndex > 0 ? (
+                            <ArrowRightIcon weight="bold" />
+                          ) : null}
                         </span>
                         {step}
                       </span>
@@ -107,11 +110,14 @@ export const Moments = () => {
                     </div>
                   </div>
                   <a
-                    className="text-fg hover:text-volt mt-auto flex items-center justify-between text-[13.5px] font-semibold"
+                    className="text-fg hover:text-volt mt-auto flex items-center justify-between py-2 text-[13.5px] font-semibold"
                     href="/programme"
                   >
                     View milestone{" "}
-                    <span style={{ color: moment.accent }}>→</span>
+                    <ArrowRightIcon
+                      style={{ color: moment.accent }}
+                      weight="bold"
+                    />
                   </a>
                 </div>
               </div>
