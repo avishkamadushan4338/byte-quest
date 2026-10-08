@@ -4,6 +4,9 @@ WORKDIR /app
 COPY . .
 RUN --mount=type=cache,target=/root/.bun/install/cache bun install --frozen-lockfile
 
+# Ensure native sharp linux-x64 prebuilts are explicitly installed for the runner
+RUN cd /app/apps/web && bun add @img/sharp-linux-x64 sharp
+
 ENV NODE_ENV=production \
     SKIP_ENV_VALIDATION=1 \
     VARLOCK_SKIP_VALIDATION=1 \
