@@ -94,7 +94,7 @@ export const SignInForm = () => {
           <FieldLabel htmlFor="password">Password</FieldLabel>
           <button
             aria-pressed={revealed}
-            className="text-muted-2 hover:text-volt cursor-pointer border-none bg-transparent p-0 font-mono text-[11px] tracking-[0.08em] uppercase transition-colors"
+            className="text-muted-2 hover:text-volt -m-2 cursor-pointer border-none bg-transparent p-2 font-mono text-[11px] tracking-[0.08em] uppercase transition-colors"
             onClick={() => setRevealed((current) => !current)}
             type="button"
           >
