@@ -18,6 +18,7 @@ export interface GuardianDetails {
 export interface VolunteerPhoto {
   name: string;
   url: string;
+  dataUrl?: string;
   size: number;
   type: string;
 }

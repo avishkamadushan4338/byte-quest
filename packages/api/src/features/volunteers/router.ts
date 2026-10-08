@@ -1,5 +1,5 @@
 import type { VolunteerApplication } from "@byte-quest/db";
-import { userProfile, volunteerApplication } from "@byte-quest/db";
+import { user, userProfile, volunteerApplication } from "@byte-quest/db";
 import { ORPCError } from "@orpc/server";
 import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -30,6 +30,7 @@ const applyInputSchema = z.object({
     contactNumber: z.string().min(1, "Guardian contact number is required"),
     alternateContactNumber: z.string().optional(),
   }),
+  photoDataUrl: z.string().optional(),
 });
 
 const applicationOutputSchema = z.object({
@@ -47,14 +48,22 @@ const applicationOutputSchema = z.object({
   guardianRelationship: z.string().nullable(),
   guardianContactNumber: z.string(),
   guardianAlternateContactNumber: z.string().nullable(),
+  photoDataUrl: z.string().nullable(),
   status: statusSchema,
   reviewNote: z.string().nullable(),
   reviewedAt: z.string().nullable(),
   createdAt: z.string(),
+  userId: z.string().nullable(),
+  username: z.string().nullable(),
+  accountEmail: z.string().nullable(),
 });
 
 /** Shapes a stored application row plus its derived reference for output. */
-const toOutput = (row: VolunteerApplication, reference: string) => ({
+const toOutput = (
+  row: VolunteerApplication,
+  reference: string,
+  credentials?: { accountEmail: string | null; username: string | null }
+) => ({
   id: row.id,
   reference,
   teams: row.teams,
@@ -69,10 +78,14 @@ const toOutput = (row: VolunteerApplication, reference: string) => ({
   guardianRelationship: row.guardianRelationship,
   guardianContactNumber: row.guardianContactNumber,
   guardianAlternateContactNumber: row.guardianAlternateContactNumber,
+  photoDataUrl: row.photoDataUrl,
   status: row.status,
   reviewNote: row.reviewNote,
   reviewedAt: row.reviewedAt ? row.reviewedAt.toISOString() : null,
   createdAt: row.createdAt.toISOString(),
+  userId: row.userId,
+  username: credentials?.username ?? null,
+  accountEmail: credentials?.accountEmail ?? null,
 });
 
 /** The reference shown to an applicant is just their row id, BQ-formatted. */
@@ -102,6 +115,7 @@ export const volunteersRouter = {
             guardianContactNumber: input.guardian.contactNumber.trim(),
             guardianAlternateContactNumber:
               input.guardian.alternateContactNumber?.trim() || null,
+            photoDataUrl: input.photoDataUrl ?? null,
           })
           .returning();
         if (!created) {
@@ -120,17 +134,26 @@ export const volunteersRouter = {
       )
       .handler(async ({ context, input }) => {
         const rows = await context.db
-          .select()
+          .select({
+            app: volunteerApplication,
+            username: user.username,
+            userEmail: user.email,
+          })
           .from(volunteerApplication)
+          .leftJoin(user, eq(volunteerApplication.userId, user.id))
           .where(
             input?.status
               ? eq(volunteerApplication.status, input.status)
               : undefined
           )
           .orderBy(desc(volunteerApplication.createdAt));
-        return rows.map((row) => ({
-          ...toOutput(row, referenceFor(row)),
-          accountIssued: row.userId !== null,
+
+        return rows.map(({ app, userEmail, username }) => ({
+          ...toOutput(app, referenceFor(app), {
+            accountEmail: userEmail ?? null,
+            username: username ?? null,
+          }),
+          accountIssued: app.userId !== null,
         }));
       }),
 

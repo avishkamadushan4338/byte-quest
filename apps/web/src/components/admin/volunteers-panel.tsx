@@ -7,7 +7,18 @@ import type {
 } from "@byte-quest/ui/components/data-table";
 import { TextareaField } from "@byte-quest/ui/components/fields";
 import { Check } from "@byte-quest/ui/components/icons";
+import {
+  AlertDialogBackdrop,
+  AlertDialogClose,
+  AlertDialogDescription,
+  AlertDialogPopup,
+  AlertDialogPortal,
+  AlertDialogRoot,
+  AlertDialogTitle,
+  AlertDialogViewport,
+} from "@byte-quest/ui/primitives/alert-dialog";
 import { Button } from "@byte-quest/ui/primitives/button";
+import { CheckIcon, CopyIcon, KeyIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -70,6 +81,24 @@ const columns: DataTableColumn<VolunteerApplicationRow>[] = [
       <span className="text-muted-2 text-[12.5px]">{row.contactNumber}</span>
     ),
     header: "Contact",
+    sortKey: "contactNumber",
+  },
+  {
+    id: "account",
+    cell: (row) =>
+      row.username ? (
+        <div className="flex flex-col">
+          <span className="text-volt font-mono text-[12.5px] font-semibold">
+            @{row.username}
+          </span>
+          <span className="text-muted-2 max-w-[140px] truncate text-[11px]">
+            {row.accountEmail ?? "—"}
+          </span>
+        </div>
+      ) : (
+        <span className="text-faint text-[12px] italic">Not provisioned</span>
+      ),
+    header: "Account",
   },
   {
     id: "status",
@@ -115,10 +144,61 @@ export const VolunteersPanel = () => {
     password: string;
   } | null>(null);
 
+  const [copied, setCopied] = useState(false);
+  const [rotatedCreds, setRotatedCreds] = useState<{
+    fullName: string;
+    open: boolean;
+    password: string;
+    username?: string;
+  }>({
+    fullName: "",
+    open: false,
+    password: "",
+  });
+
   const query = useQuery(
     orpc.volunteers.adminList.queryOptions({
       input: status === "all" ? {} : { status },
       placeholderData: (previous) => previous,
+    })
+  );
+
+  const rows = (query.data ?? []) as VolunteerApplicationRow[];
+  const sorted = sort
+    ? rows.toSorted((left, right) => {
+        const leftValue = String(
+          left[sort.key as keyof VolunteerApplicationRow] ?? ""
+        );
+        const rightValue = String(
+          right[sort.key as keyof VolunteerApplicationRow] ?? ""
+        );
+        const order = leftValue.localeCompare(rightValue);
+        return sort.direction === "asc" ? order : -order;
+      })
+    : rows;
+  const paged = sorted.slice(
+    pageIndex * PAGE_SIZE,
+    pageIndex * PAGE_SIZE + PAGE_SIZE
+  );
+
+  const active = rows.find((row) => row.id === reviewId);
+
+  const rotatePassword = useMutation(
+    orpc.access.rotateUserPassword.mutationOptions({
+      onError: (error) => {
+        toast.error(error.message || "Failed to rotate password");
+      },
+      onSuccess: (data) => {
+        const matched = rows.find((r) => r.userId === data.userId);
+        setRotatedCreds({
+          fullName: data.fullName,
+          open: true,
+          password: data.password,
+          username: matched?.username ?? undefined,
+        });
+        setCopied(false);
+        toast.success("Password rotated successfully");
+      },
     })
   );
 
@@ -147,25 +227,16 @@ export const VolunteersPanel = () => {
     })
   );
 
-  const rows = (query.data ?? []) as VolunteerApplicationRow[];
-  const sorted = sort
-    ? rows.toSorted((left, right) => {
-        const leftValue = String(
-          left[sort.key as keyof VolunteerApplicationRow] ?? ""
-        );
-        const rightValue = String(
-          right[sort.key as keyof VolunteerApplicationRow] ?? ""
-        );
-        const order = leftValue.localeCompare(rightValue);
-        return sort.direction === "asc" ? order : -order;
-      })
-    : rows;
-  const paged = sorted.slice(
-    pageIndex * PAGE_SIZE,
-    pageIndex * PAGE_SIZE + PAGE_SIZE
-  );
-
-  const active = rows.find((row) => row.id === reviewId);
+  const handleCopyPassword = async (password: string) => {
+    try {
+      await navigator.clipboard.writeText(password);
+      setCopied(true);
+      toast.success("Password copied to clipboard");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Failed to copy password");
+    }
+  };
 
   return (
     <div className="grid gap-5">
@@ -230,24 +301,47 @@ export const VolunteersPanel = () => {
         onPaginationChange={(next) => setPageIndex(next.pageIndex)}
         onSortChange={setSort}
         pagination={{ pageIndex, pageSize: PAGE_SIZE }}
-        renderRowActions={(row) =>
-          row.status === "pending" ? (
-            <Button
-              onClick={() => {
-                setReviewId(row.id);
-                setNote("");
-              }}
-              size="sm"
-              variant="outline"
-            >
-              Review
-            </Button>
-          ) : (
+        renderRowActions={(row) => {
+          if (row.status === "pending") {
+            return (
+              <Button
+                onClick={() => {
+                  setReviewId(row.id);
+                  setNote("");
+                }}
+                size="sm"
+                variant="outline"
+              >
+                Review
+              </Button>
+            );
+          }
+
+          if (row.userId) {
+            return (
+              <Button
+                aria-label={`Rotate password for ${row.fullName}`}
+                disabled={rotatePassword.isPending}
+                onClick={() => {
+                  if (row.userId) {
+                    rotatePassword.mutate({ userId: row.userId });
+                  }
+                }}
+                size="sm"
+                variant="outline"
+              >
+                <KeyIcon aria-hidden="true" className="mr-1.5 size-3.5" />
+                Rotate PW
+              </Button>
+            );
+          }
+
+          return (
             <span className="text-faint text-[13px]">
               {row.reviewedAt ? formatDate(row.reviewedAt) : "—"}
             </span>
-          )
-        }
+          );
+        }}
         rows={paged}
         sort={sort}
         total={sorted.length}
@@ -345,6 +439,97 @@ export const VolunteersPanel = () => {
           </div>
         </div>
       ) : null}
+
+      {/* Password Rotated Dialog */}
+      <AlertDialogRoot
+        onOpenChange={(open) => {
+          if (!open) {
+            setRotatedCreds((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        open={rotatedCreds.open}
+      >
+        <AlertDialogPortal>
+          <AlertDialogBackdrop />
+          <AlertDialogViewport>
+            <AlertDialogPopup className="max-w-[440px]">
+              <div className="flex items-center gap-2.5">
+                <div className="text-volt flex size-9 shrink-0 items-center justify-center rounded-full bg-[rgba(82,255,61,0.12)]">
+                  <KeyIcon aria-hidden="true" className="size-5" />
+                </div>
+                <div>
+                  <AlertDialogTitle>Password Rotated</AlertDialogTitle>
+                  <AlertDialogDescription className="text-muted text-[13px]">
+                    New temporary credentials for {rotatedCreds.fullName}
+                  </AlertDialogDescription>
+                </div>
+              </div>
+
+              <div className="mt-4 rounded-[14px] border border-[rgba(185,245,208,0.18)] bg-[rgba(0,0,0,0.3)] p-3.5">
+                {rotatedCreds.username ? (
+                  <div className="mb-2.5 flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-2 text-[13px]">
+                    <span className="text-faint font-mono text-[11px] tracking-wide">
+                      USERNAME
+                    </span>
+                    <span className="text-volt font-mono font-semibold">
+                      @{rotatedCreds.username}
+                    </span>
+                  </div>
+                ) : null}
+
+                <div className="text-faint font-mono text-[11px] tracking-wide">
+                  NEW PASSWORD
+                </div>
+                <div className="mt-1.5 flex items-center justify-between gap-2">
+                  <code className="text-volt selection:bg-volt selection:text-ink font-mono text-[14px] font-bold tracking-wider select-all">
+                    {rotatedCreds.password}
+                  </code>
+                  <Button
+                    aria-label="Copy password to clipboard"
+                    className="shrink-0"
+                    onClick={() => handleCopyPassword(rotatedCreds.password)}
+                    size="sm"
+                    variant="outline"
+                  >
+                    {copied ? (
+                      <>
+                        <CheckIcon
+                          aria-hidden="true"
+                          className="text-volt mr-1.5 size-3.5"
+                        />
+                        Copied
+                      </>
+                    ) : (
+                      <>
+                        <CopyIcon
+                          aria-hidden="true"
+                          className="mr-1.5 size-3.5"
+                        />
+                        Copy
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <AlertDialogClose
+                  render={
+                    <Button
+                      onClick={() =>
+                        setRotatedCreds((prev) => ({ ...prev, open: false }))
+                      }
+                      variant="primary"
+                    >
+                      Done
+                    </Button>
+                  }
+                />
+              </div>
+            </AlertDialogPopup>
+          </AlertDialogViewport>
+        </AlertDialogPortal>
+      </AlertDialogRoot>
     </div>
   );
 };

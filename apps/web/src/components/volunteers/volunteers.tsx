@@ -120,14 +120,48 @@ const validateApplication = (state: ApplicationState): VolunteerFormErrors => {
 const messageFor = (error: unknown, fallback: string) =>
   error instanceof Error && error.message ? error.message : fallback;
 
+const STORAGE_KEY = "bq_volunteer_application";
+
+interface StoredApplication {
+  reference: string;
+  student: StudentDetails;
+  teams: string[];
+  submittedAt: string;
+}
+
+const getInitialSavedApplication = (): StoredApplication | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved) as StoredApplication;
+      if (parsed.reference && parsed.student) {
+        return parsed;
+      }
+    }
+  } catch {
+    // Ignore localStorage errors
+  }
+  return null;
+};
+
 export const Volunteers = () => {
-  const [teams, setTeams] = useState<string[]>([]);
-  const [student, setStudent] = useState<StudentDetails>(initialStudent);
+  const [initialSaved, setInitialSaved] = useState<StoredApplication | null>(
+    getInitialSavedApplication
+  );
+  const [teams, setTeams] = useState<string[]>(initialSaved?.teams || []);
+  const [student, setStudent] = useState<StudentDetails>(
+    initialSaved?.student || initialStudent
+  );
   const [guardian, setGuardian] = useState<GuardianDetails>(initialGuardian);
   const [consent, setConsent] = useState(false);
   const [photo, setPhoto] = useState<VolunteerPhoto | null>(null);
   const [errors, setErrors] = useState<VolunteerFormErrors>({});
-  const [reference, setReference] = useState<string | null>(null);
+  const [reference, setReference] = useState<string | null>(
+    initialSaved?.reference || null
+  );
   const [pending, setPending] = useState(false);
 
   const handleStudentChange = (patch: Partial<StudentDetails>) => {
@@ -154,16 +188,26 @@ export const Volunteers = () => {
     if (photo !== null) {
       URL.revokeObjectURL(photo.url);
     }
-    setPhoto(
-      file === null
-        ? null
-        : {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            url: URL.createObjectURL(file),
-          }
-    );
+    if (file === null) {
+      setPhoto(null);
+      setErrors((current) => ({ ...current, photo: undefined }));
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      const dataUrl =
+        typeof reader.result === "string" ? reader.result : undefined;
+      setPhoto({
+        dataUrl,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        url: previewUrl,
+      });
+    });
+    reader.readAsDataURL(file);
     setErrors((current) => ({ ...current, photo: undefined }));
   };
 
@@ -204,9 +248,21 @@ export const Volunteers = () => {
           alternateContactNumber:
             guardian.alternateContactNumber.trim() || undefined,
         },
+        photoDataUrl: photo?.dataUrl,
       });
       setReference(result.reference);
       setPending(false);
+      try {
+        const stored: StoredApplication = {
+          reference: result.reference,
+          student,
+          teams,
+          submittedAt: new Date().toISOString(),
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+      } catch {
+        // Ignore localStorage write error
+      }
       toast.success("Application received");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
@@ -219,6 +275,12 @@ export const Volunteers = () => {
     if (photo !== null) {
       URL.revokeObjectURL(photo.url);
     }
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Ignore
+    }
+    setInitialSaved(null);
     setTeams([]);
     setStudent(initialStudent);
     setGuardian(initialGuardian);

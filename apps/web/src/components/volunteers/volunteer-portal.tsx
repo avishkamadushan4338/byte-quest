@@ -15,6 +15,7 @@ export interface VolunteerPortalApplication {
   className: string;
   contactNumber: string;
   email: string | null;
+  photoDataUrl?: string | null;
 }
 
 interface VolunteerPortalProps {
@@ -38,7 +39,16 @@ export const VolunteerPortal = ({ application }: VolunteerPortalProps) => (
           </p>
           <div className="mt-10 flex justify-center">
             <VolunteerIdCard
-              photo={null}
+              photo={
+                application.photoDataUrl
+                  ? {
+                      name: "photo.jpg",
+                      size: 0,
+                      type: "image/jpeg",
+                      url: application.photoDataUrl,
+                    }
+                  : null
+              }
               reference={application.reference}
               roles={roleLabels(application.teams)}
               student={

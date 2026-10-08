@@ -13,11 +13,12 @@ This document describes the core architecture, data flows, operational rules, an
    - Student details collected: Full Name, Admission Number, Grade, Class, Contact Number, and optional Email.
    - **School Field**: By default pinned to `St. Aloysius' College, Galle` for student volunteers (no public school selector needed).
    - Guardian details collected: Full Name, Relationship, Contact Number, and Alternate Contact.
-   - Consent confirmation and photo upload.
-2. **Immediate Submission State (`SuccessPanel`)**:
+   - Consent confirmation and photo upload (converted to data URL and stored with the application).
+2. **Immediate Submission State & Local Persistence (`SuccessPanel`)**:
    - **No active badge or ID card** is rendered at submission time.
    - The user receives an Application Reference Number (`BQV-...`).
    - Status clearly shows **"Pending Review"** (`status: pending`).
+   - The submission reference, details, and selected teams are saved locally in `localStorage` (`bq_volunteer_application`), allowing the user to return and see that their application has been uploaded without losing their reference.
    - Explains that the organizing committee must review and approve the application before official volunteer status and ID card access are granted.
 
 ### 1.2 Administrative Review & Approval (`/admin/volunteers`)
@@ -26,12 +27,15 @@ This document describes the core architecture, data flows, operational rules, an
    - Admin/Coordinators inspect pending submissions in the Admin Volunteers table.
    - Can approve with notes or reject submissions.
 2. **Account Provisioning on Approval**:
-   - When an application is approved (`volunteers.review` with `decision: "approved"`):
+   - When an application is approved (`volunteers.decide` with `approve: true`):
      - Better-Auth creates a user account (`signUpEmail`) with a generated unique username (`@<firstname>.<suffix>`) and secure one-time password.
      - Email is provisioned as `<username>@volunteers.bytequest.lk`.
      - A `userProfile` is linked with role `"volunteer"` and National ID `VOL-<id>`.
      - Application status updates to `"approved"`, linking `userId`.
      - The admin receives the temporary credentials to share with the volunteer.
+3. **Volunteer Credential Inspection & Password Rotation**:
+   - The Admin Volunteers table includes an **Account** column displaying the volunteer's assigned username (`@username`) and provisioned email.
+   - For approved volunteers with an account, admins can click **Rotate PW** to generate and display a new password in a secured popup dialog with one-click copy.
 
 ### 1.3 Volunteer Portal & ID Card Access (`/volunteer-portal`)
 
@@ -41,7 +45,7 @@ This document describes the core architecture, data flows, operational rules, an
 2. **Gating Rule**:
    - Only records where `status === "approved"` and linked to the authenticated user's ID are returned.
    - If not approved or pending: Access to the official ID card is withheld, displaying an informative pending notice.
-   - If approved: Displays the full interactive **BYTE QUEST Volunteer ID Card** with reference barcode, school insignia, grade/class details, and download capability.
+   - If approved: Displays the full interactive **BYTE QUEST Volunteer ID Card** with reference barcode, school insignia, grade/class details, the uploaded photo, and download capability.
 
 ---
 

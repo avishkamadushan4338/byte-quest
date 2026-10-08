@@ -22,8 +22,10 @@ export interface VolunteerApplicationRow {
   status: VolunteerApplicationStatus;
   reviewNote: string | null;
   reviewedAt: string | null;
-  createdAt: string;
   accountIssued: boolean;
+  userId: string | null;
+  username: string | null;
+  accountEmail: string | null;
 }
 
 export const volunteerApplicationCopy = {

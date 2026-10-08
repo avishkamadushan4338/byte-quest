@@ -33,6 +33,7 @@ export const volunteerApplication = sqliteTable("volunteer_application", {
   guardianRelationship: text("guardian_relationship"),
   guardianContactNumber: text("guardian_contact_number").notNull(),
   guardianAlternateContactNumber: text("guardian_alternate_contact_number"),
+  photoDataUrl: text("photo_data_url"),
   status: text("status")
     .$type<VolunteerApplicationStatus>()
     .default("pending")
