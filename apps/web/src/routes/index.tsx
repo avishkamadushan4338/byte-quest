@@ -7,24 +7,37 @@ import { Hero } from "@/components/home/hero";
 import { Impact } from "@/components/home/impact";
 import { Journey } from "@/components/home/journey";
 import { Moments } from "@/components/home/moments";
-import { Projects } from "@/components/home/projects";
-import { Schools } from "@/components/home/schools";
 import { Timeline } from "@/components/home/timeline";
 import { WhatIs } from "@/components/home/what-is";
+import { Reveal } from "@/components/site/motion";
 
 const HomeComponent = () => (
   <main className="bg-ink overflow-x-hidden">
     <Hero />
-    <WhatIs />
-    <Journey />
-    <Moments />
-    <Divisions />
-    <Impact />
-    <Projects />
-    <Schools />
-    <Awards />
-    <Timeline />
-    <CallToAction />
+    <Reveal>
+      <WhatIs />
+    </Reveal>
+    <Reveal>
+      <Journey />
+    </Reveal>
+    <Reveal>
+      <Moments />
+    </Reveal>
+    <Reveal>
+      <Divisions />
+    </Reveal>
+    <Reveal>
+      <Impact />
+    </Reveal>
+    <Reveal>
+      <Awards />
+    </Reveal>
+    <Reveal>
+      <Timeline />
+    </Reveal>
+    <Reveal>
+      <CallToAction />
+    </Reveal>
   </main>
 );
 
