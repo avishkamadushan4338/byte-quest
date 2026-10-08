@@ -137,7 +137,7 @@ export const termsPolicy: PolicyMeta = {
       heading: "Good conduct",
       body: (
         <p>
-          Everyone taking part — students, mentors, volunteers and sponsors —
+          Everyone taking part - students, mentors, volunteers and sponsors -
           agrees to the code of conduct. Behaviour that puts another participant
           at risk, or that misrepresents work, ends participation.
         </p>
@@ -245,7 +245,7 @@ export const submissionGuidelinesPolicy: PolicyMeta = {
           <p>
             Each team submits one project with a title, a description and an
             optional public repository link. The description should explain the
-            problem, your approach and what you built — enough for a judge who
+            problem, your approach and what you built - enough for a judge who
             has not seen your project.
           </p>
           <p>
@@ -302,7 +302,7 @@ export const submissionGuidelinesPolicy: PolicyMeta = {
       heading: "Questions",
       body: (
         <p>
-          Ask your teacher in charge first — they are your fastest route to the
+          Ask your teacher in charge first - they are your fastest route to the
           organising committee.
         </p>
       ),

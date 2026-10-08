@@ -8,7 +8,7 @@ import schoolsJson from "@/data/schools.json";
  * of retyping its exact official name; province and district are filled in
  * automatically when an entry from this list is picked. Schools outside this
  * list (private, international, or newly opened) can still be typed in by
- * hand — the field does not require a catalog match.
+ * hand - the field does not require a catalog match.
  */
 export interface CatalogSchool {
   name: string;

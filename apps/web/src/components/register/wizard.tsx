@@ -384,7 +384,7 @@ export const Register = () => {
   };
 
   /**
-   * Submit (or resubmit) every selected division. No account is created —
+   * Submit (or resubmit) every selected division. No account is created -
    * the school's MIC or principal submits this directly, and the edit
    * token returned for each division lets them revise it later from this
    * same browser, up to the closing date.
@@ -665,7 +665,7 @@ export const Register = () => {
           <div className="bg-surface min-w-0 flex-[3_1_560px] rounded-[24px] border border-[rgba(185,245,208,0.09)] p-[clamp(22px,3.5vw,40px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
             {isClosed ? (
               <div className="mb-6 rounded-[14px] border border-[rgba(240,216,117,0.3)] bg-[rgba(240,216,117,0.08)] px-4 py-3 text-[13px] text-[#F0D875]">
-                Registration closed on 10 January 2027 — this submission is now
+                Registration closed on 10 January 2027 - this submission is now
                 read-only.
               </div>
             ) : null}

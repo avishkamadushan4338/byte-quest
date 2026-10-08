@@ -140,7 +140,7 @@ export const divisionLabels: Record<Division, string> = {
 
 export const submissionsCopy = {
   filtersLabel: "Filter by status",
-  noDate: "—",
+  noDate: "-",
   reviewLabel: "Review",
 };
 
@@ -183,7 +183,7 @@ export const reviewCopy = {
     "Approving moves the submission to the approved queue. Rejecting returns it to the team with your note.",
   failureMessage: "We could not record that review",
   noteLabel: "Review note",
-  notePlaceholder: "Optional — shared with the team",
+  notePlaceholder: "Optional - shared with the team",
   proposalLabel: "Proposal",
   rejectLabel: "Reject",
   rejectClassName:

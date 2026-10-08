@@ -34,7 +34,7 @@ export const VolunteerPortal = ({ application }: VolunteerPortalProps) => (
         <>
           <p className="text-muted mt-5 max-w-[520px] text-[16px] leading-[1.65]">
             Welcome to the BYTE QUEST crew, {application.fullName.split(" ")[0]}
-            . Here&apos;s your volunteer ID — the organising committee will
+            . Here&apos;s your volunteer ID - the organising committee will
             reach out with your first assignment.
           </p>
           <div className="mt-10 flex justify-center">

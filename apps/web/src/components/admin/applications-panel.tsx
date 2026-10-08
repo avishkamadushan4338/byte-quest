@@ -25,7 +25,7 @@ const PAGE_SIZE = 25;
 
 const formatDate = (value: string | null) => {
   if (!value) {
-    return "—";
+    return "-";
   }
   return new Date(value).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -247,7 +247,7 @@ export const ApplicationsPanel = () => {
             </Button>
           ) : (
             <span className="text-faint text-[13px]">
-              {row.reviewedAt ? formatDate(row.reviewedAt) : "—"}
+              {row.reviewedAt ? formatDate(row.reviewedAt) : "-"}
             </span>
           )
         }

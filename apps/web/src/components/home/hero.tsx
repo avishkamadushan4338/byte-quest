@@ -103,7 +103,7 @@ export const Hero = () => (
             </div>
             <div className="mt-3.5 flex flex-wrap items-center gap-6">
               <img
-                alt="SACOBA — Old Boys' Association, St. Aloysius' College"
+                alt="SACOBA - Old Boys' Association, St. Aloysius' College"
                 className="block h-14 w-auto"
                 src="/assets/sacoba-logo.png"
               />

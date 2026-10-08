@@ -39,7 +39,7 @@ export interface Rule {
 }
 
 export const programmeLead =
-  "BYTE QUEST is a three-month inter-school innovation and coding programme. Teams learn, build and present technology solutions — guided by mentors, tested at two hackathons, and celebrated at the Grand Final.";
+  "BYTE QUEST is a three-month inter-school innovation and coding programme. Teams learn, build and present technology solutions - guided by mentors, tested at two hackathons, and celebrated at the Grand Final.";
 
 export const programmeFacts: Fact[] = [
   { label: "FORMAT", value: "Accelerator", color: "#F2F7F4" },

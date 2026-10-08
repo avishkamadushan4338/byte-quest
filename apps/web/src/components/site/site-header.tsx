@@ -1,4 +1,3 @@
-import { BrandLockup } from "@byte-quest/ui/components/brand";
 import { useScrolled } from "@byte-quest/ui/hooks/use-scrolled";
 import { cn } from "@byte-quest/ui/lib/utils";
 import {
@@ -72,18 +71,26 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
           className="text-fg hover:text-fg flex shrink-0 items-center gap-3"
           to="/"
         >
-          <BrandLockup
-            crestClassName={
+          <img
+            alt="St. Aloysius' College crest"
+            className={cn(
+              "w-auto transition-[height] duration-300",
               scrolled
                 ? "h-7 min-[380px]:h-[30px]"
                 : "h-7 min-[380px]:h-8 sm:h-9"
-            }
-            crestSrc="/assets/crest.png"
-            logoClassName={
+            )}
+            src="/assets/crest.png"
+          />
+          <span aria-hidden="true" className="bg-line-strong h-6 w-px" />
+          <img
+            alt="BYTE QUEST"
+            className={cn(
+              "w-auto transition-[height] duration-300",
               scrolled
-                ? "h-6 min-[380px]:h-[26px]"
-                : "h-6 min-[380px]:h-7 sm:h-8"
-            }
+                ? "h-5 min-[380px]:h-[22px]"
+                : "h-5 min-[380px]:h-6 sm:h-7"
+            )}
+            src="/assets/bq-logo.png"
           />
         </Link>
 

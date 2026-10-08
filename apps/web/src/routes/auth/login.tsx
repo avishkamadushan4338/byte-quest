@@ -46,7 +46,7 @@ const LoginRoute = () => (
           </h1>
           <p className="text-muted mt-5 max-w-[460px] text-[17px] leading-[1.65]">
             BYTE QUEST uses a username and password. Schools and volunteers do
-            not create their own account — the organising committee issues one
+            not create their own account - the organising committee issues one
             once a team registration or volunteer application is reviewed.
           </p>
 

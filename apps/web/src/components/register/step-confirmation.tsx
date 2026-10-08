@@ -35,7 +35,7 @@ export const StepConfirmation = ({
     return [
       {
         label: withDivisionTag(confirmationCopy.referenceLabel, division),
-        value: references[division] ?? "—",
+        value: references[division] ?? "-",
         color: "#52FF3D",
       },
       {
@@ -45,7 +45,7 @@ export const StepConfirmation = ({
       },
       {
         label: withDivisionTag(confirmationCopy.leaderLabel, division),
-        value: leader?.fullName || "—",
+        value: leader?.fullName || "-",
         color: "#F2F7F4",
       },
     ];

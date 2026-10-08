@@ -18,7 +18,7 @@ export const Moments = () => {
       <div className="mx-auto max-w-[1280px]">
         <HomeHeading
           kicker="04 / THE THREE BIG MOMENTS"
-          lead="Each milestone raises the bar — from first idea to working prototype to a public showcase."
+          lead="Each milestone raises the bar - from first idea to working prototype to a public showcase."
           title="Two hackathons. One grand finale."
         />
         <div className="mt-14 grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))] gap-4">

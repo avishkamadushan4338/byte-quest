@@ -185,7 +185,7 @@ export const dashboardStatCopy = {
   gradeLabel: "Grade",
   teamSizeLabel: "Team size",
   teamSizeHint: `${TEAM_MIN_MEMBERS}-${TEAM_MAX_MEMBERS} members`,
-  noTeam: "—",
+  noTeam: "-",
   submissionLabel: "Submission",
   notStarted: "Not started",
 };
@@ -222,7 +222,7 @@ export const joinPanelCopy = {
   description:
     "Pick your school to see whether it already fields a team in your division. BYTE QUEST keeps the team list private, so your school coordinator confirms membership.",
   rulesTitle: "How joining works",
-  rulesBody: `A school fields exactly one team per division, a team holds ${TEAM_MIN_MEMBERS} to ${TEAM_MAX_MEMBERS} members, and UI, architecture and business must all be covered. Ask your school coordinator for your team ID — it is the only way in.`,
+  rulesBody: `A school fields exactly one team per division, a team holds ${TEAM_MIN_MEMBERS} to ${TEAM_MAX_MEMBERS} members, and UI, architecture and business must all be covered. Ask your school coordinator for your team ID - it is the only way in.`,
   backLabel: "Back",
   backAriaLabel: "Go back to the team options",
   schoolLabel: "School",
@@ -264,7 +264,7 @@ export const teamPanelCopy = {
   gradeColumn: "Grade",
   roleColumn: "Role",
   specialtyColumn: "Specialty",
-  noSpecialtyLabel: "—",
+  noSpecialtyLabel: "-",
   coverageCompleteTitle: "Specialty coverage complete.",
   coverageCompleteBody:
     "UI, architecture and business are all covered. Your team is ready to build and pitch together.",

@@ -9,7 +9,7 @@ interface StatusShellProps {
 
 /**
  * In-flow page surface for status routes. It stays in the document flow so the
- * site header and footer keep working around it — a fixed layer would collapse
+ * site header and footer keep working around it - a fixed layer would collapse
  * to zero height inside the page-transition transform and leave the route blank.
  */
 export const StatusShell = ({

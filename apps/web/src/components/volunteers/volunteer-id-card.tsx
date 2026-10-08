@@ -289,7 +289,7 @@ export const renderVolunteerIdCard = async (options: IdCardRenderOptions) => {
   fillText(ctx, idCard.classLabel, infoX, 340, { colour: "#5e7469", size: 14 });
   fillText(
     ctx,
-    `Gr ${options.student.grade ?? "—"} · ${options.student.className}`,
+    `Gr ${options.student.grade ?? "-"} · ${options.student.className}`,
     infoX,
     366,
     { colour: "#d5e1db", size: 17 }

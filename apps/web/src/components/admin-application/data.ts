@@ -34,7 +34,7 @@ export const initialApplication: ApplicationFields = {
 export const adminApplyCopy = {
   kicker: "ORGANISING COMMITTEE",
   title: "Apply for admin access.",
-  lede: "Admin access is granted only by the organising committee. Anyone can apply — an existing admin reviews every application.",
+  lede: "Admin access is granted only by the organising committee. Anyone can apply - an existing admin reviews every application.",
   submit: "Submit application →",
   required: "Required",
   email: "Enter a valid email",

@@ -8,9 +8,9 @@ export interface SeoMetadataOptions {
 
 export const SITE_CONFIG = {
   name: "BYTE QUEST",
-  fullName: "BYTE QUEST — National School Innovation & Coding Programme",
+  fullName: "BYTE QUEST - National School Innovation & Coding Programme",
   institution: "St. Aloysius' College Galle",
-  organizer: "SACOBA — Old Boys' Association, St. Aloysius' College",
+  organizer: "SACOBA - Old Boys' Association, St. Aloysius' College",
   description:
     "A premier national school innovation and coding programme in Sri Lanka, empowering students to learn, build, innovate and inspire.",
   url: "https://bytequest.lk",
@@ -80,7 +80,7 @@ export const getOrganizationJsonLd = () =>
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     name: SITE_CONFIG.name,
-    legalName: "Byte Quest — St. Aloysius' College Galle",
+    legalName: "Byte Quest - St. Aloysius' College Galle",
     url: SITE_CONFIG.url,
     logo: `${SITE_CONFIG.url}/assets/crest.png`,
     description: SITE_CONFIG.description,

@@ -116,7 +116,7 @@ export const Dashboard = ({ me, submission, team }: DashboardProps) => {
         id="dashboard"
         kicker={dashboardHero.kicker}
         kickerTone="volt"
-        lead={`${dashboardHero.leadPrefix} ${me.fullName} — ${dashboardHero.leadSuffix}`}
+        lead={`${dashboardHero.leadPrefix} ${me.fullName} - ${dashboardHero.leadSuffix}`}
         title={dashboardHero.title}
       />
 

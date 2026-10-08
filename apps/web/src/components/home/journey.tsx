@@ -10,7 +10,7 @@ export const Journey = () => (
     <Container>
       <SectionHeader
         kicker="03 / The Journey"
-        lead="Twelve weeks across three phases — each one moving teams closer to a working, presentable solution."
+        lead="Twelve weeks across three phases - each one moving teams closer to a working, presentable solution."
         title="From curiosity to creation."
       />
 

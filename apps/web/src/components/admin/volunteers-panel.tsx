@@ -36,7 +36,7 @@ const PAGE_SIZE = 25;
 
 const formatDate = (value: string | null) => {
   if (!value) {
-    return "—";
+    return "-";
   }
   return new Date(value).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -92,7 +92,7 @@ const columns: DataTableColumn<VolunteerApplicationRow>[] = [
             @{row.username}
           </span>
           <span className="text-muted-2 max-w-[140px] truncate text-[11px]">
-            {row.accountEmail ?? "—"}
+            {row.accountEmail ?? "-"}
           </span>
         </div>
       ) : (
@@ -338,7 +338,7 @@ export const VolunteersPanel = () => {
 
           return (
             <span className="text-faint text-[13px]">
-              {row.reviewedAt ? formatDate(row.reviewedAt) : "—"}
+              {row.reviewedAt ? formatDate(row.reviewedAt) : "-"}
             </span>
           );
         }}
@@ -390,7 +390,7 @@ export const VolunteersPanel = () => {
             <div>
               <div className="text-faint text-[11.5px]">ADMISSION NO</div>
               <div className="text-fg-strong mt-0.5">
-                {active.admissionNumber ?? "—"}
+                {active.admissionNumber ?? "-"}
               </div>
             </div>
           </div>

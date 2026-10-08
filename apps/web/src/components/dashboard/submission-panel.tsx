@@ -68,7 +68,7 @@ const REPO_URL_PATTERN = /^https?:\/\/\S+$/u;
 
 const toSchoolOptions = (schools: School[] | undefined) =>
   (schools ?? []).map((school) => ({
-    label: `${school.name} — ${school.city}`,
+    label: `${school.name} - ${school.city}`,
     value: school.id,
   }));
 

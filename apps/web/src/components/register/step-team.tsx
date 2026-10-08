@@ -42,7 +42,7 @@ const TeamFields = ({
         id={`team-idea-${division}`}
         label="Initial project idea"
         onValueChange={(value) => onChange({ idea: value })}
-        placeholder="A sentence or two — this can change."
+        placeholder="A sentence or two - this can change."
         requirement="optional"
         value={team.idea}
       />

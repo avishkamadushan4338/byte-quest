@@ -20,7 +20,7 @@ export const Impact = () => (
         kicker="06 / INNOVATE FOR IMPACT · SENIOR"
         leadClassName="max-w-[480px] text-[16.5px]"
         kickerColor="#B7F000"
-        lead="Senior teams innovate for the UN Sustainable Development Goals — turning a real-world problem into a technology solution."
+        lead="Senior teams innovate for the UN Sustainable Development Goals - turning a real-world problem into a technology solution."
         title="Technology with purpose."
       />
       <ol className="relative m-0 mt-16 grid list-none grid-cols-1 border-t border-[rgba(185,245,208,0.12)] p-0 min-[600px]:grid-cols-2 min-[1000px]:grid-cols-4">

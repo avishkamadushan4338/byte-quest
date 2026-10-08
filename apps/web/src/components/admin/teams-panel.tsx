@@ -177,10 +177,10 @@ export const TeamsPanel = () => {
                   </TableCell>
                   <TableCell>
                     <div className="text-fg-dim text-[13px]">
-                      {team.teacherName ?? "—"}
+                      {team.teacherName ?? "-"}
                     </div>
                     <div className="text-faint-2 text-[12px]">
-                      {team.teacherPhone ?? team.teacherEmail ?? "—"}
+                      {team.teacherPhone ?? team.teacherEmail ?? "-"}
                     </div>
                   </TableCell>
                   <TableCell>

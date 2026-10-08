@@ -56,7 +56,7 @@ export const ErrorPage = ({ reset }: Pick<ErrorComponentProps, "reset">) => {
             We hit an unexpected bug.
           </h1>
           <p className="text-muted mt-4 mb-0 max-w-[460px] text-[16px] leading-[1.6]">
-            It&apos;s not you — it&apos;s us. Please try again in a moment. If
+            It&apos;s not you - it&apos;s us. Please try again in a moment. If
             the problem continues, contact the organising committee.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-2.5">

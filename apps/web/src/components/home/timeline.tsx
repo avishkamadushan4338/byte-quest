@@ -176,7 +176,7 @@ export const Timeline = () => {
               ))}
               {activeWeek === weeks.length ? (
                 <div className="text-gold-bright py-3 text-[14px]">
-                  The finale — see you at the Expo.
+                  The finale - see you at the Expo.
                 </div>
               ) : null}
             </div>

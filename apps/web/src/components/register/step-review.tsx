@@ -30,7 +30,7 @@ interface ReviewSection {
   rows: ReviewRow[];
 }
 
-const EMPTY_VALUE = "—";
+const EMPTY_VALUE = "-";
 
 const buildSections = (state: RegisterState): ReviewSection[] => {
   const activeDivisions = divisionOrder.filter((division) =>

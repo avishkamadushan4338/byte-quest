@@ -175,7 +175,7 @@ export const SiteFooter = () => (
           <span className={eyebrowClass}>Proudly presented by</span>
           <div className="flex items-center gap-4">
             <img
-              alt="SACOBA — Old Boys’ Association, St. Aloysius’ College"
+              alt="SACOBA - Old Boys’ Association, St. Aloysius’ College"
               className="h-11 w-auto"
               src={SACOBA_SRC}
             />

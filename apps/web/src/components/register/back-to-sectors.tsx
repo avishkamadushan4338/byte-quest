@@ -5,7 +5,7 @@ import { ArrowLabel } from "@/components/site/arrow-label";
 /**
  * Sits directly above the Register/Volunteers page's own hero (which
  * supplies its own header clearance), so this only needs enough top
- * padding to clear the fixed nav itself — not a second full spacer. The
+ * padding to clear the fixed nav itself - not a second full spacer. The
  * nav's own unscrolled height tops out around 102px; 130px leaves a safe
  * margin so this bar's text never renders under (or visually above) it.
  */

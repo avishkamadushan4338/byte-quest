@@ -123,7 +123,7 @@ export const objectives: Objective[] = [
 ];
 
 export const objectivesLead =
-  "To give school students a structured path from curiosity to creation — and a national stage to show what they build.";
+  "To give school students a structured path from curiosity to creation - and a national stage to show what they build.";
 
 export const eligibilityLead =
   "Every student in Grades 6–13 has a place. Teams compete within the division that matches their grades.";
@@ -286,11 +286,11 @@ export interface Organiser {
 export const crestAlt = "St. Aloysius' College Galle crest";
 
 export const obaLogoAlt =
-  "SACOBA — Old Boys' Association, St. Aloysius' College";
+  "SACOBA - Old Boys' Association, St. Aloysius' College";
 
 export const organiser: Organiser = {
   kicker: "PRESENTED BY",
-  title: "St. Aloysius' College, Galle — Old Boys' Association",
+  title: "St. Aloysius' College, Galle - Old Boys' Association",
   body: "BYTE QUEST is organised by the OBA of St. Aloysius' College, Galle. Organising committee details will be published shortly.",
   motto: "CERTA VIRILITER",
   email: "bytequest@aloysiuscollege.lk",

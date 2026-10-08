@@ -49,7 +49,7 @@ function DataItem({
           valueClassName
         )}
       >
-        {isEmpty ? "—" : value}
+        {isEmpty ? "-" : value}
       </dd>
     </div>
   );

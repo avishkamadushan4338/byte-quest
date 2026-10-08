@@ -88,7 +88,7 @@ export const JoinPanel = ({ division, onBack }: JoinPanelProps) => {
   );
 
   const schoolOptions = (schoolsQuery.data ?? []).map((school) => ({
-    label: `${school.name} — ${school.city}`,
+    label: `${school.name} - ${school.city}`,
     value: school.id,
   }));
 
