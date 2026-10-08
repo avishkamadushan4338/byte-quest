@@ -90,33 +90,6 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5">
-          {isSignedIn ? (
-            <>
-              <Link
-                className={cn(navLinkClass, "hidden min-[900px]:inline-flex")}
-                to={authMenuLink.href}
-              >
-                {authMenuLink.label}
-              </Link>
-              <span
-                aria-hidden="true"
-                className="mx-1 hidden h-4 w-px bg-[rgba(185,245,208,0.16)] min-[900px]:block"
-              />
-            </>
-          ) : (
-            <>
-              <Link
-                className={cn(navLinkClass, "hidden min-[900px]:inline-flex")}
-                to="/auth/login"
-              >
-                Sign in
-              </Link>
-              <span
-                aria-hidden="true"
-                className="mx-1 hidden h-4 w-px bg-[rgba(185,245,208,0.16)] min-[900px]:block"
-              />
-            </>
-          )}
           <Link
             className="group bg-volt text-ink hover:text-ink hover:bg-lime inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[13px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)]"
             to="/volunteers"
