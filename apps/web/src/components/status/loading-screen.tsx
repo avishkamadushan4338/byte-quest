@@ -1,7 +1,7 @@
 import { cn } from "@byte-quest/ui/lib/utils";
 import { useEffect, useState } from "react";
 
-import { StatusShell } from "./status-shell";
+import { StatusOverlay } from "./status-shell";
 
 const BRAND_SRC = "/assets/bq-logo.png";
 const CREST_SRC = "/assets/crest.png";
@@ -52,7 +52,7 @@ export const LoadingScreen = () => {
   const phrase = percent >= MAX_PERCENT ? "READY" : "LOADING THE QUEST";
 
   return (
-    <StatusShell background="#020807" className="overflow-hidden">
+    <StatusOverlay background="#020807" className="overflow-hidden">
       <main
         aria-label="Loading BYTE QUEST"
         aria-live="polite"
@@ -140,6 +140,6 @@ export const LoadingScreen = () => {
           </div>
         </footer>
       </main>
-    </StatusShell>
+    </StatusOverlay>
   );
 };

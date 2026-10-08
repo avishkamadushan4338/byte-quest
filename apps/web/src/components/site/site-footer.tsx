@@ -192,12 +192,20 @@ export const SiteFooter = () => (
 
       <div className="mt-[clamp(56px,7vw,80px)] flex flex-wrap items-center justify-between gap-x-10 gap-y-6 border-t border-[rgba(185,245,208,0.08)] py-6">
         <div className="flex flex-wrap items-center gap-5">
-          <span className={eyebrowClass}>Presented by</span>
-          <img
-            alt="SACOBA — Old Boys' Association, St. Aloysius' College"
-            className="h-11 w-auto"
-            src={SACOBA_SRC}
-          />
+          <span className={eyebrowClass}>Proudly presented by</span>
+          <div className="flex items-center gap-4">
+            <img
+              alt="St. Aloysius' College crest"
+              className="h-10 w-auto"
+              src={CREST_SRC}
+            />
+            <span aria-hidden="true" className="bg-line-strong h-6 w-px" />
+            <img
+              alt="SACOBA — Old Boys' Association, St. Aloysius' College"
+              className="h-11 w-auto"
+              src={SACOBA_SRC}
+            />
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-5">
           <span className={eyebrowClass}>Follow the quest</span>

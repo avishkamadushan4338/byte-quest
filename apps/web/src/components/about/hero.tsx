@@ -1,8 +1,8 @@
 import { SubpageHero } from "@/components/site/subpage-hero";
 
-import { aboutLead, crestAlt } from "./data";
+import { aboutLead, obaLogoAlt } from "./data";
 
-const OBA_LOGO_SRC = "/assets/crest.png";
+const OBA_LOGO_SRC = "/assets/sacoba-logo.png";
 
 export const Hero = () => (
   <SubpageHero
@@ -12,8 +12,8 @@ export const Hero = () => (
           {aboutLead}
         </p>
         <img
-          alt={crestAlt}
-          className="h-16 w-auto self-start"
+          alt={obaLogoAlt}
+          className="h-14 w-auto self-start"
           src={OBA_LOGO_SRC}
         />
       </div>

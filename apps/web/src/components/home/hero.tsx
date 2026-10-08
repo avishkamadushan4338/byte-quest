@@ -103,11 +103,19 @@ export const Hero = () => (
             <div className="text-muted-2 font-mono text-[11.5px] tracking-[0.14em]">
               PROUDLY PRESENTED BY
             </div>
-            <img
-              alt={crestAlt}
-              className="mt-3.5 block h-16 w-auto"
-              src={CREST_SRC}
-            />
+            <div className="mt-3.5 flex flex-wrap items-center gap-6">
+              <img
+                alt={crestAlt}
+                className="block h-16 w-auto"
+                src={CREST_SRC}
+              />
+              <span aria-hidden="true" className="bg-line-strong h-10 w-px" />
+              <img
+                alt="SACOBA — Old Boys' Association, St. Aloysius' College"
+                className="block h-14 w-auto"
+                src="/assets/sacoba-logo.png"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -284,6 +284,9 @@ export interface Organiser {
 
 export const crestAlt = "St. Aloysius' College Galle crest";
 
+export const obaLogoAlt =
+  "SACOBA — Old Boys' Association, St. Aloysius' College";
+
 export const organiser: Organiser = {
   kicker: "PRESENTED BY",
   title: "St. Aloysius' College, Galle — Old Boys' Association",

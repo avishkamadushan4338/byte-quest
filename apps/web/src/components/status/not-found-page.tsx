@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { ArrowLabel } from "@/components/site/arrow-label";
 
 import {
-  StatusHeader,
   StatusShell,
   statusPrimaryButton,
   statusSecondaryButton,
@@ -17,8 +16,6 @@ export const NotFoundPage = () => (
     className="min-h-svh"
   >
     <div className="relative min-h-svh overflow-hidden">
-      <StatusHeader label="ERROR 404" />
-
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-[44%] left-1/2 -translate-x-1/2 -translate-y-1/2"

@@ -2,11 +2,7 @@ import { Link, useRouter } from "@tanstack/react-router";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { useMemo } from "react";
 
-import {
-  StatusHeader,
-  StatusShell,
-  statusSecondaryButton,
-} from "./status-shell";
+import { StatusShell, statusSecondaryButton } from "./status-shell";
 
 const REFERENCE_LENGTH = 6;
 
@@ -40,9 +36,8 @@ export const ErrorPage = ({ reset }: Pick<ErrorComponentProps, "reset">) => {
   return (
     <StatusShell
       background="radial-gradient(50% 50% at 50% 40%, rgba(255,138,122,.07), transparent 75%), #020807"
-      className="flex min-h-svh flex-col"
+      className="flex min-h-svh flex-col pt-[clamp(104px,12vw,150px)]"
     >
-      <StatusHeader label="ERROR 500" />
       <main
         className="flex flex-1 items-center justify-center px-[clamp(20px,5vw,64px)] pt-10 pb-16"
         role="alert"
