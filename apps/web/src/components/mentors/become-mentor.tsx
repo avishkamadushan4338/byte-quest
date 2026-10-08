@@ -1,3 +1,5 @@
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 import { becomeMentor, contributions, mentorshipMailto } from "./data";
 
 export const BecomeMentor = () => (
@@ -26,7 +28,7 @@ export const BecomeMentor = () => (
           className="bg-fg text-ink hover:bg-volt hover:text-ink self-start rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
           href={mentorshipMailto}
         >
-          {becomeMentor.action}
+          <ArrowLabel>{becomeMentor.action}</ArrowLabel>
         </a>
       </div>
       <div className="grid grid-cols-2 gap-px border-l border-[rgba(185,245,208,0.07)] bg-[rgba(185,245,208,0.07)]">
