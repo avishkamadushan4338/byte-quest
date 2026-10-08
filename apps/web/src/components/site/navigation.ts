@@ -4,6 +4,7 @@ export interface NavLink {
 }
 
 export const primaryNavLinks: NavLink[] = [
+  { label: "Programme", href: "/programme" },
   { label: "Journey", href: "/journey" },
   { label: "Mentors", href: "/mentors" },
   { label: "Partners", href: "/partners" },
@@ -11,6 +12,7 @@ export const primaryNavLinks: NavLink[] = [
 ];
 
 export const menuLinks: NavLink[] = [
+  { label: "Programme", href: "/programme" },
   { label: "Journey", href: "/journey" },
   { label: "Divisions", href: "/#divisions" },
   { label: "Mentors", href: "/mentors" },
@@ -21,12 +23,18 @@ export const menuLinks: NavLink[] = [
   { label: "Register", href: "/register" },
 ];
 
+export const footerProgrammeLinks: NavLink[] = [
+  { label: "Programme", href: "/programme" },
+  { label: "Journey", href: "/journey" },
+  { label: "Projects", href: "/projects" },
+  { label: "Register", href: "/register" },
+];
+
 export const footerNavLinks: NavLink[] = [
+  { label: "Volunteer", href: "/volunteers" },
   { label: "Mentors", href: "/mentors" },
   { label: "Partners", href: "/partners" },
-  { label: "Volunteer", href: "/volunteers" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "#contact" },
 ];
 
 export const footerGuidelineLinks: NavLink[] = [
