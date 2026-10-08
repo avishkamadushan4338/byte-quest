@@ -2,6 +2,7 @@ import { Container } from "@byte-quest/ui/components/container";
 import { Section } from "@byte-quest/ui/components/section";
 import { SectionHeader } from "@byte-quest/ui/components/section-header";
 import { cn } from "@byte-quest/ui/lib/utils";
+import { ArrowLeftIcon, ArrowRightIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 
 import { milestoneWeeks, phaseOf, weekTags, weeks } from "./data";
@@ -49,7 +50,7 @@ export const Timeline = () => {
     <Section id="timeline" tone="alt">
       <Container>
         <SectionHeader
-          kicker="11 / Programme Timeline"
+          kicker="08 / Programme Timeline"
           lead="Select a week to see what happens. Official dates will be announced."
           title="Week by week."
         />
@@ -128,7 +129,7 @@ export const Timeline = () => {
                   onClick={() => selectWeek(Math.max(1, activeWeek - 1))}
                   type="button"
                 >
-                  ←
+                  <ArrowLeftIcon aria-hidden="true" weight="bold" />
                 </button>
                 <button
                   aria-label="Next week"
@@ -139,7 +140,7 @@ export const Timeline = () => {
                   }
                   type="button"
                 >
-                  →
+                  <ArrowRightIcon aria-hidden="true" weight="bold" />
                 </button>
               </div>
             </div>
