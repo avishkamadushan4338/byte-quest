@@ -1,6 +1,8 @@
 import { cn } from "@byte-quest/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 
+import { ArrowLabel } from "@/components/site/arrow-label";
+
 interface ClosingCtaAction {
   label: string;
   to: string;
@@ -57,7 +59,7 @@ export const ClosingCta = ({ title, actions, compact }: ClosingCtaProps) => (
             key={action.label}
             to={action.to}
           >
-            {action.label}
+            <ArrowLabel>{action.label}</ArrowLabel>
           </Link>
         ))}
       </div>
