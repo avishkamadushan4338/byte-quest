@@ -22,9 +22,7 @@ import { MotionProvider, PageTransition } from "../components/site/motion";
 import { SiteFooter } from "../components/site/site-footer";
 import { SiteHeader } from "../components/site/site-header";
 import { LoadingScreen } from "../components/status/loading-screen";
-import { getProfile } from "../functions/get-profile";
 import { getSiteOrigin } from "../functions/get-site-origin";
-import { getUser } from "../functions/get-user";
 import { NOT_FOUND_PATH, buildHeadForPath } from "../utils/seo";
 
 import appCss from "../index.css?url";
@@ -38,7 +36,7 @@ export interface RouterAppContext {
 }
 
 const RootDocument = () => {
-  const { ambientBlobs, isSignedIn, isAdmin } = Route.useLoaderData();
+  const { ambientBlobs } = Route.useLoaderData();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
@@ -51,9 +49,7 @@ const RootDocument = () => {
       </head>
       <body className="bg-ink text-fg min-h-svh">
         <AmbientGlow blobs={ambientBlobs} />
-        {isAdminRoute ? null : (
-          <SiteHeader isAdmin={isAdmin} isSignedIn={isSignedIn} />
-        )}
+        {isAdminRoute ? null : <SiteHeader />}
         <Suspense fallback={<LoadingScreen />}>
           <MotionProvider>
             <PageTransition routeKey={pathname.split("/")[1] ?? ""}>
@@ -80,16 +76,10 @@ const RootDocument = () => {
 };
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
-  loader: async () => {
-    const session = await getUser();
-    const profile = session ? await getProfile() : null;
-    return {
-      ambientBlobs: generateAmbientBlobs(),
-      isSignedIn: Boolean(session),
-      isAdmin: profile?.role === "admin",
-      siteOrigin: await getSiteOrigin(),
-    };
-  },
+  loader: async () => ({
+    ambientBlobs: generateAmbientBlobs(),
+    siteOrigin: await getSiteOrigin(),
+  }),
   head: ({ loaderData, matches }) => {
     // When nothing below the root matched (or a loader threw notFound) the
     // leaf is the root route itself, whose pathname is not a real page.

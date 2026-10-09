@@ -14,27 +14,14 @@ import { useState } from "react";
 import { isInternalHref, menuLinks, primaryNavLinks } from "./navigation";
 
 const navLinkClass =
-  "text-muted hover:text-fg relative inline-flex items-center rounded-full px-3.5 py-2 text-[13.5px] font-medium tracking-[0.01em] whitespace-nowrap transition-colors duration-200 hover:bg-[rgba(185,245,208,0.06)] data-[status=active]:text-fg data-[status=active]:after:absolute data-[status=active]:after:bottom-[3px] data-[status=active]:after:left-1/2 data-[status=active]:after:size-1 data-[status=active]:after:-translate-x-1/2 data-[status=active]:after:rounded-full data-[status=active]:after:bg-volt data-[status=active]:after:shadow-[0_0_8px_var(--color-volt)] data-[status=active]:after:content-['']";
+  "text-muted hover:text-fg relative inline-flex items-center rounded-full px-3.5 py-2 text-[15px] font-medium tracking-[0.01em] whitespace-nowrap transition-colors duration-200 hover:bg-[rgba(185,245,208,0.06)] data-[status=active]:text-fg data-[status=active]:after:absolute data-[status=active]:after:bottom-[3px] data-[status=active]:after:left-1/2 data-[status=active]:after:size-1 data-[status=active]:after:-translate-x-1/2 data-[status=active]:after:rounded-full data-[status=active]:after:bg-volt data-[status=active]:after:shadow-[0_0_8px_var(--color-volt)] data-[status=active]:after:content-['']";
 const menuLinkClass =
   "font-display text-fg hover:text-volt flex items-baseline gap-4 border-b border-[rgba(185,245,208,0.08)] py-2.5 text-[clamp(26px,3.4vw,40px)] font-semibold tracking-[-0.025em]";
 
-export interface SiteHeaderProps {
-  isSignedIn: boolean;
-  isAdmin: boolean;
-}
-
-export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
+export const SiteHeader = () => {
   const scrolled = useScrolled();
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
-
-  let authMenuLink = { label: "Sign in", href: "/auth/login" };
-  if (isAdmin) {
-    authMenuLink = { label: "Admin", href: "/admin" };
-  } else if (isSignedIn) {
-    authMenuLink = { label: "Dashboard", href: "/dashboard" };
-  }
-  const mobileMenuLinks = [...menuLinks, authMenuLink];
 
   return (
     <header
@@ -111,7 +98,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
 
         <div className="flex shrink-0 items-center gap-1.5">
           <Link
-            className="group bg-volt text-ink hover:text-ink hover:bg-lime hidden min-h-11 items-center gap-1.5 rounded-full px-4 py-2.5 text-[13px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)] min-[480px]:inline-flex sm:px-5"
+            className="group bg-volt text-ink hover:text-ink hover:bg-lime hidden min-h-11 items-center gap-1.5 rounded-full px-4 py-2.5 text-[14.5px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)] min-[480px]:inline-flex sm:px-5"
             to="/volunteers"
           >
             Volunteer
@@ -150,9 +137,9 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 </DialogClose>
               </div>
               <div className="grid flex-1 [grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))] content-center gap-x-12 gap-y-1">
-                {mobileMenuLinks.map((link, index) => {
+                {menuLinks.map((link, index) => {
                   const number = (
-                    <span className="text-teal font-mono text-[11px] tracking-[0.1em]">
+                    <span className="text-teal font-mono text-[13px] tracking-[0.1em]">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                   );
@@ -184,7 +171,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
               </div>
               <div className="flex flex-wrap gap-2.5 pt-2 min-[540px]:hidden">
                 <Link
-                  className="bg-volt text-ink hover:text-ink hover:bg-lime inline-flex min-h-11 items-center gap-1.5 rounded-full px-5 text-[14px] font-bold"
+                  className="bg-volt text-ink hover:text-ink hover:bg-lime inline-flex min-h-11 items-center gap-1.5 rounded-full px-5 text-[15.5px] font-bold"
                   onClick={closeMenu}
                   to="/volunteers"
                 >
@@ -192,7 +179,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                   <ArrowRightIcon aria-hidden="true" weight="bold" />
                 </Link>
               </div>
-              <div className="text-muted-2 border-line flex flex-wrap justify-between gap-x-6 gap-y-2 border-t pt-5 font-mono text-[11px] leading-relaxed tracking-[0.08em]">
+              <div className="text-muted-2 border-line flex flex-wrap justify-between gap-x-6 gap-y-2 border-t pt-5 font-mono text-[13px] leading-relaxed tracking-[0.08em]">
                 <span>LEARN. BUILD. INNOVATE. INSPIRE.</span>
                 <span>ST. ALOYSIUS&apos; COLLEGE, GALLE · OBA</span>
               </div>
