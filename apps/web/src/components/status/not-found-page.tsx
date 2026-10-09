@@ -8,7 +8,7 @@ import {
   statusSecondaryButton,
 } from "./status-shell";
 
-const AVATAR_SRC = "/assets/hero-avatar.png";
+const AVATAR_SRC = "/assets/hero-avatar.webp";
 
 export const NotFoundPage = () => (
   <StatusShell

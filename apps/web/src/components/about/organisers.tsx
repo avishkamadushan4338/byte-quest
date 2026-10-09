@@ -1,6 +1,6 @@
 import { crestAlt, organiser } from "./data";
 
-const CREST_SRC = "/assets/crest.png";
+const CREST_SRC = "/assets/crest.webp";
 
 export const Organisers = () => (
   <section

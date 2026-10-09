@@ -6,7 +6,7 @@ import { ArrowLabel } from "@/components/site/arrow-label";
 
 import { HeroDots } from "./hero-dots";
 
-const AVATAR_SRC = "/assets/hero-avatar.png";
+const AVATAR_SRC = "/assets/hero-avatar.webp";
 
 export const Hero = () => (
   <section
@@ -60,7 +60,7 @@ export const Hero = () => (
             className="block h-auto w-full max-w-[600px]"
             height={604}
             width={4064}
-            src="/assets/bq-logo.png"
+            src="/assets/bq-logo.webp"
           />
         </h1>
 
@@ -114,7 +114,7 @@ export const Hero = () => (
                 height={56}
                 loading="lazy"
                 width={189}
-                src="/assets/sacoba-logo.png"
+                src="/assets/sacoba-logo.webp"
               />
             </div>
           </div>

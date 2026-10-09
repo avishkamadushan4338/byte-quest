@@ -13,8 +13,8 @@ export const SITE_CONFIG = {
   organizer: "SACOBA - Old Boys' Association, St. Aloysius' College",
   description:
     "A premier national school innovation and coding programme in Sri Lanka, empowering students to learn, build, innovate and inspire.",
-  url: "https://bytequest.lk",
-  defaultImage: "/assets/crest.png",
+  url: "https://bytequest.aloysiuscollege.lk",
+  defaultImage: "/assets/crest.webp",
   locale: "en_LK",
   geo: {
     /** Southern Province / Galle District */
@@ -73,6 +73,17 @@ export const buildSeoMeta = (options?: SeoMetadataOptions) => {
 };
 
 /**
+ * Returns the canonical `<link>` tag for a route path, preventing duplicate-
+ * content SEO penalties across trailing-slash/query-string variants.
+ */
+export const buildCanonicalLink = (path?: string) => ({
+  rel: "canonical",
+  href: path
+    ? `${SITE_CONFIG.url}${path.startsWith("/") ? "" : "/"}${path}`
+    : SITE_CONFIG.url,
+});
+
+/**
  * Returns structured schema.org JSON-LD for Search Engine Knowledge Graphs.
  */
 export const getOrganizationJsonLd = () =>
@@ -82,7 +93,7 @@ export const getOrganizationJsonLd = () =>
     name: SITE_CONFIG.name,
     legalName: "Byte Quest - St. Aloysius' College Galle",
     url: SITE_CONFIG.url,
-    logo: `${SITE_CONFIG.url}/assets/crest.png`,
+    logo: `${SITE_CONFIG.url}/assets/crest.webp`,
     description: SITE_CONFIG.description,
     address: {
       "@type": "PostalAddress",

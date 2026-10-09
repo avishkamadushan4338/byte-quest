@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ComingSoonPage } from "@/components/status/coming-soon-page";
-import { buildSeoMeta } from "@/utils/seo";
+import { buildCanonicalLink, buildSeoMeta } from "@/utils/seo";
 
 const ProjectsRoute = () => (
   <ComingSoonPage
@@ -12,6 +12,7 @@ const ProjectsRoute = () => (
 
 export const Route = createFileRoute("/projects")({
   head: () => ({
+    links: [buildCanonicalLink("/projects")],
     meta: buildSeoMeta({
       description:
         "Student showcase and innovation projects built by participants across Sri Lanka during BYTE QUEST.",

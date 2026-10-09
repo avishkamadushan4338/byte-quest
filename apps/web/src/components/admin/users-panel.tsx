@@ -1,6 +1,6 @@
 import { Badge } from "@byte-quest/ui/components/badge";
 import { EmptyState } from "@byte-quest/ui/components/callout";
-import { TextField } from "@byte-quest/ui/components/fields";
+import { SelectField, TextField } from "@byte-quest/ui/components/fields";
 import {
   Table,
   TableBody,
@@ -457,29 +457,24 @@ export const UsersPanel = () => {
                 />
 
                 <div className="flex flex-col gap-1.5">
-                  <label
-                    className="text-fg-dim text-[13px] font-semibold"
-                    htmlFor="new-user-role"
-                  >
-                    Role
-                  </label>
-                  <select
-                    className="bg-surface text-fg focus:border-volt rounded-[11px] border border-[rgba(185,245,208,0.18)] px-3 py-2.5 text-[14px] outline-none"
+                  <SelectField
                     id="new-user-role"
-                    onChange={(e) =>
+                    label="Role"
+                    onValueChange={(val) =>
                       setNewUser((prev) => ({
                         ...prev,
-                        role: e.target.value as UserRole,
+                        role: (val ?? "student") as UserRole,
                       }))
                     }
+                    options={[
+                      { value: "student", label: "Student" },
+                      { value: "leader", label: "Team Leader" },
+                      { value: "volunteer", label: "Volunteer" },
+                      { value: "mic", label: "MIC (Teacher)" },
+                      { value: "admin", label: "Admin" },
+                    ]}
                     value={newUser.role}
-                  >
-                    <option value="student">Student</option>
-                    <option value="leader">Team Leader</option>
-                    <option value="volunteer">Volunteer</option>
-                    <option value="mic">MIC (Teacher)</option>
-                    <option value="admin">Admin</option>
-                  </select>
+                  />
                 </div>
               </div>
 

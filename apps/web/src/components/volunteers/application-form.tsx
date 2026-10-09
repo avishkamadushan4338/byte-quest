@@ -196,7 +196,6 @@ export const ApplicationForm = ({
               />
               <SelectField
                 error={errors.student?.grade}
-                hideArrow
                 id="grade"
                 label="Grade"
                 onValueChange={(value) =>
@@ -261,7 +260,6 @@ export const ApplicationForm = ({
                 value={guardian.name}
               />
               <SelectField
-                hideArrow
                 id="guardian-relationship"
                 label="Relationship"
                 onValueChange={(value) =>

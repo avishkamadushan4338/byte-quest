@@ -110,7 +110,7 @@ export const idCard = {
   schoolLabel: "SCHOOL",
   tagline: "LEARN. BUILD. INNOVATE. INSPIRE.",
   photoAlt: "Volunteer photo",
-  crestSrc: "/assets/crest.png",
+  crestSrc: "/assets/crest.webp",
 };
 
 export const consentCopy =

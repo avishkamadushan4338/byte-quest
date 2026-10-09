@@ -10,9 +10,9 @@ import {
 } from "./navigation";
 import type { NavLink } from "./navigation";
 
-const CREST_SRC = "/assets/crest.png";
-const BRAND_SRC = "/assets/bq-logo.png";
-const SACOBA_SRC = "/assets/sacoba-logo.png";
+const CREST_SRC = "/assets/crest.webp";
+const BRAND_SRC = "/assets/bq-logo.webp";
+const SACOBA_SRC = "/assets/sacoba-logo.webp";
 const CURRENT_YEAR = new Date().getFullYear();
 
 const pillars = [

@@ -10,6 +10,17 @@ import {
   ComboboxRoot,
   ComboboxTrigger,
 } from "@byte-quest/ui/primitives/combobox";
+import {
+  SelectIcon,
+  SelectItem,
+  SelectList,
+  SelectPopup,
+  SelectPortal,
+  SelectPositioner,
+  SelectRoot,
+  SelectTrigger,
+  SelectValue,
+} from "@byte-quest/ui/primitives/select";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
@@ -54,7 +65,6 @@ export interface FieldOption {
 
 interface SelectFieldProps extends ControlProps {
   options: FieldOption[];
-  hideArrow?: boolean;
 }
 
 interface ComboboxFieldProps extends ControlProps {
@@ -188,7 +198,6 @@ export const SelectField = ({
   hint,
   options,
   surface = "ink",
-  hideArrow,
 }: SelectFieldProps) => (
   <FieldShell
     error={error}
@@ -197,24 +206,33 @@ export const SelectField = ({
     label={label}
     requirement={requirement}
   >
-    <select
-      aria-invalid={Boolean(error)}
-      className={cn(
-        controlClass(surface, error),
-        "cursor-pointer",
-        hideArrow && "appearance-none"
-      )}
-      id={id}
-      onChange={(event) => onValueChange(event.target.value)}
-      value={value}
+    <SelectRoot
+      items={options}
+      onValueChange={(next) => onValueChange((next as string | null) ?? "")}
+      value={value || null}
     >
-      <option value="">Select</option>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+      <SelectTrigger
+        aria-invalid={Boolean(error)}
+        className={controlClass(surface, error)}
+        id={id}
+      >
+        <SelectValue placeholder="Select" />
+        <SelectIcon />
+      </SelectTrigger>
+      <SelectPortal>
+        <SelectPositioner sideOffset={6}>
+          <SelectPopup>
+            <SelectList>
+              {options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectList>
+          </SelectPopup>
+        </SelectPositioner>
+      </SelectPortal>
+    </SelectRoot>
   </FieldShell>
 );
 

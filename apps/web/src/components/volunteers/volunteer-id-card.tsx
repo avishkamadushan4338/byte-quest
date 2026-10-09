@@ -4,7 +4,7 @@ import { cn } from "@byte-quest/ui/lib/utils";
 import type { StudentDetails, VolunteerPhoto } from "./data";
 import { idCard, validationCopy } from "./data";
 
-const BRAND_LOGO_SRC = "/assets/bq-logo.png";
+const BRAND_LOGO_SRC = "/assets/bq-logo.webp";
 
 interface VolunteerIdCardProps {
   photo: VolunteerPhoto | null;

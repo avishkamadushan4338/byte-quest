@@ -80,7 +80,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 : "h-7 min-[380px]:h-8 sm:h-9"
             )}
             height={36}
-            src="/assets/crest.png"
+            src="/assets/crest.webp"
             width={36}
           />
           <span
@@ -96,7 +96,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 : "h-5 min-[380px]:h-6 sm:h-7"
             )}
             height={28}
-            src="/assets/bq-logo.png"
+            src="/assets/bq-logo.webp"
             width={188}
           />
         </Link>

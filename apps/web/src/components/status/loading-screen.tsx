@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { StatusOverlay } from "./status-shell";
 
-const BRAND_SRC = "/assets/bq-logo.png";
+const BRAND_SRC = "/assets/bq-logo.webp";
 const TICK_MS = 110;
 const HOLD_TICKS = 8;
 const STEP_SIZE = 25;
@@ -77,7 +77,7 @@ export const LoadingScreen = () => {
             />
             <div
               aria-hidden="true"
-              className="absolute inset-0 overflow-hidden [mask-image:url(/assets/bq-logo.png)] [mask-size:100%_100%]"
+              className="absolute inset-0 overflow-hidden [mask-image:url(/assets/bq-logo.webp)] [mask-size:100%_100%]"
             >
               <div className="animate-sweep absolute inset-y-0 w-[35%] bg-[linear-gradient(100deg,transparent,rgba(255,255,255,0.85),transparent)] motion-reduce:animate-none" />
             </div>

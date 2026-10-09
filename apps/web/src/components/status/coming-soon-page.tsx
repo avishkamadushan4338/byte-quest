@@ -6,7 +6,7 @@ import type { ChangeEvent, FormEvent } from "react";
 
 import { StatusShell, statusSecondaryButton } from "./status-shell";
 
-const BRAND_SRC = "/assets/bq-logo.png";
+const BRAND_SRC = "/assets/bq-logo.webp";
 const DEFAULT_DESCRIPTION =
   "A three-month innovation and coding programme for Sri Lanka's young innovators. Get notified the moment registrations open.";
 const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/u;
