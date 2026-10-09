@@ -34,7 +34,4 @@ export default defineConfig({
     }),
     viteReact(),
   ],
-  ssr: {
-    external: ["sharp"],
-  },
 });

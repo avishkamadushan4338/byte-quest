@@ -1,7 +1,6 @@
 import type { RouterClient } from "@orpc/server";
 
 import { accessRouter } from "../features/access/router";
-import { cmsRouter } from "../features/cms/router";
 import { schoolsRouter } from "../features/schools/router";
 import { submissionsRouter } from "../features/submissions/router";
 import { teamsRouter } from "../features/teams/router";
@@ -15,7 +14,6 @@ export const appRouter = {
     user: context.session?.user,
   })),
   ...accessRouter,
-  ...cmsRouter,
   ...schoolsRouter,
   ...teamsRouter,
   ...submissionsRouter,
