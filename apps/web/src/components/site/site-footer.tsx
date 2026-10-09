@@ -30,7 +30,7 @@ const columns = [
 const socials: { label: string; href: string; icon: ReactNode }[] = [
   {
     label: "Facebook",
-    href: "#contact",
+    href: "https://www.facebook.com/people/Byte-Quest-Hackathon/61595058065480/?rdid=l8luL0bxN0ZGzb8x&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1EzkWkwQvh%2F",
     icon: (
       <path
         d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4.4V11H7v4h3v9h4v-9h3l1-4h-4V8.6c0-.4.3-.6.6-.6Z"
@@ -40,7 +40,7 @@ const socials: { label: string; href: string; icon: ReactNode }[] = [
   },
   {
     label: "Instagram",
-    href: "#contact",
+    href: "https://www.instagram.com/bytequest.sac?cplk=cmw1bjVsbW9uOW8y",
     icon: (
       <>
         <rect
