@@ -69,7 +69,7 @@ export const seoPages: SeoPage[] = [
     indexable: true,
     title: "Register your school team",
     description:
-      "Register a school team for BYTE QUEST: choose the Junior or Senior Division, add your team, students and teacher in charge, then review before submitting.",
+      "Official BYTE QUEST school team registration opens on 10 November 2026. See what to prepare: your school, division, a team of 3–5 students and a teacher in charge.",
   },
   {
     path: "/privacy",
