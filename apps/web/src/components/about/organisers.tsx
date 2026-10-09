@@ -35,7 +35,7 @@ export const Organisers = () => (
             {organiser.body}
           </p>
           <a
-            className="text-gold hover:text-gold-bright inline-flex min-h-11 w-fit items-center text-[18px] font-semibold tracking-[-0.01em] underline-offset-4 hover:underline"
+            className="text-gold hover:text-gold-bright inline-flex min-h-11 w-fit items-center text-[18px] font-semibold tracking-[-0.01em]"
             href={`mailto:${organiser.email}`}
           >
             {organiser.email}
