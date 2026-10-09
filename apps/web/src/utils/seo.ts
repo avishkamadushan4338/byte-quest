@@ -1,111 +1,249 @@
-export interface SeoMetadataOptions {
-  title?: string;
-  description?: string;
-  path?: string;
-  image?: string;
-  type?: "website" | "article";
-}
+import { findPage, isKnownPath, normalizePath, seoPages } from "./seo-pages";
+import type { SeoPage } from "./seo-pages";
+
+/**
+ * Single source of truth for site-wide SEO identity and for every tag, sitemap
+ * entry and robots rule derived from it. Per-page copy lives in `seo-pages.ts`.
+ *
+ * The production origin is NOT hard-coded into tags: it is resolved at runtime
+ * from the `SITE_URL` environment variable (see `functions/get-site-origin.ts`)
+ * and falls back to `DEFAULT_SITE_ORIGIN`, the host the production compose file
+ * deploys to.
+ */
+export const DEFAULT_SITE_ORIGIN = "https://bytequest.aloysiuscollege.lk";
 
 export const SITE_CONFIG = {
   name: "BYTE QUEST",
-  fullName: "BYTE QUEST - National School Innovation & Coding Programme",
-  institution: "St. Aloysius' College Galle",
-  organizer: "SACOBA - Old Boys' Association, St. Aloysius' College",
-  description:
-    "A premier national school innovation and coding programme in Sri Lanka, empowering students to learn, build, innovate and inspire.",
-  url: "https://bytequest.aloysiuscollege.lk",
-  defaultImage: "/assets/crest.webp",
+  institution: "St. Aloysius' College, Galle",
+  organizer: "Old Boys' Association of St. Aloysius' College, Galle",
+  language: "en",
   locale: "en_LK",
-  geo: {
-    /** Southern Province / Galle District */
-    region: "LK-31",
-    placename: "Galle, Sri Lanka",
-    position: "6.0367;80.2170",
-    icbm: "6.0367, 80.2170",
+  titleSuffix: " | BYTE QUEST",
+  defaultImage: {
+    path: "/assets/og-card.png",
+    width: 1200,
+    height: 630,
+    alt: "BYTE QUEST - Learn. Build. Innovate. Inspire.",
   },
+  logoPath: "/assets/bq-logo-mark.png",
+} as const;
+
+export type MetaTag = Record<string, string>;
+export type LinkTag = Record<string, string>;
+
+export interface HeadTags {
+  links: LinkTag[];
+  meta: MetaTag[];
+  scripts: { type: string; children: string }[];
+}
+
+/** Returns a clean `https://host[:port]` origin, or the default for bad input. */
+export const normalizeOrigin = (raw?: string | null): string => {
+  if (!raw) {
+    return DEFAULT_SITE_ORIGIN;
+  }
+  try {
+    const url = new URL(raw.trim());
+    if (url.protocol !== "https:" && url.protocol !== "http:") {
+      return DEFAULT_SITE_ORIGIN;
+    }
+    return url.origin;
+  } catch {
+    return DEFAULT_SITE_ORIGIN;
+  }
 };
 
+export const absoluteUrl = (origin: string, path: string): string => {
+  const normalized = normalizePath(path);
+  return normalized === "/" ? `${origin}/` : `${origin}${normalized}`;
+};
+
+const withSuffix = (page: SeoPage) =>
+  page.absoluteTitle ? page.title : `${page.title}${SITE_CONFIG.titleSuffix}`;
+
+/** Sentinel path for requests that matched no route; never a real URL. */
+export const NOT_FOUND_PATH = "/__not-found__";
+
+const NOT_FOUND_TITLE = `Page not found${SITE_CONFIG.titleSuffix}`;
+const PRIVATE_TITLE = `BYTE QUEST`;
+
+/** Escapes characters that could terminate an inline JSON-LD script block. */
+export const serializeJsonLd = (data: unknown): string =>
+  JSON.stringify(data)
+    .replaceAll("<", "\\u003c")
+    .replaceAll(">", "\\u003e")
+    .replaceAll("&", "\\u0026")
+    .replaceAll("\u2028", "\\u2028")
+    .replaceAll("\u2029", "\\u2029");
+
 /**
- * Generates an array of TanStack Router meta tags with complete SEO,
- * Geo targeting, Open Graph, and Twitter Cards specifications.
+ * Schema.org graph that only states verified facts:
+ *  - the website, and
+ *  - BYTE QUEST as an Organization (the programme brand).
+ * The school and the OBA are deliberately NOT asserted to be the same entity as
+ * BYTE QUEST, and no address, coordinates, social profiles, events or ratings
+ * are published until the organisers confirm them.
  */
-export const buildSeoMeta = (options?: SeoMetadataOptions) => {
-  const title = options?.title
-    ? `${options.title} | ${SITE_CONFIG.name}`
-    : `${SITE_CONFIG.name} | ${SITE_CONFIG.institution}`;
+export const buildJsonLd = (origin: string) => ({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${origin}/#website`,
+      url: origin,
+      name: SITE_CONFIG.name,
+      inLanguage: SITE_CONFIG.language,
+      publisher: { "@id": `${origin}/#organization` },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${origin}/#organization`,
+      name: SITE_CONFIG.name,
+      url: origin,
+      logo: `${origin}${SITE_CONFIG.logoPath}`,
+      description:
+        "An inter-school innovation and coding programme for Sri Lankan students, organised by the Old Boys' Association of St. Aloysius' College, Galle.",
+    },
+  ],
+});
 
-  const description = options?.description ?? SITE_CONFIG.description;
-  const url = options?.path
-    ? `${SITE_CONFIG.url}${options.path.startsWith("/") ? "" : "/"}${options.path}`
-    : SITE_CONFIG.url;
-  const image = options?.image ?? SITE_CONFIG.defaultImage;
-  const absoluteImage = image.startsWith("http")
-    ? image
-    : `${SITE_CONFIG.url}${image.startsWith("/") ? "" : "/"}${image}`;
-
+const buildSocialTags = ({
+  description,
+  origin,
+  title,
+  url,
+}: {
+  description: string;
+  origin: string;
+  title: string;
+  url: string;
+}): MetaTag[] => {
+  const image = `${origin}${SITE_CONFIG.defaultImage.path}`;
   return [
-    // Basic Meta
-    { title },
-    { name: "description", content: description },
-
-    // Geo Targeting (Galle, Sri Lanka)
-    { name: "geo.region", content: SITE_CONFIG.geo.region },
-    { name: "geo.placename", content: SITE_CONFIG.geo.placename },
-    { name: "geo.position", content: SITE_CONFIG.geo.position },
-    { name: "ICBM", content: SITE_CONFIG.geo.icbm },
-
-    // Open Graph
     { property: "og:site_name", content: SITE_CONFIG.name },
+    { property: "og:type", content: "website" },
+    { property: "og:locale", content: SITE_CONFIG.locale },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
     { property: "og:url", content: url },
-    { property: "og:type", content: options?.type ?? "website" },
-    { property: "og:locale", content: SITE_CONFIG.locale },
-    { property: "og:image", content: absoluteImage },
-    { property: "og:image:alt", content: title },
-
-    // Twitter Cards
+    { property: "og:image", content: image },
+    {
+      property: "og:image:width",
+      content: String(SITE_CONFIG.defaultImage.width),
+    },
+    {
+      property: "og:image:height",
+      content: String(SITE_CONFIG.defaultImage.height),
+    },
+    { property: "og:image:alt", content: SITE_CONFIG.defaultImage.alt },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:title", content: title },
     { name: "twitter:description", content: description },
-    { name: "twitter:image", content: absoluteImage },
+    { name: "twitter:image", content: image },
+    { name: "twitter:image:alt", content: SITE_CONFIG.defaultImage.alt },
   ];
 };
 
 /**
- * Returns the canonical `<link>` tag for a route path, preventing duplicate-
- * content SEO penalties across trailing-slash/query-string variants.
+ * Builds the complete document head for a pathname. This is the only place that
+ * emits title, description, canonical, robots, Open Graph and JSON-LD, so the
+ * tags cannot conflict. Unknown paths (404s) and non-indexable pages get
+ * `noindex` and never a canonical.
  */
-export const buildCanonicalLink = (path?: string) => ({
-  rel: "canonical",
-  href: path
-    ? `${SITE_CONFIG.url}${path.startsWith("/") ? "" : "/"}${path}`
-    : SITE_CONFIG.url,
-});
+export const buildHeadForPath = (
+  rawPath: string,
+  origin: string = DEFAULT_SITE_ORIGIN
+): HeadTags => {
+  const path = normalizePath(rawPath);
+  const page = findPage(path);
+  const scripts = [
+    {
+      type: "application/ld+json",
+      children: serializeJsonLd(buildJsonLd(origin)),
+    },
+  ];
+
+  if (!page) {
+    const known = isKnownPath(path);
+    return {
+      links: [],
+      meta: [
+        { title: known ? PRIVATE_TITLE : NOT_FOUND_TITLE },
+        { name: "robots", content: "noindex, nofollow" },
+      ],
+      scripts: [],
+    };
+  }
+
+  const title = withSuffix(page);
+  const url = absoluteUrl(origin, page.canonicalPath ?? page.path);
+
+  if (!page.indexable) {
+    return {
+      links: [],
+      meta: [
+        { title },
+        { name: "description", content: page.description },
+        { name: "robots", content: "noindex, nofollow" },
+      ],
+      scripts: [],
+    };
+  }
+
+  return {
+    links: [{ rel: "canonical", href: url }],
+    meta: [
+      { title },
+      { name: "description", content: page.description },
+      { name: "robots", content: "index, follow" },
+      ...buildSocialTags({ description: page.description, origin, title, url }),
+    ],
+    scripts,
+  };
+};
+
+/** Pages that belong in sitemap.xml: indexable and self-canonical. */
+export const getSitemapPages = (): SeoPage[] =>
+  seoPages.filter(
+    (page) =>
+      page.indexable &&
+      (page.canonicalPath === undefined || page.canonicalPath === page.path)
+  );
+
+const escapeXml = (value: string) =>
+  value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
 
 /**
- * Returns structured schema.org JSON-LD for Search Engine Knowledge Graphs.
+ * No `<lastmod>` is emitted: the content is code-defined, so there is no
+ * trustworthy per-page modification date and an artificial one would be noise.
  */
-export const getOrganizationJsonLd = () =>
-  JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "EducationalOrganization",
-    name: SITE_CONFIG.name,
-    legalName: "Byte Quest - St. Aloysius' College Galle",
-    url: SITE_CONFIG.url,
-    logo: `${SITE_CONFIG.url}/assets/crest.webp`,
-    description: SITE_CONFIG.description,
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Galle",
-      addressRegion: "Southern Province",
-      postalCode: "80000",
-      addressCountry: "LK",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: "6.0367",
-      longitude: "80.2170",
-    },
-    sameAs: ["https://facebook.com", "https://instagram.com"],
-  });
+export const buildSitemapXml = (origin: string): string => {
+  const urls = getSitemapPages()
+    .map(
+      (page) =>
+        `  <url>\n    <loc>${escapeXml(absoluteUrl(origin, page.path))}</loc>\n  </url>`
+    )
+    .join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+};
+
+/**
+ * `/api/` is operational and blocked, except the public CMS image endpoint that
+ * pages embed. robots.txt is not access control: private pages are protected by
+ * authentication and carry `noindex`, and are intentionally left crawlable so
+ * that directive can be seen.
+ */
+export const buildRobotsTxt = (origin: string): string =>
+  [
+    "User-agent: *",
+    "Allow: /api/cms/images/",
+    "Disallow: /api/",
+    "",
+    `Sitemap: ${origin}/sitemap.xml`,
+    "",
+  ].join("\n");

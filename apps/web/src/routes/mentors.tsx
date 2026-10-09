@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ComingSoonPage } from "@/components/status/coming-soon-page";
-import { buildCanonicalLink, buildSeoMeta } from "@/utils/seo";
 
 const MentorsRoute = () => (
   <ComingSoonPage
@@ -11,14 +10,5 @@ const MentorsRoute = () => (
 );
 
 export const Route = createFileRoute("/mentors")({
-  head: () => ({
-    links: [buildCanonicalLink("/mentors")],
-    meta: buildSeoMeta({
-      description:
-        "Meet industry mentors, software architects, and tech leaders guiding students throughout BYTE QUEST.",
-      path: "/mentors",
-      title: "Mentors",
-    }),
-  }),
   component: MentorsRoute,
 });

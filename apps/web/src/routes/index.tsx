@@ -10,7 +10,6 @@ import { Moments } from "@/components/home/moments";
 import { Timeline } from "@/components/home/timeline";
 import { WhatIs } from "@/components/home/what-is";
 import { Reveal } from "@/components/site/motion";
-import { buildCanonicalLink, buildSeoMeta } from "@/utils/seo";
 
 const HomeComponent = () => (
   <main className="bg-ink">
@@ -43,12 +42,5 @@ const HomeComponent = () => (
 );
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    links: [buildCanonicalLink("/")],
-    meta: buildSeoMeta({
-      path: "/",
-      title: "Home",
-    }),
-  }),
   component: HomeComponent,
 });

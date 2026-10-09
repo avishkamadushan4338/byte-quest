@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   createRootRouteWithContext,
+  rootRouteId,
   useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
@@ -22,8 +23,9 @@ import { SiteFooter } from "../components/site/site-footer";
 import { SiteHeader } from "../components/site/site-header";
 import { LoadingScreen } from "../components/status/loading-screen";
 import { getProfile } from "../functions/get-profile";
+import { getSiteOrigin } from "../functions/get-site-origin";
 import { getUser } from "../functions/get-user";
-import { buildSeoMeta, getOrganizationJsonLd } from "../utils/seo";
+import { NOT_FOUND_PATH, buildHeadForPath } from "../utils/seo";
 
 import appCss from "../index.css?url";
 
@@ -85,37 +87,45 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       ambientBlobs: generateAmbientBlobs(),
       isSignedIn: Boolean(session),
       isAdmin: profile?.role === "admin",
+      siteOrigin: await getSiteOrigin(),
     };
   },
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1, viewport-fit=cover",
-      },
-      ...buildSeoMeta(),
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: getOrganizationJsonLd(),
-      },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/assets/favicon.png" },
-      { rel: "shortcut icon", href: "/favicon.ico" },
-      { rel: "apple-touch-icon", href: "/assets/favicon.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      {
-        rel: "preconnect",
-        href: "https://fonts.gstatic.com",
-        crossOrigin: "anonymous",
-      },
-      { rel: "stylesheet", href: FONT_STYLESHEET },
-    ],
-  }),
+  head: ({ loaderData, matches }) => {
+    // When nothing below the root matched (or a loader threw notFound) the
+    // leaf is the root route itself, whose pathname is not a real page.
+    const leaf = matches.at(-1);
+    const isNotFound =
+      !leaf || leaf.routeId === rootRouteId || leaf.status === "notFound";
+    const seo = buildHeadForPath(
+      isNotFound ? NOT_FOUND_PATH : leaf.pathname,
+      loaderData?.siteOrigin
+    );
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1, viewport-fit=cover",
+        },
+        ...seo.meta,
+      ],
+      scripts: seo.scripts,
+      links: [
+        ...seo.links,
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", type: "image/png", href: "/assets/favicon.png" },
+        { rel: "shortcut icon", href: "/favicon.ico" },
+        { rel: "apple-touch-icon", href: "/assets/favicon.png" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossOrigin: "anonymous",
+        },
+        { rel: "stylesheet", href: FONT_STYLESHEET },
+      ],
+    };
+  },
 
   component: RootDocument,
 });

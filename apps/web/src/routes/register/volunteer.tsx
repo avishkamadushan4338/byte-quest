@@ -11,6 +11,5 @@ const RegisterVolunteerRoute = () => (
 );
 
 export const Route = createFileRoute("/register/volunteer")({
-  head: () => ({ meta: [{ title: "Volunteer | BYTE QUEST" }] }),
   component: RegisterVolunteerRoute,
 });
