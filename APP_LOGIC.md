@@ -119,16 +119,6 @@ This document describes the core architecture, data flows, operational rules, an
 
 ---
 
-## 7. Search Engine Optimization (SEO) & Geo-Targeting
+## 7. Search Engine Optimization
 
-1. **Geo-Location Targeting**:
-   - Pinned to St. Aloysius' College, Galle, Southern Province, Sri Lanka:
-     - `geo.region`: `LK-31`
-     - `geo.placename`: `Galle, Sri Lanka`
-     - `geo.position`: `6.0367;80.2170`
-     - `ICBM`: `6.0367, 80.2170`
-2. **Social Graph Metadata**:
-   - Open Graph tags (`og:site_name`, `og:title`, `og:description`, `og:url`, `og:locale`, `og:image`).
-   - Twitter Card meta (`summary_large_image`).
-3. **Structured Data (JSON-LD)**:
-   - Root document injects Schema.org `EducationalOrganization` linking BYTE QUEST, St. Aloysius' College Galle, and SACOBA.
+All SEO behaviour (metadata, canonicals, robots, sitemap, JSON-LD, route indexing decisions, tests and the deployment checklist) is documented in [docs/seo.md](docs/seo.md). Page copy and indexability live in `apps/web/src/utils/seo-pages.ts`; the public origin comes from `SITE_URL`.
