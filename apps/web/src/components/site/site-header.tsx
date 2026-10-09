@@ -68,7 +68,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
         />
         <Link
           aria-label="BYTE QUEST home"
-          className="text-fg hover:text-fg flex shrink-0 items-center gap-3"
+          className="text-fg hover:text-fg flex min-w-0 shrink items-center gap-2 min-[380px]:gap-3"
           to="/"
         >
           <img
@@ -79,9 +79,14 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 ? "h-7 min-[380px]:h-[30px]"
                 : "h-7 min-[380px]:h-8 sm:h-9"
             )}
+            height={36}
             src="/assets/crest.png"
+            width={36}
           />
-          <span aria-hidden="true" className="bg-line-strong h-6 w-px" />
+          <span
+            aria-hidden="true"
+            className="bg-line-strong h-6 w-px shrink-0"
+          />
           <img
             alt="BYTE QUEST"
             className={cn(
@@ -90,7 +95,9 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 ? "h-5 min-[380px]:h-[22px]"
                 : "h-5 min-[380px]:h-6 sm:h-7"
             )}
+            height={28}
             src="/assets/bq-logo.png"
+            width={188}
           />
         </Link>
 
@@ -104,7 +111,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
 
         <div className="flex shrink-0 items-center gap-1.5">
           <Link
-            className="group bg-volt text-ink hover:text-ink hover:bg-lime inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[13px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)]"
+            className="group bg-volt text-ink hover:text-ink hover:bg-lime hidden min-h-11 items-center gap-1.5 rounded-full px-4 py-2.5 text-[13px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)] min-[480px]:inline-flex sm:px-5"
             to="/volunteers"
           >
             Volunteer
@@ -132,7 +139,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                 )}
               />
             </DialogTrigger>
-            <DialogContent className="overflow-y-auto px-[clamp(20px,5vw,64px)] py-6 sm:px-[clamp(20px,5vw,64px)] sm:py-6">
+            <DialogContent className="gap-6 overflow-y-auto px-[clamp(20px,5vw,64px)] py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-[clamp(20px,5vw,64px)] sm:py-6 sm:pb-[max(1.5rem,env(safe-area-inset-bottom))]">
               <div className="flex items-center justify-between">
                 <DialogTitle>Menu</DialogTitle>
                 <DialogClose
@@ -175,7 +182,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                   );
                 })}
               </div>
-              <div className="flex flex-wrap gap-2.5 min-[540px]:hidden">
+              <div className="flex flex-wrap gap-2.5 pt-2 min-[540px]:hidden">
                 <Link
                   className="bg-volt text-ink hover:text-ink hover:bg-lime inline-flex min-h-11 items-center gap-1.5 rounded-full px-5 text-[14px] font-bold"
                   onClick={closeMenu}
@@ -185,7 +192,7 @@ export const SiteHeader = ({ isSignedIn, isAdmin }: SiteHeaderProps) => {
                   <ArrowRightIcon aria-hidden="true" weight="bold" />
                 </Link>
               </div>
-              <div className="text-muted-2 flex flex-wrap justify-between gap-3 font-mono text-[11px] tracking-[0.08em]">
+              <div className="text-muted-2 border-line flex flex-wrap justify-between gap-x-6 gap-y-2 border-t pt-5 font-mono text-[11px] leading-relaxed tracking-[0.08em]">
                 <span>LEARN. BUILD. INNOVATE. INSPIRE.</span>
                 <span>ST. ALOYSIUS&apos; COLLEGE, GALLE · OBA</span>
               </div>

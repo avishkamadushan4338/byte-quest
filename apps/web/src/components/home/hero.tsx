@@ -10,7 +10,7 @@ const AVATAR_SRC = "/assets/hero-avatar.png";
 
 export const Hero = () => (
   <section
-    className="relative flex min-h-[max(100svh,860px)] items-center overflow-hidden px-[clamp(20px,5vw,64px)] pt-[120px] pb-14"
+    className="split:min-h-[max(100svh,860px)] split:flex-row split:items-center split:pt-[120px] relative flex flex-col overflow-hidden px-[clamp(20px,5vw,64px)] pt-[88px] pb-14"
     id="top"
     style={{
       background:
@@ -21,7 +21,7 @@ export const Hero = () => (
 
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute bottom-0 left-[-6%] z-[1] aspect-[1024/1536] h-[82%] opacity-42 min-[980px]:left-[clamp(40px,5vw,120px)] min-[980px]:h-[min(calc(100%_-_86px),1240px)] min-[980px]:opacity-100"
+      className="split:absolute split:bottom-0 split:left-[clamp(40px,5vw,120px)] split:mx-0 split:aspect-[1024/1536] split:h-[min(calc(100%_-_86px),1240px,62vw)] split:w-auto pointer-events-none relative z-[1] mx-auto aspect-square w-[min(92vw,540px)] shrink-0"
     >
       <div
         className="absolute top-[40%] left-1/2 aspect-square w-[180%] -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -34,6 +34,10 @@ export const Hero = () => (
         <img
           alt=""
           className="absolute top-0 left-0 block h-auto w-full origin-[50%_0] scale-[1.28]"
+          decoding="async"
+          fetchPriority="high"
+          height={1536}
+          width={1024}
           src={AVATAR_SRC}
         />
       </div>
@@ -41,19 +45,21 @@ export const Hero = () => (
 
     <div
       aria-hidden="true"
-      className="absolute inset-0 z-[1] bg-[linear-gradient(90deg,rgba(2,8,7,0.2),rgba(2,8,7,0.7))] min-[980px]:bg-[linear-gradient(90deg,transparent_40%,rgba(2,8,7,0.35)_62%,transparent_100%)]"
+      className="split:bg-[linear-gradient(90deg,transparent_40%,rgba(2,8,7,0.35)_62%,transparent_100%)] absolute inset-0 z-[1] bg-[linear-gradient(90deg,rgba(2,8,7,0.2),rgba(2,8,7,0.7))]"
     />
     <div
       aria-hidden="true"
       className="absolute inset-x-0 bottom-[-1px] z-[1] h-[34%] bg-[linear-gradient(180deg,rgba(2,8,7,0),rgba(2,8,7,0.7)_60%,#020807)]"
     />
 
-    <Container className="relative z-[2] flex justify-end">
-      <div className="[container-type:inline-size] -mt-[70px] w-[min(100%,600px)] min-[980px]:mr-[clamp(-48px,-3vw,0px)]">
+    <Container className="split:mt-0 split:justify-end relative z-[2] -mt-[16vw] flex min-[540px]:-mt-[88px]">
+      <div className="split:-mt-[70px] split:mr-[clamp(-48px,-3vw,0px)] split:w-[min(100%,calc(100vw-500px),600px)] [container-type:inline-size] w-full">
         <h1 className="m-0 leading-none">
           <img
             alt="BYTE QUEST"
             className="block h-auto w-full max-w-[600px]"
+            height={604}
+            width={4064}
             src="/assets/bq-logo.png"
           />
         </h1>
@@ -105,6 +111,9 @@ export const Hero = () => (
               <img
                 alt="SACOBA - Old Boys' Association, St. Aloysius' College"
                 className="block h-14 w-auto"
+                height={56}
+                loading="lazy"
+                width={189}
                 src="/assets/sacoba-logo.png"
               />
             </div>

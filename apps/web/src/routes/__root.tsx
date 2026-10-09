@@ -61,8 +61,16 @@ const RootDocument = () => {
         </Suspense>
         <SiteFooter />
         <Toaster richColors theme="dark" />
-        <TanStackRouterDevtools position="bottom-left" />
-        <ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />
+        {import.meta.env.DEV &&
+        import.meta.env.VITE_SHOW_DEVTOOLS === "true" ? (
+          <>
+            <TanStackRouterDevtools position="bottom-left" />
+            <ReactQueryDevtools
+              buttonPosition="bottom-right"
+              position="bottom"
+            />
+          </>
+        ) : null}
         <Scripts />
       </body>
     </html>

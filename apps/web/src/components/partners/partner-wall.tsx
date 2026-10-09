@@ -12,7 +12,7 @@ export const PartnerWall = () => (
       <div className="mt-5 grid gap-3">
         {partnerTiers.map((tier) => (
           <div
-            className="bg-surface grid grid-cols-[120px_1fr] items-center gap-4 rounded-[16px] border border-[rgba(185,245,208,0.07)] p-3.5"
+            className="bg-surface grid grid-cols-1 items-center gap-3 rounded-[16px] border border-[rgba(185,245,208,0.07)] p-3.5 sm:grid-cols-[120px_1fr] sm:gap-4"
             key={tier.name}
           >
             <span
@@ -21,7 +21,7 @@ export const PartnerWall = () => (
             >
               {tier.label}
             </span>
-            <div className="grid [grid-template-columns:repeat(auto-fill,minmax(150px,1fr))] gap-2">
+            <div className="grid [grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr))] gap-2">
               {Array.from({ length: tier.slots }, (_, slot) => (
                 <div
                   className="text-faint-2 flex items-center justify-center rounded-[10px] border border-dashed border-[rgba(185,245,208,0.12)] font-mono text-[10px] tracking-[0.1em]"

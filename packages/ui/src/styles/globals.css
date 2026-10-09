@@ -4,6 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Side-by-side hero layouts need both width and a landscape-ish viewport; tall tablets stack. */
+@custom-variant split (@media (min-width: 980px) and (min-aspect-ratio: 1/1));
+
 @theme {
   --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
