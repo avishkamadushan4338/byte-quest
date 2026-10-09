@@ -6,7 +6,10 @@ import { ArrowLabel } from "@/components/site/arrow-label";
 
 import { HeroDots } from "./hero-dots";
 
-const AVATAR_SRC = "/assets/hero-avatar.webp";
+const AVATAR_SRC = "/assets/hero-avatar-1024.webp";
+const AVATAR_SRCSET =
+  "/assets/hero-avatar-640.webp 640w, /assets/hero-avatar-1024.webp 1024w";
+const AVATAR_SIZES = "(min-width: 1024px) 800px, 92vw";
 
 export const Hero = () => (
   <section
@@ -38,7 +41,9 @@ export const Hero = () => (
           fetchPriority="high"
           height={1536}
           width={1024}
+          sizes={AVATAR_SIZES}
           src={AVATAR_SRC}
+          srcSet={AVATAR_SRCSET}
         />
       </div>
     </div>
