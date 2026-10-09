@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+<<<<<<< HEAD
 import { SITE_CONFIG } from "@/utils/seo";
 
 type ChangeFreq = "daily" | "weekly" | "monthly" | "yearly";
@@ -43,13 +44,24 @@ ${urls}
 };
 
 /** Public, unauthenticated: machine-readable index of crawlable pages. */
+=======
+import { ENV } from "@/env.server";
+import { buildSitemapXml, normalizeOrigin } from "@/utils/seo";
+
+>>>>>>> 3fff91a (feat(seo): generate sitemap.xml and robots.txt from the route registry)
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: () =>
+<<<<<<< HEAD
         new Response(buildSitemapXml(), {
           headers: {
             "Content-Type": "application/xml",
+=======
+        new Response(buildSitemapXml(normalizeOrigin(ENV.SITE_URL)), {
+          headers: {
+            "Content-Type": "application/xml; charset=utf-8",
+>>>>>>> 3fff91a (feat(seo): generate sitemap.xml and robots.txt from the route registry)
             "Cache-Control": "public, max-age=3600",
           },
         }),
