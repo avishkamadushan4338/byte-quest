@@ -1,6 +1,6 @@
 import type { Database } from "@byte-quest/db";
 import { school, team } from "@byte-quest/db";
-import { asc, eq, ilike, sql } from "drizzle-orm";
+import { asc, eq, like, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { adminProcedure, publicProcedure } from "../../index";
@@ -60,7 +60,7 @@ export const findOrCreateSchool = async (db: Database, input: SchoolLookup) => {
       address: school.address,
     })
     .from(school)
-    .where(ilike(school.name, `%${name}%`))
+    .where(like(school.name, `%${name}%`))
     .limit(1);
   if (partial) {
     return partial;

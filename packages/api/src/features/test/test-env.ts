@@ -62,6 +62,13 @@ const resolveMigrationsDir = (): string => {
   );
 };
 
+/** Statements of one migration file, split the way drizzle emits them. */
+const readStatements = (file: string): string[] =>
+  readFileSync(file, "utf-8")
+    .split("--> statement-breakpoint")
+    .map((statement) => statement.trim())
+    .filter(Boolean);
+
 /** Run an ordered list of statements sequentially. */
 const runSequentially = async (
   run: (statement: string) => Promise<unknown>,
@@ -85,27 +92,24 @@ export const createTestDb = async (): Promise<TestDb> => {
   const db = await createDb({ TURSO_DATABASE_URL: `file:${dbPath}` });
 
   const migrationsDir = resolveMigrationsDir();
-  const migrationDirs = readdirSync(migrationsDir, {
-    withFileTypes: true,
-  }).toSorted((a, b) => a.name.localeCompare(b.name));
 
-  const statements = migrationDirs.flatMap((dirEntry) => {
-    if (!dirEntry.isDirectory()) {
-      return [];
-    }
-    const migrationSql = path.join(
-      migrationsDir,
-      dirEntry.name,
-      "migration.sql"
-    );
-    if (!existsFile(migrationSql)) {
-      return [];
-    }
-    return readFileSync(migrationSql, "utf-8")
-      .split("--> statement-breakpoint")
-      .map((statement) => statement.trim())
-      .filter(Boolean);
-  });
+  // drizzle-kit writes flat `NNNN_name.sql` files next to a `meta/` folder;
+  // a `<dir>/migration.sql` layout is still supported for either shape.
+  const statements = readdirSync(migrationsDir, {
+    withFileTypes: true,
+  })
+    .toSorted((a, b) => a.name.localeCompare(b.name))
+    .flatMap((entry) => {
+      const fullPath = path.join(migrationsDir, entry.name);
+      if (entry.isFile() && entry.name.endsWith(".sql")) {
+        return readStatements(fullPath);
+      }
+      if (!entry.isDirectory()) {
+        return [];
+      }
+      const migrationSql = path.join(fullPath, "migration.sql");
+      return existsFile(migrationSql) ? readStatements(migrationSql) : [];
+    });
 
   await runSequentially((statement) => db.run(sql.raw(statement)), statements);
 
