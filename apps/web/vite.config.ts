@@ -22,7 +22,16 @@ export default defineConfig({
     varlockVitePlugin({ ssrInjectMode: "auto-load" }),
     tailwindcss(),
     tanstackStart(),
-    nitro({ preset: "node-server" }),
+    nitro({
+      preset: "node-server",
+      compressPublicAssets: true,
+      // Defence in depth for private surfaces; pages also render a robots meta tag.
+      routeRules: {
+        "/admin/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
+        "/api/rpc/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
+        "/api/auth/**": { headers: { "X-Robots-Tag": "noindex, nofollow" } },
+      },
+    }),
     viteReact(),
   ],
   ssr: {
