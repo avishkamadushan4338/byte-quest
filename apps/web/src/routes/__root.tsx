@@ -103,9 +103,9 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
       links: [
         ...seo.links,
         { rel: "stylesheet", href: appCss },
-        { rel: "icon", type: "image/png", href: "/assets/favicon.png" },
+        { rel: "icon", type: "image/webp", href: "/assets/favicon.webp" },
         { rel: "shortcut icon", href: "/favicon.ico" },
-        { rel: "apple-touch-icon", href: "/assets/favicon.png" },
+        { rel: "apple-touch-icon", href: "/assets/favicon.webp" },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         {
           rel: "preconnect",
