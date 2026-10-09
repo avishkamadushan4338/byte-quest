@@ -141,7 +141,7 @@ describe("head tags", () => {
       expect(tagsNamed(meta, key)).toHaveLength(1);
     }
     expect(tagsNamed(meta, "og:image")[0]?.content).toBe(
-      `${ORIGIN}/assets/og-card.png`
+      `${ORIGIN}/assets/og-card.webp`
     );
   });
 

@@ -20,7 +20,7 @@ export const SITE_CONFIG = {
   locale: "en_LK",
   titleSuffix: " | BYTE QUEST",
   defaultImage: {
-    path: "/assets/og-card.png",
+    path: "/assets/og-card.webp",
     width: 1200,
     height: 630,
     alt: "BYTE QUEST - Learn. Build. Innovate. Inspire.",
