@@ -13,6 +13,7 @@ ENV NODE_ENV=production \
     VARLOCK_SKIP_CODEGEN=1 \
     BETTER_AUTH_SECRET=jzhHZQmHEdvyScLuQ3vcaGUB7HNV8PJb \
     BETTER_AUTH_URL=http://localhost:5001 \
+    ADMIN_PASSWORD=build-placeholder-not-used \
     TURSO_DATABASE_URL=libsql://byte-quest-tenuka22.aws-ap-northeast-1.turso.io
 
 RUN cd apps/web && bun run build
