@@ -62,7 +62,7 @@ function MenuGroupLabel({
   return (
     <MenuPrimitive.GroupLabel
       className={cn(
-        "px-3 py-2 font-mono text-[10.5px] tracking-[0.16em] text-faint uppercase",
+        "px-3 py-2 font-mono text-[12.5px] tracking-[0.16em] text-faint uppercase",
         className
       )}
       {...props}

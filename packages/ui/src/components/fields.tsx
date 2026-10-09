@@ -15,7 +15,7 @@ type TagTone = "required" | "optional";
 
 function FieldTag({ tone }: { tone: TagTone }) {
   return (
-    <span className="text-faint-2 ml-auto font-mono text-[10px] tracking-[0.1em]">
+    <span className="text-faint-2 ml-auto font-mono text-[12.5px] tracking-[0.1em]">
       {tone.toUpperCase()}
     </span>
   );
@@ -63,7 +63,7 @@ function TextField({
   return (
     <Field className={cn("grid gap-2", className)} invalid={Boolean(error)}>
       <div className="flex items-center gap-2">
-        <FieldLabel htmlFor={id}>{label}</FieldLabel>
+        <FieldLabel>{label}</FieldLabel>
         <FieldTag tone={required ? "required" : "optional"} />
       </div>
       <Input
@@ -114,7 +114,7 @@ function TextareaField({
   return (
     <Field className={cn("grid gap-2", className)} invalid={Boolean(error)}>
       <div className="flex items-center gap-2">
-        <FieldLabel htmlFor={id}>{label}</FieldLabel>
+        <FieldLabel>{label}</FieldLabel>
         <FieldTag tone={required ? "required" : "optional"} />
       </div>
       <Textarea
@@ -374,7 +374,7 @@ function RadioCardField({
   return (
     <Field className={cn("grid gap-3", className)} invalid={Boolean(error)}>
       <div className="flex items-center gap-2">
-        <span className="font-mono text-[11px] tracking-[0.16em] text-muted-2 uppercase">
+        <span className="font-mono text-[13px] tracking-[0.16em] text-muted-2 uppercase">
           {legend}
         </span>
         <FieldTag tone="required" />
@@ -404,7 +404,7 @@ function RadioCardField({
                 value={option.value}
               />
               {option.badge ? (
-                <span className="text-teal font-mono text-[10.5px] tracking-[0.14em]">
+                <span className="text-teal font-mono text-[12.5px] tracking-[0.14em]">
                   {option.badge}
                 </span>
               ) : null}
@@ -503,7 +503,7 @@ function OptionToggleField({
   return (
     <Field className={cn("grid gap-3", className)} invalid={Boolean(error)}>
       <div className="flex items-center gap-2">
-        <span className="font-mono text-[11px] tracking-[0.16em] text-muted-2 uppercase">
+        <span className="font-mono text-[13px] tracking-[0.16em] text-muted-2 uppercase">
           {legend}
         </span>
         <FieldTag tone="required" />

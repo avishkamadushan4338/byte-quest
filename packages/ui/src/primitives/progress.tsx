@@ -59,7 +59,7 @@ function ProgressLabel({ className, children, ...props }: ProgressLabelProps) {
   return (
     <ProgressPrimitive.Label
       className={cn(
-        "text-muted-2 font-mono text-[10.5px] tracking-[0.14em] uppercase",
+        "text-muted-2 font-mono text-[12.5px] tracking-[0.14em] uppercase",
         className
       )}
       {...props}

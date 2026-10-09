@@ -39,7 +39,7 @@ function DataItem({
 
   return (
     <div className={cn("flex flex-col gap-1.5", className)} {...props}>
-      <dt className="text-faint font-mono text-[10.5px] tracking-[0.14em] uppercase">
+      <dt className="text-faint font-mono text-[12.5px] tracking-[0.14em] uppercase">
         {label}
       </dt>
       <dd

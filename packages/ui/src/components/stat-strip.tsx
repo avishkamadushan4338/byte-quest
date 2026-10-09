@@ -42,7 +42,7 @@ function StatStrip({
     >
       {items.map((item) => (
         <div className="bg-ink/50 px-5 py-[18px]" key={String(item.label)}>
-          <dt className="text-faint font-mono text-[10px] tracking-[0.14em] uppercase">
+          <dt className="text-faint font-mono text-[12.5px] tracking-[0.14em] uppercase">
             {item.label}
           </dt>
           <dd

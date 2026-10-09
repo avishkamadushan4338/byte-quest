@@ -20,7 +20,7 @@ function Kicker({ tone = "teal", className, ...props }: KickerProps) {
   return (
     <div
       className={cn(
-        "font-mono text-[11px] tracking-[0.16em] uppercase",
+        "font-mono text-[13px] tracking-[0.16em] uppercase",
         toneClasses[tone],
         className
       )}

@@ -21,7 +21,7 @@ function FieldLabel({
   return (
     <FieldPrimitive.Label
       className={cn(
-        "font-mono text-[11px] tracking-[0.16em] text-muted-2 uppercase",
+        "font-mono text-[13px] tracking-[0.16em] text-muted-2 uppercase",
         className
       )}
       {...props}

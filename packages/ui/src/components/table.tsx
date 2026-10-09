@@ -52,7 +52,7 @@ function TableHeadCell({ className, ...props }: TableHeadCellProps) {
   return (
     <th
       className={cn(
-        "text-faint px-5 py-4 text-left font-mono text-[10.5px] tracking-[0.14em] whitespace-nowrap uppercase",
+        "text-faint px-5 py-4 text-left font-mono text-[12.5px] tracking-[0.14em] whitespace-nowrap uppercase",
         className
       )}
       scope="col"
@@ -103,7 +103,7 @@ function DefinitionTable({ rows, className, labelWidth = "130px" }: DefinitionTa
     >
       {rows.map((row) => (
         <div className="contents" key={String(row.label)}>
-          <div className="bg-ink px-[18px] py-3.5 font-mono text-[10.5px] tracking-[0.14em] text-faint uppercase">
+          <div className="bg-ink px-[18px] py-3.5 font-mono text-[12.5px] tracking-[0.14em] text-faint uppercase">
             {row.label}
           </div>
           <div className="bg-ink text-fg-dim px-[18px] py-3.5 text-[14px] leading-[1.5]">

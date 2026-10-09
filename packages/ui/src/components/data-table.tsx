@@ -211,7 +211,7 @@ function DataTable<Row>({
                       isSorted && sort !== null ? ariaSort(sort.direction) : undefined
                     }
                     className={cn(
-                      "text-faint px-5 py-4 font-mono text-[10.5px] tracking-[0.14em] whitespace-nowrap uppercase",
+                      "text-faint px-5 py-4 font-mono text-[12.5px] tracking-[0.14em] whitespace-nowrap uppercase",
                       cellAlign(column),
                       column.widthClassName,
                       column.headerClassName
@@ -241,7 +241,7 @@ function DataTable<Row>({
                 );
               })}
               {renderRowActions ? (
-                <th className="text-faint px-5 py-4 text-right font-mono text-[10.5px] tracking-[0.14em] uppercase">
+                <th className="text-faint px-5 py-4 text-right font-mono text-[12.5px] tracking-[0.14em] uppercase">
                   Controls
                 </th>
               ) : null}

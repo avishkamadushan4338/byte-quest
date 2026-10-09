@@ -61,7 +61,7 @@ function DialogTitle({
 }: Omit<DialogPrimitive.Title.Props, "className"> & { className?: string }) {
   return (
     <DialogPrimitive.Title
-      className={cn("font-mono text-[11px] tracking-[0.16em] text-muted-2 uppercase", className)}
+      className={cn("font-mono text-[13px] tracking-[0.16em] text-muted-2 uppercase", className)}
       {...props}
     />
   );

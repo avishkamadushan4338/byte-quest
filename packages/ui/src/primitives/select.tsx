@@ -161,7 +161,7 @@ function SelectGroupLabel({ className, ...props }: SelectGroupLabelProps) {
   return (
     <SelectPrimitive.GroupLabel
       className={cn(
-        "text-faint px-3 pt-2 pb-1 font-mono text-[10.5px] tracking-[0.14em] uppercase",
+        "text-faint px-3 pt-2 pb-1 font-mono text-[12.5px] tracking-[0.14em] uppercase",
         className
       )}
       {...props}

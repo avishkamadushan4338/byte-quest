@@ -55,7 +55,7 @@ function BrandLockup({
       <span className="flex flex-col leading-none">
         <Brand className={logoClassName} size={size} />
         {tagline ? (
-          <span className="mt-[5px] font-mono text-[9px] tracking-[0.14em] text-muted-2">
+          <span className="mt-[5px] font-mono text-[13px] tracking-[0.14em] text-muted-2">
             {tagline}
           </span>
         ) : null}

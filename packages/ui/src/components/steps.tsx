@@ -42,7 +42,7 @@ function Steps({ steps, current, maxVisited, onSelect, className }: StepsProps) 
             >
               <span
                 className={cn(
-                  "flex size-[26px] shrink-0 items-center justify-center rounded-lg border font-mono text-[11px] transition-colors",
+                  "flex size-[26px] shrink-0 items-center justify-center rounded-lg border font-mono text-[13px] transition-colors",
                   isComplete
                     ? "border-transparent bg-volt text-ink"
                     : isCurrent
@@ -108,7 +108,7 @@ type ProgressMeterProps = {
 function ProgressMeter({ value, max, label, className }: ProgressMeterProps) {
   return (
     <ProgressRoot className={className} max={max} value={value}>
-      {label ? <span className="text-muted-2 font-mono text-[10.5px] tracking-[0.14em] uppercase">{label}</span> : null}
+      {label ? <span className="text-muted-2 font-mono text-[12.5px] tracking-[0.14em] uppercase">{label}</span> : null}
       <ProgressTrack>
         <ProgressIndicator />
       </ProgressTrack>

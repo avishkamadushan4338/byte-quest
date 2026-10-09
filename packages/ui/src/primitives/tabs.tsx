@@ -5,7 +5,7 @@ const tabsListClasses =
   "bg-surface border-line-soft inline-flex w-fit flex-wrap items-center gap-1 rounded-[14px] border p-1.5";
 
 const tabsTabClasses =
-  "text-muted hover:text-fg cursor-pointer rounded-[9px] px-3.5 py-2 font-mono text-[11.5px] tracking-[0.06em] whitespace-nowrap uppercase transition-colors outline-none data-selected:bg-fg data-selected:text-ink";
+  "text-muted hover:text-fg cursor-pointer rounded-[9px] px-3.5 py-2 font-mono text-[13px] tracking-[0.06em] whitespace-nowrap uppercase transition-colors outline-none data-selected:bg-fg data-selected:text-ink";
 
 type TabsRootProps = Omit<TabsPrimitive.Root.Props, "className"> & {
   className?: string;
