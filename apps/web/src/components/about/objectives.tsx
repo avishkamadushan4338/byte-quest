@@ -6,8 +6,8 @@ export const Objectives = () => (
     id="objectives"
   >
     <div className="mx-auto grid max-w-[1280px] [grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))] items-start gap-x-[72px] gap-y-10">
-      <div className="sticky top-[110px]">
-        <div className="text-teal font-mono text-[11px] tracking-[0.16em]">
+      <div className="min-[900px]:sticky min-[900px]:top-[110px]">
+        <div className="text-teal font-mono text-[13px] tracking-[0.16em]">
           OBJECTIVES
         </div>
         <h2 className="mt-[18px] mb-0 text-[clamp(34px,4.4vw,60px)] leading-[0.95] tracking-[-0.04em]">
@@ -23,7 +23,7 @@ export const Objectives = () => (
             className="grid grid-cols-[56px_1fr] gap-4 border-b border-[rgba(185,245,208,0.1)] py-[22px]"
             key={objective.n}
           >
-            <span className="text-volt pt-1 font-mono text-[12px]">
+            <span className="text-volt pt-1 font-mono text-[13px]">
               {objective.n}
             </span>
             <div>

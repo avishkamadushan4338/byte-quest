@@ -53,14 +53,14 @@ const gridClass =
 const FormCard = ({ step, title, subtitle, children }: FormCardProps) => (
   <div className={panelClass}>
     <div className="mb-[22px] flex items-start gap-4">
-      <span className="text-volt flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(82,255,61,0.35)] font-mono text-[12px]">
+      <span className="text-volt flex size-9 shrink-0 items-center justify-center rounded-[10px] border border-[rgba(82,255,61,0.35)] font-mono text-[13px]">
         {step}
       </span>
       <div>
         <h2 className="font-display m-0 text-[21px] font-semibold tracking-[-0.01em]">
           {title}
         </h2>
-        <div className="text-muted-2 mt-1 text-[13.5px]">{subtitle}</div>
+        <div className="text-muted-2 mt-1 text-[15px]">{subtitle}</div>
       </div>
     </div>
     {children}
@@ -141,7 +141,7 @@ export const ApplicationForm = ({
                     />
                     <span
                       aria-hidden="true"
-                      className="text-ink absolute top-3.5 right-3.5 flex size-5 items-center justify-center rounded-[6px] text-[12px] font-bold"
+                      className="text-ink absolute top-3.5 right-3.5 flex size-5 items-center justify-center rounded-[6px] text-[13px] font-bold"
                       style={{
                         border: `1px solid ${border}`,
                         background: on ? "#52FF3D" : "transparent",
@@ -152,7 +152,7 @@ export const ApplicationForm = ({
                     <span className="font-display pr-7 text-[16px] font-semibold">
                       {option.title}
                     </span>
-                    <span className="text-muted-2 text-[12.5px] leading-[1.45]">
+                    <span className="text-muted-2 text-[14px] leading-[1.45]">
                       {option.description}
                     </span>
                   </label>
@@ -160,7 +160,7 @@ export const ApplicationForm = ({
               })}
             </div>
             <div
-              className="mt-2.5 min-h-4 text-[12px] text-[#FF8A7A]"
+              className="mt-2.5 min-h-4 text-[13px] text-[#FF8A7A]"
               role="alert"
             >
               {errors.teams}
@@ -323,14 +323,14 @@ export const ApplicationForm = ({
                     src={photo.url}
                   />
                 ) : (
-                  <span className="text-faint-2 font-mono text-[10px] tracking-[0.1em]">
+                  <span className="text-faint-2 font-mono text-[12.5px] tracking-[0.1em]">
                     {validationCopy.photoPlaceholder}
                   </span>
                 )}
               </div>
               <div className="flex min-w-40 shrink-0 flex-col gap-2.5">
                 <label
-                  className="text-fg hover:border-volt relative inline-flex w-fit cursor-pointer items-center gap-2.5 rounded-full border border-[rgba(242,247,244,0.25)] px-[18px] py-3 text-[14px] font-semibold whitespace-nowrap"
+                  className="text-fg hover:border-volt relative inline-flex w-fit cursor-pointer items-center gap-2.5 rounded-full border border-[rgba(242,247,244,0.25)] px-[18px] py-3 text-[15.5px] font-semibold whitespace-nowrap"
                   htmlFor="volunteer-photo"
                 >
                   {photo
@@ -346,11 +346,11 @@ export const ApplicationForm = ({
                     type="file"
                   />
                 </label>
-                <span className="text-muted-2 text-[12.5px]">
+                <span className="text-muted-2 text-[14px]">
                   {photo?.name ?? validationCopy.fileLabelEmpty}
                 </span>
                 <span
-                  className="min-h-4 text-[12px] text-[#FF8A7A]"
+                  className="min-h-4 text-[13px] text-[#FF8A7A]"
                   role="alert"
                 >
                   {photoError}
@@ -361,20 +361,20 @@ export const ApplicationForm = ({
         </div>
 
         <aside
-          className={`${panelClass} sticky top-[100px] flex max-w-full flex-[1_1_300px] flex-col gap-[18px]`}
+          className={`${panelClass} flex max-w-full flex-[1_1_300px] flex-col gap-[18px] min-[900px]:sticky min-[900px]:top-[100px]`}
         >
-          <div className="text-muted-2 font-mono text-[11px] tracking-[0.16em]">
+          <div className="text-muted-2 font-mono text-[13px] tracking-[0.16em]">
             {applicationAside.kicker}
           </div>
           <div className="grid gap-2.5">
             {checklist.map((item) => (
               <div
-                className="flex items-center gap-3 text-[14px]"
+                className="flex items-center gap-3 text-[15.5px]"
                 key={item.label}
                 style={{ color: item.done ? "#F2F7F4" : "#8FA79C" }}
               >
                 <span
-                  className="text-ink flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
+                  className="text-ink flex size-5 shrink-0 items-center justify-center rounded-full text-[13px] font-bold"
                   style={{
                     background: item.done ? "#52FF3D" : "transparent",
                     border: `1px solid ${item.done ? "#52FF3D" : "rgba(185,245,208,0.25)"}`,
@@ -392,7 +392,7 @@ export const ApplicationForm = ({
               style={{ width: percent }}
             />
           </div>
-          <label className="text-muted flex cursor-pointer items-start gap-3 text-[13px] leading-[1.5]">
+          <label className="text-muted flex cursor-pointer items-start gap-3 text-[14.5px] leading-[1.5]">
             <input
               checked={consent}
               className="accent-volt mt-[3px] size-4 shrink-0"
@@ -402,7 +402,7 @@ export const ApplicationForm = ({
             <span>{consentCopy}</span>
           </label>
           <span
-            className="-mt-2.5 min-h-3.5 text-[12px] text-[#FF8A7A]"
+            className="-mt-2.5 min-h-3.5 text-[13px] text-[#FF8A7A]"
             role="alert"
           >
             {errors.consent}
@@ -415,7 +415,7 @@ export const ApplicationForm = ({
           >
             {applicationAside.submitLabel}
           </button>
-          <p className="text-faint m-0 text-[12px] leading-[1.55]">
+          <p className="text-faint m-0 text-[13px] leading-[1.55]">
             {applicationAside.privacyNote}
           </p>
         </aside>

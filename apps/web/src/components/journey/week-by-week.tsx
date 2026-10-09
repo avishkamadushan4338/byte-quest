@@ -62,7 +62,7 @@ export const WeekByWeek = ({ onPhaseChange, phase }: WeekByWeekProps) => {
       }}
     >
       <div className="mx-auto flex max-w-[1280px] flex-wrap items-start gap-x-[72px] gap-y-10">
-        <div className="sticky top-[110px] flex-[1_1_300px]">
+        <div className="flex-[1_1_300px] min-[900px]:sticky min-[900px]:top-[110px]">
           <SectionHeading kicker="WEEK BY WEEK" title="The full programme." />
           <p className="text-muted mt-[18px] mb-0 max-w-[380px] text-[16px] leading-[1.6]">
             Filter by phase, or follow the journey from orientation to the Grand
@@ -75,7 +75,7 @@ export const WeekByWeek = ({ onPhaseChange, phase }: WeekByWeekProps) => {
             options={phaseFilters}
             value={phase}
           />
-          <div className="text-muted-2 mt-5 flex flex-wrap gap-3.5 text-[12.5px]">
+          <div className="text-muted-2 mt-5 flex flex-wrap gap-3.5 text-[14px]">
             <span className="flex items-center gap-2">
               <span className="bg-lime size-2 rounded-full" />
               Hackathon
@@ -100,7 +100,7 @@ export const WeekByWeek = ({ onPhaseChange, phase }: WeekByWeekProps) => {
                 key={item.week}
               >
                 <span
-                  className="relative z-[1] flex size-11 items-center justify-center rounded-[12px] font-mono text-[13px]"
+                  className="relative z-[1] flex size-11 items-center justify-center rounded-[12px] font-mono text-[14.5px]"
                   style={styles.dot}
                 >
                   {item.n}
@@ -110,7 +110,7 @@ export const WeekByWeek = ({ onPhaseChange, phase }: WeekByWeekProps) => {
                   style={styles.card}
                 >
                   <div className="min-w-0">
-                    <div className="text-faint font-mono text-[10px] tracking-[0.14em]">
+                    <div className="text-faint font-mono text-[12.5px] tracking-[0.14em]">
                       WEEK {item.week} · {item.phaseLabel}
                     </div>
                     <div className="font-display text-fg mt-[5px] text-[clamp(17px,1.6vw,20px)] font-semibold tracking-[-0.01em]">
@@ -119,7 +119,7 @@ export const WeekByWeek = ({ onPhaseChange, phase }: WeekByWeekProps) => {
                   </div>
                   {item.milestone ? (
                     <span
-                      className="rounded-full px-2.5 py-[5px] font-mono text-[10px] tracking-[0.14em] whitespace-nowrap"
+                      className="rounded-full px-2.5 py-[5px] font-mono text-[12.5px] tracking-[0.14em] whitespace-nowrap"
                       style={styles.tag}
                     >
                       {item.milestone}
