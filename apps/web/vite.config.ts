@@ -25,4 +25,7 @@ export default defineConfig({
     nitro({ preset: "node-server" }),
     viteReact(),
   ],
+  ssr: {
+    external: ["sharp"],
+  },
 });

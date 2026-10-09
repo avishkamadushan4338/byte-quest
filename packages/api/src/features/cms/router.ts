@@ -1,7 +1,7 @@
 import { cmsImage } from "@byte-quest/db";
 import { ORPCError } from "@orpc/server";
 import { desc, eq } from "drizzle-orm";
-import sharp from "sharp";
+import type Sharp from "sharp";
 import { z } from "zod";
 
 import { adminProcedure } from "../../index";
@@ -50,6 +50,17 @@ export const cmsRouter = {
         if (original.byteLength > MAX_UPLOAD_BYTES) {
           throw new ORPCError("BAD_REQUEST", {
             message: "Image must be 8MB or smaller",
+          });
+        }
+
+        let sharp: typeof Sharp;
+        try {
+          const mod = await import("sharp");
+          sharp = mod.default || mod;
+        } catch {
+          throw new ORPCError("INTERNAL_SERVER_ERROR", {
+            message:
+              "Image processing module (sharp) is unavailable on this runtime",
           });
         }
 

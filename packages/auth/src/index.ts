@@ -5,6 +5,9 @@ import { betterAuth } from "better-auth";
 import { username } from "better-auth/plugins";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 
+export { ensureBootstrapAdmin, ADMIN_USERNAME } from "./admin";
+export type { AdminBootstrapConfig } from "./admin";
+
 /**
  * Sign-in handles allow letters, digits, dots, underscores and hyphens, and
  * must start alphanumeric. Hyphens matter: generated MIC handles embed them,
@@ -24,6 +27,9 @@ export const isValidUsername = (value: string) =>
 export interface AuthConfig {
   BETTER_AUTH_URL: string;
   BETTER_AUTH_SECRET: string;
+  ADMIN_PASSWORD: string;
+  ADMIN_NAME?: string;
+  ADMIN_EMAIL?: string;
 }
 
 export interface AuthOptions {
