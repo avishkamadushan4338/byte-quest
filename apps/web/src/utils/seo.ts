@@ -25,7 +25,7 @@ export const SITE_CONFIG = {
     height: 630,
     alt: "BYTE QUEST - Learn. Build. Innovate. Inspire.",
   },
-  logoPath: "/assets/bq-logo-mark.png",
+  logoPath: "/assets/bq-logo.webp",
 } as const;
 
 export type MetaTag = Record<string, string>;
