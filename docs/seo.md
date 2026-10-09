@@ -156,7 +156,7 @@ Not tested: Google Rich Results Test and Schema.org validator (require the publi
 | Confirm production hostname and set `SITE_URL` | Organisers / DevOps |
 | DNS, HTTPS, host redirects, proxy compression | DevOps |
 | Search Console verification and sitemap submission | Authorised Google account holder |
-| Approve the generated social card (`public/assets/og-card.png`; uses the BYTE QUEST wordmark and tagline only, no school crest) | Organisers |
+| Approve the generated social card (`public/assets/og-card.webp`; uses the BYTE QUEST wordmark and tagline only, no school crest) | Organisers |
 | Real social profile URLs (for `sameAs`) | Organisers |
 | Confirmed address or venue, dates and registration deadline (for `Event` / `Organization` details) | Organisers |
 | Mentor line-up and student projects (to lift `noindex`), with student and parent consent | Organisers |
