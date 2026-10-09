@@ -20,16 +20,16 @@ Evidence came from a production build served locally and from `curl`, Playwright
 | 10 | P2 | Homepage LCP element was `hero-avatar.png` (2.6 MB); logos 0.7 MB; JS/CSS served uncompressed | Lighthouse | Improved (see 6) |
 | 11 | Info | `geo.*` / `ICBM` meta tags: ignored by Google, coordinates unverified | n/a | Removed |
 
-Checked and found sound: `<html lang="en">`, a single H1 per public page, 404 status codes, redirect behaviour (`/register`, `/dashboard`, `/admin`: one hop), SSR content, `Cache-Control` on CMS images.
+Checked and found sound: `<html lang="en">`, a single H1 per public page, 404 status codes, redirect behaviour (`/register`, `/dashboard`, `/admin`: one hop), SSR content.
 
 ## 2. Architecture
 
 One metadata owner, with no per-route `head()` overrides on public pages.
 
 - [apps/web/src/utils/seo-pages.ts](../apps/web/src/utils/seo-pages.ts): route registry (title, description, indexability, canonical override). **Edit copy here.**
-- [apps/web/src/utils/seo.ts](../apps/web/src/utils/seo.ts): site identity, `buildHeadForPath()`, JSON-LD, sitemap and robots generators.
+- [apps/web/src/utils/seo.ts](../apps/web/src/utils/seo.ts): site identity, `buildHeadForPath()`, JSON-LD, sitemap, robots and `llms.txt` generators.
 - [apps/web/src/routes/\_\_root.tsx](../apps/web/src/routes/__root.tsx): calls `buildHeadForPath` with the leaf match's pathname. Both SSR and client navigation use it. Sentinel `NOT_FOUND_PATH` is used when only the root route matched.
-- `routes/sitemap[.]xml.ts`, `routes/robots[.]txt.ts`: generated at request time from the same registry. The static `public/robots.txt` was removed.
+- `routes/sitemap[.]xml.ts`, `routes/robots[.]txt.ts`, `routes/llms[.]txt.ts`: generated at request time from the same registry. The static `public/robots.txt` was removed.
 - `functions/get-site-origin.ts` and `SITE_URL` in `.env.schema`: runtime origin, with the default `https://bytequest.aloysiuscollege.lk`.
 - `vite.config.ts`: `X-Robots-Tag: noindex, nofollow` for `/admin/**`, `/api/rpc/**` and `/api/auth/**`; `compressPublicAssets`.
 
@@ -46,11 +46,12 @@ Rules:
 - **Registration** (`/register/team`): indexable, since it is the public entry point for the programme's main call to action. Form data is never placed in URLs or metadata.
 - **`/register/volunteer`**: canonical `/volunteers`, excluded from the sitemap.
 - **Legal pages**: indexable.
-- **robots.txt**: `Disallow: /api/` with `Allow: /api/cms/images/` (public images pages embed). Private pages stay crawlable but `noindex`, so crawlers can see the directive. They are protected by authentication, not by robots.txt.
+- **robots.txt**: `Disallow: /api/`. Private pages stay crawlable but `noindex`, so crawlers can see the directive. They are protected by authentication, not by robots.txt.
+- **llms.txt** (`/llms.txt`): plain-text summary for generative engines - one-line site description, key facts, contact and the sitemap page list, all derived from the same registry so it cannot drift from the sitemap. Private and placeholder routes are never listed.
 
 ### Structured data
 
-Emitted on indexable pages only: `WebSite` and `Organization` (BYTE QUEST) with stable `@id`s (`/#website`, `/#organization`).
+Emitted on indexable pages only: `WebSite` and `Organization` (BYTE QUEST) with stable `@id`s (`/#website`, `/#organization`), plus a per-page `WebPage` node (`<url>#webpage`) carrying the title and description and linking back with `isPartOf: { "@id": "/#website" }`.
 
 Deliberately **not** used:
 
@@ -66,7 +67,7 @@ Neither type qualifies for a Google rich result; they feed entity understanding 
 
 | Route | Index | Title | Canonical | Sitemap | Structured data |
 | --- | --- | --- | --- | --- | --- |
-| `/` | yes | BYTE QUEST \| Inter-School Innovation & Coding Programme | self | yes | WebSite, Organization |
+| `/` | yes | BYTE QUEST \| Inter-School Innovation & Coding Programme | self | yes | WebSite, Organization, WebPage |
 | `/about` | yes | About & Organisers \| BYTE QUEST | self | yes | same |
 | `/programme` | yes | Programme: Divisions, Phases & Hackathons \| BYTE QUEST | self | yes | same |
 | `/journey` | yes | Journey & Milestones \| BYTE QUEST | self | yes | same |

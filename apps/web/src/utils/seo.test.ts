@@ -4,8 +4,10 @@ import nodePath from "node:path";
 
 import {
   DEFAULT_SITE_ORIGIN,
+  SITE_CONFIG,
   buildHeadForPath,
   buildJsonLd,
+  buildLlmsTxt,
   buildRobotsTxt,
   buildSitemapXml,
   getSitemapPages,
@@ -194,6 +196,25 @@ describe("structured data", () => {
       expect(serialised).not.toContain(forbidden);
     }
   });
+
+  it("emits a WebPage node for indexable pages, and none for noindex ones", () => {
+    for (const page of seoPages.filter((entry) => entry.indexable)) {
+      const { links, scripts } = buildHeadForPath(page.path, ORIGIN);
+      expect(scripts).toHaveLength(2);
+      const node = JSON.parse(scripts[1]?.children ?? "{}");
+      expect(node["@context"]).toBe("https://schema.org");
+      expect(node["@type"]).toBe("WebPage");
+      expect(node.url).toBe(
+        links.find((link) => link.rel === "canonical")?.href
+      );
+      expect(node.description).toBe(page.description);
+      expect(node.isPartOf).toEqual({ "@id": `${ORIGIN}/#website` });
+    }
+
+    for (const path of ["/mentors", "/dashboard", "/does-not-exist"]) {
+      expect(buildHeadForPath(path, ORIGIN).scripts).toHaveLength(0);
+    }
+  });
 });
 
 describe("sitemap.xml and robots.txt", () => {
@@ -227,12 +248,55 @@ describe("sitemap.xml and robots.txt", () => {
     expect(xml).not.toContain("<lastmod>");
   });
 
-  it("references the sitemap and keeps CMS images crawlable", () => {
+  it("references the sitemap and blocks the API", () => {
     const txt = buildRobotsTxt(ORIGIN);
     expect(txt).toContain(`Sitemap: ${ORIGIN}/sitemap.xml`);
-    expect(txt).toContain("Allow: /api/cms/images/");
     expect(txt).toContain("Disallow: /api/");
+    expect(txt).not.toContain("Allow: /api/");
     expect(txt).not.toMatch(ROOT_DISALLOW_PATTERN);
     expect(txt).not.toContain("localhost");
+  });
+});
+
+describe("llms.txt", () => {
+  const LINK_PATTERN = /\]\((?<url>[^)]+)\)/gu;
+
+  it("opens with the site summary and published key facts", () => {
+    const txt = buildLlmsTxt(ORIGIN);
+    expect(txt.startsWith("# BYTE QUEST")).toBe(true);
+    expect(txt).toContain(getSitemapPages()[0]?.description ?? "");
+    expect(txt).toContain(SITE_CONFIG.contactEmail);
+    expect(txt).toContain(SITE_CONFIG.motto);
+    expect(txt).toContain("10 November 2026");
+    expect(txt).toContain("## Pages");
+  });
+
+  it("lists exactly the sitemap pages, as absolute URLs", () => {
+    const txt = buildLlmsTxt(ORIGIN);
+    const links = [...txt.matchAll(LINK_PATTERN)].map(
+      (match) => match.groups?.url
+    );
+    expect(links).toEqual(
+      getSitemapPages().map(
+        (page) => `${ORIGIN}${page.path === "/" ? "/" : page.path}`
+      )
+    );
+  });
+
+  it("never exposes private, placeholder or API routes", () => {
+    const txt = buildLlmsTxt(ORIGIN);
+    for (const path of [
+      "/admin",
+      "/dashboard",
+      "/auth/login",
+      "/apply-admin",
+      "/volunteer-portal",
+      "/mentors",
+      "/projects",
+      "/register/volunteer",
+      "/api/",
+    ]) {
+      expect(txt).not.toContain(path);
+    }
   });
 });

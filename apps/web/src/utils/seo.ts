@@ -19,6 +19,8 @@ export const SITE_CONFIG = {
   language: "en",
   locale: "en_LK",
   titleSuffix: " | BYTE QUEST",
+  contactEmail: "bytequest@aloysiuscollege.lk",
+  motto: "CERTA VIRILITER",
   defaultImage: {
     path: "/assets/og-card.webp",
     width: 1200,
@@ -190,6 +192,22 @@ export const buildHeadForPath = (
     };
   }
 
+  /**
+   * Per-page `WebPage` node: gives crawlers and generative engines a
+   * self-contained, machine-readable description of this exact URL and ties it
+   * back to the site-wide `WebSite` / `Organization` graph by `@id`.
+   */
+  const pageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: title,
+    description: page.description,
+    inLanguage: SITE_CONFIG.language,
+    isPartOf: { "@id": `${origin}/#website` },
+  };
+
   return {
     links: [{ rel: "canonical", href: url }],
     meta: [
@@ -198,7 +216,10 @@ export const buildHeadForPath = (
       { name: "robots", content: "index, follow" },
       ...buildSocialTags({ description: page.description, origin, title, url }),
     ],
-    scripts,
+    scripts: [
+      ...scripts,
+      { type: "application/ld+json", children: serializeJsonLd(pageJsonLd) },
+    ],
   };
 };
 
@@ -233,17 +254,47 @@ export const buildSitemapXml = (origin: string): string => {
 };
 
 /**
- * `/api/` is operational and blocked, except the public CMS image endpoint that
- * pages embed. robots.txt is not access control: private pages are protected by
- * authentication and carry `noindex`, and are intentionally left crawlable so
- * that directive can be seen.
+ * `/api/` is operational and blocked. robots.txt is not access control: private
+ * pages are protected by authentication and carry `noindex`, and are
+ * intentionally left crawlable so that directive can be seen.
  */
 export const buildRobotsTxt = (origin: string): string =>
   [
     "User-agent: *",
-    "Allow: /api/cms/images/",
     "Disallow: /api/",
     "",
     `Sitemap: ${origin}/sitemap.xml`,
+    "",
+  ].join("\n");
+
+/**
+ * `llms.txt` (the llmstxt.org convention): a plain-text summary for generative
+ * engines, served at `/llms.txt`. Every statement below is already published
+ * somewhere on the site, and the page list is derived from the same registry
+ * that drives sitemap.xml, so the two can never drift apart. Private and
+ * placeholder routes are never listed.
+ */
+export const buildLlmsTxt = (origin: string): string =>
+  [
+    `# ${SITE_CONFIG.name}`,
+    "",
+    `> ${findPage("/")?.description ?? ""}`,
+    "",
+    "## Key facts",
+    "- Organised by the Old Boys' Association of St. Aloysius' College, Galle (SACOBA).",
+    "- A three-month inter-school innovation and coding programme for students in Grades 6-13 in Sri Lanka.",
+    "- Schools enter teams of 3-5 students with a teacher in charge, in Junior and Senior Divisions.",
+    "- Teams work through mentor-guided phases, two hackathons and a Grand Final.",
+    "- School team registration opens on 10 November 2026.",
+    `- Motto: ${SITE_CONFIG.motto}.`,
+    "",
+    "## Contact",
+    `- Organising committee: ${SITE_CONFIG.contactEmail}`,
+    "",
+    "## Pages",
+    ...getSitemapPages().map(
+      (page) =>
+        `- [${page.title}](${absoluteUrl(origin, page.path)}): ${page.description}`
+    ),
     "",
   ].join("\n");
