@@ -1,6 +1,6 @@
-import { crestAlt, organiser } from "./data";
+import { obaLogoAlt, organiser } from "./data";
 
-const CREST_SRC = "/assets/crest.webp";
+const OBA_LOGO_SRC = "/assets/sacoba-logo.webp";
 
 export const Organisers = () => (
   <section
@@ -17,13 +17,15 @@ export const Organisers = () => (
       <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,320px)_1fr]">
         <div className="flex items-center justify-center p-[clamp(28px,5vw,48px)]">
           <img
-            alt={crestAlt}
-            className="h-[clamp(120px,16vw,180px)] w-auto"
-            src={CREST_SRC}
+            alt={obaLogoAlt}
+            className="h-auto w-full max-w-[clamp(180px,22vw,260px)]"
+            height={1256}
+            src={OBA_LOGO_SRC}
+            width={4249}
           />
         </div>
         <div className="flex flex-col gap-[14px] border-t border-[rgba(212,175,55,0.16)] p-[clamp(28px,4vw,56px)] sm:border-t-0 sm:border-l">
-          <div className="text-gold font-mono text-[11px] tracking-[0.16em]">
+          <div className="text-gold font-mono text-[13px] tracking-[0.16em]">
             {organiser.kicker}
           </div>
           <h2 className="m-0 text-[clamp(24px,2.6vw,36px)] leading-[1.1] tracking-[-0.03em]">
@@ -33,12 +35,12 @@ export const Organisers = () => (
             {organiser.body}
           </p>
           <a
-            className="text-gold hover:text-gold-bright w-fit text-[18px] font-semibold tracking-[-0.01em] underline-offset-4 hover:underline"
+            className="text-gold hover:text-gold-bright inline-flex min-h-11 w-fit items-center text-[18px] font-semibold tracking-[-0.01em] underline-offset-4 hover:underline"
             href={`mailto:${organiser.email}`}
           >
             {organiser.email}
           </a>
-          <div className="text-gold-bright font-mono text-[12px] tracking-[0.14em]">
+          <div className="text-gold-bright font-mono text-[13px] tracking-[0.14em]">
             {organiser.motto}
           </div>
         </div>
