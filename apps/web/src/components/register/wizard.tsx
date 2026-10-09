@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { ArrowLabel } from "@/components/site/arrow-label";
@@ -24,6 +24,7 @@ import {
   createEmptyMember,
   divisionGrades,
   divisionOrder,
+  REGISTRATION_OPENS_AT,
   initialRegisterState,
   registerAside,
   registerHero,
@@ -31,6 +32,7 @@ import {
   stepOrder,
   validationCopy,
 } from "./data";
+import { RegistrationNotOpen } from "./not-open";
 import { RegisterStepper } from "./register-stepper";
 import { StepConfirmation } from "./step-confirmation";
 import { StepDivision } from "./step-division";
@@ -225,6 +227,10 @@ export const Register = () => {
     Partial<Record<Division, string>>
   >(initial.editTokens);
   const [pending, setPending] = useState(false);
+  const [isOpen, setIsOpen] = useState(
+    () => Date.now() >= REGISTRATION_OPENS_AT.getTime()
+  );
+  const handleOpen = useCallback(() => setIsOpen(true), []);
   const [isClosed, setIsClosed] = useState(
     () => Date.now() > REGISTRATION_CLOSES_AT.getTime()
   );
@@ -604,6 +610,10 @@ export const Register = () => {
     ),
   };
 
+  if (!isOpen && !submitted) {
+    return <RegistrationNotOpen onOpen={handleOpen} />;
+  }
+
   if (isClosed && !submitted) {
     return (
       <main className="bg-ink">
@@ -632,7 +642,7 @@ export const Register = () => {
           <div className="flex flex-wrap gap-2">
             {registerHero.pills.map((pill) => (
               <span
-                className="rounded-full px-3 py-2 text-[13px] whitespace-nowrap"
+                className="rounded-full px-3 py-2 text-[14.5px] whitespace-nowrap"
                 key={pill.label}
                 style={{
                   color: pill.color,
@@ -664,14 +674,14 @@ export const Register = () => {
 
           <div className="bg-surface min-w-0 flex-[3_1_560px] rounded-[24px] border border-[rgba(185,245,208,0.09)] p-[clamp(22px,3.5vw,40px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
             {isClosed ? (
-              <div className="mb-6 rounded-[14px] border border-[rgba(240,216,117,0.3)] bg-[rgba(240,216,117,0.08)] px-4 py-3 text-[13px] text-[#F0D875]">
+              <div className="mb-6 rounded-[14px] border border-[rgba(240,216,117,0.3)] bg-[rgba(240,216,117,0.08)] px-4 py-3 text-[14.5px] text-[#F0D875]">
                 Registration closed on 10 January 2027 - this submission is now
                 read-only.
               </div>
             ) : null}
             {isConfirmation ? null : (
               <div className="mb-6">
-                <div className="text-volt font-mono text-[10.5px] tracking-[0.16em]">
+                <div className="text-volt font-mono text-[12.5px] tracking-[0.16em]">
                   {content.eyebrow}
                 </div>
                 <h2 className="mt-2 mb-0 text-[clamp(26px,3vw,36px)] leading-[1.05] tracking-[-0.03em]">
@@ -688,7 +698,7 @@ export const Register = () => {
             {submitted || isClosed ? null : (
               <div className="mt-7 flex items-center justify-between gap-3 border-t border-[rgba(185,245,208,0.08)] pt-5">
                 <button
-                  className="cursor-pointer rounded-full border border-[rgba(242,247,244,0.2)] bg-transparent px-5 py-[13px] font-sans text-[14px] font-semibold disabled:cursor-default"
+                  className="cursor-pointer rounded-full border border-[rgba(242,247,244,0.2)] bg-transparent px-5 py-[13px] font-sans text-[15.5px] font-semibold disabled:cursor-default"
                   disabled={pending || step === 0}
                   onClick={handleBack}
                   style={{ color: step === 0 ? "#3D5249" : "#F2F7F4" }}

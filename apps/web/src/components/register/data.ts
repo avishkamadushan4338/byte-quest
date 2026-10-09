@@ -367,3 +367,19 @@ export const memberSummary = (member: MemberDetails): string => {
   );
   return parts.length > 0 ? parts.join(" · ") : "";
 };
+
+/** Official registration opens at midnight, Sri Lanka time. */
+export const REGISTRATION_OPENS_AT = new Date("2026-11-10T00:00:00+05:30");
+
+export const registrationNotOpen = {
+  kicker: "TEAM REGISTRATION",
+  title: "Registration opens soon.",
+  lead: "Official registration opens on 10 November 2026. Get your team and details ready - the form appears here the moment it opens.",
+  status: "NOT OPEN YET",
+  opensLabel: "OFFICIAL REGISTRATION OPENS",
+  opensDate: "10 November 2026",
+  closesNote: "Registration closes on 10 January 2027.",
+  readyKicker: "READY YOUR TEAM",
+  readyTitle: "3–5 members",
+  readyNote: "3 REQUIRED · 2 OPTIONAL",
+};
