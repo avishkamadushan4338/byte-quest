@@ -26,24 +26,24 @@ export const Milestones = () => (
           >
             <div className="flex items-center justify-between">
               <span
-                className="font-mono text-[10.5px] tracking-[0.14em]"
+                className="font-mono text-[12.5px] tracking-[0.14em]"
                 style={{ color: item.accent }}
               >
                 {item.week}
               </span>
-              <span className="text-gold-bright rounded-full border border-[rgba(240,216,117,0.3)] px-[9px] py-1 font-mono text-[10px] tracking-[0.12em]">
+              <span className="text-gold-bright rounded-full border border-[rgba(240,216,117,0.3)] px-[9px] py-1 font-mono text-[12.5px] tracking-[0.12em]">
                 DATE TBA
               </span>
             </div>
             <div>
-              <div className="text-muted-2 font-mono text-[10.5px] tracking-[0.14em]">
+              <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.14em]">
                 {item.label}
               </div>
               <div className="font-display mt-1.5 text-[24px] font-bold tracking-[-0.02em]">
                 {item.title}
               </div>
             </div>
-            <div className="text-muted flex flex-wrap gap-x-2 gap-y-1.5 text-[13.5px]">
+            <div className="text-muted flex flex-wrap gap-x-2 gap-y-1.5 text-[15px]">
               {item.flow.map((step, index) => (
                 <span
                   className="inline-flex gap-2 whitespace-nowrap"

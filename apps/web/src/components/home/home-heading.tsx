@@ -19,7 +19,7 @@ export const HomeHeading = ({
   <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))] items-end gap-x-[72px] gap-y-6">
     <div>
       <div
-        className="font-mono text-[11px] tracking-[0.16em]"
+        className="font-mono text-[13px] tracking-[0.16em]"
         style={{ color: kickerColor }}
       >
         {kicker}

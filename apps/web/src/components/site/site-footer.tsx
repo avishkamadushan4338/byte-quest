@@ -78,9 +78,9 @@ const socials: { label: string; href: string; icon: ReactNode }[] = [
 ];
 
 const linkClass =
-  "font-display w-fit py-1 text-[17px] font-medium tracking-[-0.01em] text-[#C9D8D1] transition-colors duration-200 hover:text-white";
+  "font-display inline-flex w-fit items-center py-1 pointer-coarse:min-h-11 text-[17px] font-medium tracking-[-0.01em] text-[#C9D8D1] transition-colors duration-200 hover:text-white";
 const eyebrowClass =
-  "font-mono text-[10.5px] tracking-[0.2em] text-faint uppercase";
+  "font-mono text-[12.5px] tracking-[0.2em] text-faint uppercase";
 
 const FooterLink = ({ link }: { link: NavLink }) =>
   isInternalHref(link.href) ? (
@@ -156,7 +156,7 @@ export const SiteFooter = () => (
           {columns.map((column) => (
             <div key={column.title}>
               <div
-                className={`font-mono text-[11px] tracking-[0.2em] uppercase ${column.titleClass}`}
+                className={`font-mono text-[13px] tracking-[0.2em] uppercase ${column.titleClass}`}
               >
                 {column.title}
               </div>
@@ -206,7 +206,7 @@ export const SiteFooter = () => (
         </div>
       </div>
 
-      <div className="text-faint flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-[rgba(185,245,208,0.08)] py-[22px] text-[13px]">
+      <div className="text-faint flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-[rgba(185,245,208,0.08)] py-[22px] text-[14.5px]">
         <span className="min-w-0 flex-auto">
           © {CURRENT_YEAR} BYTE QUEST · St. Aloysius&apos; College OBA, Galle
         </span>
@@ -214,7 +214,7 @@ export const SiteFooter = () => (
           {footerGuidelineLinks.map((link) => (
             <li key={link.label}>
               <Link
-                className="text-muted-2 hover:text-fg inline-block py-1.5"
+                className="text-muted-2 hover:text-fg inline-flex items-center py-1.5 pointer-coarse:min-h-11"
                 to={link.href}
               >
                 {link.label}

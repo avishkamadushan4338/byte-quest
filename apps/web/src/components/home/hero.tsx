@@ -109,7 +109,7 @@ export const Hero = () => (
 
         <div className="border-line mt-12 flex flex-wrap items-end gap-x-9 gap-y-5 border-t pt-5">
           <div>
-            <div className="text-muted-2 font-mono text-[11.5px] tracking-[0.14em]">
+            <div className="text-muted-2 font-mono text-[13px] tracking-[0.14em]">
               PROUDLY PRESENTED BY
             </div>
             <div className="mt-3.5 flex flex-wrap items-center gap-6">

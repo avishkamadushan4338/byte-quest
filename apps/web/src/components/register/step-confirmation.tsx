@@ -79,7 +79,7 @@ export const StepConfirmation = ({
         ✓
       </span>
       <div>
-        <div className="text-volt font-mono text-[10.5px] tracking-[0.16em]">
+        <div className="text-volt font-mono text-[12.5px] tracking-[0.16em]">
           {registerSteps.confirmation.eyebrow}
         </div>
         <h2 className="mt-2 mb-0 text-[clamp(30px,4vw,48px)] leading-none tracking-[-0.035em]">
@@ -93,7 +93,7 @@ export const StepConfirmation = ({
       <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-px overflow-hidden rounded-[16px] border border-[rgba(185,245,208,0.08)] bg-[rgba(185,245,208,0.08)]">
         {facts.map((fact) => (
           <div className="bg-ink min-w-0 px-[18px] py-4" key={fact.label}>
-            <div className="text-faint font-mono text-[10px] tracking-[0.14em]">
+            <div className="text-faint font-mono text-[12.5px] tracking-[0.14em]">
               {fact.label}
             </div>
             <div
@@ -106,16 +106,16 @@ export const StepConfirmation = ({
         ))}
       </div>
       <div>
-        <div className="text-muted-2 font-mono text-[10.5px] tracking-[0.16em]">
+        <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.16em]">
           {confirmationCopy.nextStepsLabel}
         </div>
         <div className="mt-3 grid gap-2">
           {confirmationCopy.nextSteps.map((item) => (
             <div
-              className="text-fg-dim flex items-center gap-3.5 text-[14px]"
+              className="text-fg-dim flex items-center gap-3.5 text-[15.5px]"
               key={item.n}
             >
-              <span className="text-volt font-mono text-[11px]">{item.n}</span>
+              <span className="text-volt font-mono text-[13px]">{item.n}</span>
               {item.text}
             </div>
           ))}
@@ -123,13 +123,13 @@ export const StepConfirmation = ({
       </div>
       <div className="flex flex-wrap gap-2.5">
         <Link
-          className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
+          className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[15.5px] font-bold whitespace-nowrap"
           to="/journey"
         >
           <ArrowLabel>{confirmationCopy.journeyLabel}</ArrowLabel>
         </Link>
         <button
-          className="text-fg hover:border-volt cursor-pointer rounded-full border border-[rgba(242,247,244,0.25)] bg-transparent px-[22px] py-3.5 font-sans text-[14px] font-semibold"
+          className="text-fg hover:border-volt cursor-pointer rounded-full border border-[rgba(242,247,244,0.25)] bg-transparent px-[22px] py-3.5 font-sans text-[15.5px] font-semibold"
           onClick={onReset}
           type="button"
         >

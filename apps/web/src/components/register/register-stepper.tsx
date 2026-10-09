@@ -43,7 +43,7 @@ export const RegisterStepper = ({
 
   return (
     <aside className="bg-surface max-w-full flex-[1_1_260px] rounded-[20px] border border-[rgba(185,245,208,0.09)] p-5 min-[1100px]:sticky min-[1100px]:top-[100px]">
-      <div className="text-muted-2 font-mono text-[10.5px] tracking-[0.16em]">
+      <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.16em]">
         STEP {current + 1} OF {total}
       </div>
       <div className="mt-3 h-1 overflow-hidden rounded-[4px] bg-[rgba(185,245,208,0.08)]">
@@ -62,7 +62,7 @@ export const RegisterStepper = ({
             <li key={key}>
               <button
                 aria-current={isCurrent ? "step" : undefined}
-                className="flex w-full items-center gap-3 rounded-[10px] border-none p-2.5 text-left font-sans text-[14px]"
+                className="flex w-full items-center gap-3 rounded-[10px] border-none p-2.5 text-left font-sans text-[15.5px]"
                 disabled={locked}
                 onClick={() => onSelect(index)}
                 style={{
@@ -75,7 +75,7 @@ export const RegisterStepper = ({
                 type="button"
               >
                 <span
-                  className="flex size-[26px] shrink-0 items-center justify-center rounded-[8px] font-mono text-[11px]"
+                  className="flex size-[26px] shrink-0 items-center justify-center rounded-[8px] font-mono text-[13px]"
                   style={{
                     background: colors.dotBg,
                     color: colors.dotFg,

@@ -28,7 +28,7 @@ export const FilterBar = ({
         return (
           <button
             aria-selected={on}
-            className="cursor-pointer rounded-[8px] border-none px-3.5 py-2 font-mono text-[11.5px] tracking-[0.06em] whitespace-nowrap"
+            className="cursor-pointer rounded-[8px] border-none px-3.5 py-2 font-mono text-[13px] tracking-[0.06em] whitespace-nowrap"
             key={division}
             onClick={() => onDivisionChange(index)}
             role="tab"
@@ -49,7 +49,7 @@ export const FilterBar = ({
         return (
           <button
             aria-pressed={on}
-            className="cursor-pointer rounded-full px-3 py-[7px] font-sans text-[12.5px] whitespace-nowrap"
+            className="cursor-pointer rounded-full px-3 py-[7px] font-sans text-[14px] whitespace-nowrap"
             key={category}
             onClick={() => onCategoryChange(index)}
             style={{
@@ -70,7 +70,7 @@ export const FilterBar = ({
       </span>
       <input
         aria-label="Search projects"
-        className="text-fg min-w-0 flex-1 border-none bg-transparent font-sans text-[13.5px] outline-none"
+        className="text-fg min-w-0 flex-1 border-none bg-transparent font-sans text-[15px] outline-none"
         onChange={(event) => onQueryChange(event.target.value)}
         placeholder="Search projects or schools"
         type="search"

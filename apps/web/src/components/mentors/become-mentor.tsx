@@ -15,7 +15,7 @@ export const BecomeMentor = () => (
       }}
     >
       <div className="flex flex-col gap-5 p-[clamp(28px,4vw,48px)]">
-        <div className="text-volt font-mono text-[11px] tracking-[0.16em]">
+        <div className="text-volt font-mono text-[13px] tracking-[0.16em]">
           {becomeMentor.kicker}
         </div>
         <h2 className="m-0 text-[clamp(28px,3.2vw,42px)] leading-[1.05] tracking-[-0.03em]">
@@ -25,7 +25,7 @@ export const BecomeMentor = () => (
           {becomeMentor.body}
         </p>
         <a
-          className="bg-fg text-ink hover:bg-volt hover:text-ink self-start rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
+          className="bg-fg text-ink hover:bg-volt hover:text-ink self-start rounded-full px-[22px] py-3.5 text-[15.5px] font-bold whitespace-nowrap"
           href={mentorshipMailto}
         >
           <ArrowLabel>{becomeMentor.action}</ArrowLabel>
@@ -37,13 +37,13 @@ export const BecomeMentor = () => (
             className="flex flex-col gap-2 bg-[#04120E] p-[clamp(18px,2.4vw,26px)]"
             key={item.n}
           >
-            <span className="text-volt font-mono text-[11px] tracking-[0.1em]">
+            <span className="text-volt font-mono text-[13px] tracking-[0.1em]">
               {item.n}
             </span>
             <div className="font-display text-[16px] font-semibold">
               {item.title}
             </div>
-            <div className="text-muted-2 text-[13px] leading-[1.5]">
+            <div className="text-muted-2 text-[14.5px] leading-[1.5]">
               {item.description}
             </div>
           </div>

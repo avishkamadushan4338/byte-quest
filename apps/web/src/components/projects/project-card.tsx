@@ -23,11 +23,11 @@ export const ProjectCard = ({ project, onSelect }: ProjectCardProps) => {
           background: `radial-gradient(60% 80% at 70% 30%, ${categoryTints[project.category]}, transparent 70%), repeating-linear-gradient(135deg,#061C16 0 10px,#04140F 10px 20px)`,
         }}
       >
-        <span className="text-faint-2 font-mono text-[10.5px] tracking-[0.1em]">
+        <span className="text-faint-2 font-mono text-[12.5px] tracking-[0.1em]">
           PROJECT THUMBNAIL
         </span>
         <span
-          className="absolute top-3 left-3 rounded-[6px] bg-[rgba(2,8,7,0.85)] px-2 py-1 font-mono text-[10px] tracking-[0.12em]"
+          className="absolute top-3 left-3 rounded-[6px] bg-[rgba(2,8,7,0.85)] px-2 py-1 font-mono text-[12.5px] tracking-[0.12em]"
           style={{
             color: division.color,
             border: `1px solid ${division.line}`,
@@ -36,7 +36,7 @@ export const ProjectCard = ({ project, onSelect }: ProjectCardProps) => {
           {project.division}
         </span>
         {project.award ? (
-          <span className="text-gold-bright absolute top-3 right-3 rounded-[6px] border border-[rgba(212,175,55,0.4)] bg-[rgba(212,175,55,0.15)] px-2 py-1 font-mono text-[10px] tracking-[0.1em]">
+          <span className="text-gold-bright absolute top-3 right-3 rounded-[6px] border border-[rgba(212,175,55,0.4)] bg-[rgba(212,175,55,0.15)] px-2 py-1 font-mono text-[12.5px] tracking-[0.1em]">
             ★ {project.award}
           </span>
         ) : null}
@@ -46,18 +46,20 @@ export const ProjectCard = ({ project, onSelect }: ProjectCardProps) => {
           <div className="font-display text-muted text-[19px] font-semibold tracking-[-0.01em]">
             {placeholderTitle}
           </div>
-          <div className="text-faint mt-1 text-[13px]">{placeholderByline}</div>
+          <div className="text-faint mt-1 text-[14.5px]">
+            {placeholderByline}
+          </div>
         </div>
         <div className="flex flex-wrap gap-1.5">
-          <span className="text-lime rounded-full bg-[rgba(82,255,61,0.07)] px-[9px] py-1 text-[11.5px]">
+          <span className="text-lime rounded-full bg-[rgba(82,255,61,0.07)] px-[9px] py-1 text-[13px]">
             {project.category}
           </span>
-          <span className="text-muted-2 rounded-[6px] bg-[rgba(185,245,208,0.05)] px-2 py-1 font-mono text-[10.5px]">
+          <span className="text-muted-2 rounded-[6px] bg-[rgba(185,245,208,0.05)] px-2 py-1 font-mono text-[12.5px]">
             {project.tech}
           </span>
         </div>
         <button
-          className="text-fg hover:text-volt mt-auto flex cursor-pointer items-center justify-between border-x-0 border-t border-b-0 border-solid border-[rgba(185,245,208,0.07)] bg-transparent px-0 pt-3 pb-0 font-sans text-[13.5px] font-semibold"
+          className="text-fg hover:text-volt mt-auto flex cursor-pointer items-center justify-between border-x-0 border-t border-b-0 border-solid border-[rgba(185,245,208,0.07)] bg-transparent px-0 pt-3 pb-0 font-sans text-[15px] font-semibold"
           onClick={() => onSelect(project.id)}
           type="button"
         >

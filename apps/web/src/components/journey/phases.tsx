@@ -37,12 +37,12 @@ export const Phases = ({ onSelect, phase }: PhasesProps) => (
             >
               <div className="flex w-full items-center justify-between">
                 <span
-                  className="font-mono text-[11px] tracking-[0.14em]"
+                  className="font-mono text-[13px] tracking-[0.14em]"
                   style={{ color: item.accent }}
                 >
                   PHASE {item.n}
                 </span>
-                <span className="text-muted-2 rounded-full border border-[rgba(185,245,208,0.14)] px-2.5 py-[5px] font-mono text-[10.5px] tracking-[0.1em]">
+                <span className="text-muted-2 rounded-full border border-[rgba(185,245,208,0.14)] px-2.5 py-[5px] font-mono text-[12.5px] tracking-[0.1em]">
                   {item.weeks}
                 </span>
               </div>
@@ -52,7 +52,7 @@ export const Phases = ({ onSelect, phase }: PhasesProps) => (
               <div className="flex flex-wrap gap-1.5">
                 {item.items.map((entry) => (
                   <span
-                    className="text-muted rounded-[8px] bg-[rgba(185,245,208,0.05)] px-2.5 py-[5px] text-[12.5px]"
+                    className="text-muted rounded-[8px] bg-[rgba(185,245,208,0.05)] px-2.5 py-[5px] text-[14px]"
                     key={entry}
                   >
                     {entry}

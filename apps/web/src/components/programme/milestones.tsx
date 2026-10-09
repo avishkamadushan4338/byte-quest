@@ -45,7 +45,7 @@ export const Milestones = () => {
                 type="button"
               >
                 <span
-                  className="font-mono text-[10.5px] tracking-[0.14em]"
+                  className="font-mono text-[12.5px] tracking-[0.14em]"
                   style={{ color: item.color }}
                 >
                   {item.kicker} · WEEK {item.week}
@@ -68,12 +68,12 @@ export const Milestones = () => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-center gap-2">
               <span
-                className="font-mono text-[10.5px] tracking-[0.14em] whitespace-nowrap"
+                className="font-mono text-[12.5px] tracking-[0.14em] whitespace-nowrap"
                 style={{ color: moment.color }}
               >
                 {moment.kicker}
               </span>
-              <span className="text-gold-bright rounded-full border border-[rgba(240,216,117,0.3)] px-[9px] py-[3px] font-mono text-[10.5px] tracking-[0.12em] whitespace-nowrap">
+              <span className="text-gold-bright rounded-full border border-[rgba(240,216,117,0.3)] px-[9px] py-[3px] font-mono text-[12.5px] tracking-[0.12em] whitespace-nowrap">
                 DATE TBA
               </span>
             </div>
@@ -100,10 +100,10 @@ export const Milestones = () => {
           <div className="grid gap-px self-start overflow-hidden rounded-[16px] bg-[rgba(185,245,208,0.08)]">
             {moment.rows.map((row) => (
               <div
-                className="bg-ink grid grid-cols-1 gap-1 px-[18px] py-3.5 text-[14px] sm:grid-cols-[130px_minmax(0,1fr)] sm:gap-3.5"
+                className="bg-ink grid grid-cols-1 gap-1 px-[18px] py-3.5 text-[15.5px] sm:grid-cols-[130px_minmax(0,1fr)] sm:gap-3.5"
                 key={row.label}
               >
-                <span className="text-faint pt-0.5 font-mono text-[10.5px] tracking-[0.12em]">
+                <span className="text-faint pt-0.5 font-mono text-[12.5px] tracking-[0.12em]">
                   {row.label}
                 </span>
                 <span className="text-fg-dim leading-[1.5]">{row.value}</span>

@@ -92,9 +92,9 @@ export const applicationAside = {
 export const successPanel = {
   kicker: "YOU'RE ON THE CREW",
   titleStart: "Welcome,",
-  body: "Your application has been received and you're registered with the BYTE QUEST crew! The organizing committee will review your submission and issue your login credentials once approved. Please log in with your assigned account to view and download your official volunteer ID card.",
+  body: "Under review",
   statusLabel: "STATUS",
-  statusValue: "Pending Approval",
+  statusValue: "Under review",
   idLabel: "APPLICATION REF",
   downloadLabel: "Download ID card ↓",
   resetLabel: "Submit another response",

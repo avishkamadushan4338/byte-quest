@@ -93,7 +93,7 @@ export const TeamPanel = ({ me, onChanged, team }: TeamPanelProps) => {
           <h2 className="font-display mt-4 text-[clamp(24px,3vw,34px)] font-bold tracking-[-0.02em]">
             {team.name}
           </h2>
-          <p className="text-muted mt-2 text-[14px] leading-[1.6]">
+          <p className="text-muted mt-2 text-[15.5px] leading-[1.6]">
             {`${teamPanelCopy.teamMetaSuffix}: ${school} · Grade ${me.grade}`}
           </p>
         </div>
@@ -177,7 +177,7 @@ export const TeamPanel = ({ me, onChanged, team }: TeamPanelProps) => {
         </>
       ) : (
         <div className="border-line-soft flex flex-wrap items-center justify-between gap-3 border-t pt-5">
-          <p className="text-muted-2 max-w-[460px] text-[13px] leading-[1.6]">
+          <p className="text-muted-2 max-w-[460px] text-[14.5px] leading-[1.6]">
             {teamPanelCopy.inviteBody}
           </p>
           <AlertDialogRoot onOpenChange={setOpen} open={open}>

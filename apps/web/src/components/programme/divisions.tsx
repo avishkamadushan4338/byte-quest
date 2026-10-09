@@ -28,7 +28,7 @@ export const Divisions = () => (
         <div className={`${rowGrid} bg-surface-2`}>
           <div className="px-3 py-4 break-words sm:px-[18px]" />
           <div className={`${cellBorder} px-3 py-4 break-words sm:px-[18px]`}>
-            <div className="text-mint font-mono text-[10.5px] tracking-[0.14em]">
+            <div className="text-mint font-mono text-[12.5px] tracking-[0.14em]">
               DIVISION A
             </div>
             <div className="font-display mt-1 text-[clamp(22px,2.4vw,30px)] font-bold tracking-[-0.025em]">
@@ -36,7 +36,7 @@ export const Divisions = () => (
             </div>
           </div>
           <div className={`${cellBorder} px-3 py-4 break-words sm:px-[18px]`}>
-            <div className="text-volt font-mono text-[10.5px] tracking-[0.14em]">
+            <div className="text-volt font-mono text-[12.5px] tracking-[0.14em]">
               DIVISION B
             </div>
             <div className="font-display mt-1 text-[clamp(22px,2.4vw,30px)] font-bold tracking-[-0.025em]">
@@ -49,16 +49,16 @@ export const Divisions = () => (
             className={`${rowGrid} bg-surface border-t border-[rgba(185,245,208,0.08)]`}
             key={row.label}
           >
-            <div className="text-faint px-3 py-4 font-mono text-[10.5px] tracking-[0.12em] break-words sm:px-[18px]">
+            <div className="text-faint px-3 py-4 font-mono text-[12.5px] tracking-[0.12em] break-words sm:px-[18px]">
               {row.label}
             </div>
             <div
-              className={`${cellBorder} text-fg-dim px-3 py-4 text-[14px] leading-[1.5] break-words sm:px-[18px]`}
+              className={`${cellBorder} text-fg-dim px-3 py-4 text-[15.5px] leading-[1.5] break-words sm:px-[18px]`}
             >
               {row.junior}
             </div>
             <div
-              className={`${cellBorder} text-fg-dim px-3 py-4 text-[14px] leading-[1.5] break-words sm:px-[18px]`}
+              className={`${cellBorder} text-fg-dim px-3 py-4 text-[15.5px] leading-[1.5] break-words sm:px-[18px]`}
             >
               {row.senior}
             </div>

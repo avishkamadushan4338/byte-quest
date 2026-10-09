@@ -13,7 +13,7 @@ const countLabel = (count: number) =>
 
 export const Gallery = ({ projects, onSelect, onClear }: GalleryProps) => (
   <>
-    <div className="text-faint mt-4 flex items-center justify-between gap-3 font-mono text-[11px] tracking-[0.1em]">
+    <div className="text-faint mt-4 flex items-center justify-between gap-3 font-mono text-[13px] tracking-[0.1em]">
       <span>{countLabel(projects.length)}</span>
       <span>{galleryNote}</span>
     </div>
@@ -28,7 +28,7 @@ export const Gallery = ({ projects, onSelect, onClear }: GalleryProps) => (
           {galleryEmpty.title}
         </div>
         <button
-          className="text-fg hover:border-volt mt-3.5 cursor-pointer rounded-full border border-[rgba(242,247,244,0.22)] bg-transparent px-[18px] py-2.5 font-sans text-[13.5px] font-semibold"
+          className="text-fg hover:border-volt mt-3.5 cursor-pointer rounded-full border border-[rgba(242,247,244,0.22)] bg-transparent px-[18px] py-2.5 font-sans text-[15px] font-semibold"
           onClick={onClear}
           type="button"
         >

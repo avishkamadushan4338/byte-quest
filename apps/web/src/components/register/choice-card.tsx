@@ -62,7 +62,7 @@ export const ChoiceCard = ({
         {indicator}
       </span>
       <span
-        className="font-mono text-[10.5px] tracking-[0.14em]"
+        className="font-mono text-[12.5px] tracking-[0.14em]"
         style={{ color }}
       >
         {kicker}
@@ -70,7 +70,7 @@ export const ChoiceCard = ({
       <span className="font-display text-[32px] leading-none font-bold tracking-[-0.03em]">
         {title}
       </span>
-      <span className="text-muted text-[13.5px] leading-[1.5]">
+      <span className="text-muted text-[15px] leading-[1.5]">
         {description}
       </span>
       {children}

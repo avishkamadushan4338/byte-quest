@@ -37,7 +37,7 @@ export const Journey = () => (
                   }}
                 />
                 <span
-                  className="ml-2 bg-[#041611] px-3 font-mono text-[11px] tracking-[0.16em] whitespace-nowrap"
+                  className="ml-2 bg-[#041611] px-3 font-mono text-[13px] tracking-[0.16em] whitespace-nowrap"
                   style={{ color: phase.color }}
                 >
                   PHASE {phase.n} · {phase.weeks}
@@ -77,7 +77,7 @@ export const Journey = () => (
                 <ul className="relative m-0 flex list-none flex-wrap gap-2 p-0">
                   {phase.items.map((item) => (
                     <li
-                      className="text-fg-strong inline-flex items-center gap-[9px] rounded-full border border-[rgba(185,245,208,0.1)] bg-[rgba(2,8,7,0.6)] px-3.5 py-[9px] text-[13.5px] whitespace-nowrap"
+                      className="text-fg-strong inline-flex items-center gap-[9px] rounded-full border border-[rgba(185,245,208,0.1)] bg-[rgba(2,8,7,0.6)] px-3.5 py-[9px] text-[15px] whitespace-nowrap"
                       key={item}
                     >
                       <span
@@ -93,7 +93,7 @@ export const Journey = () => (
                 </ul>
 
                 <div className="relative mt-auto flex items-center justify-between gap-3 border-t border-[rgba(185,245,208,0.08)] pt-[18px]">
-                  <span className="text-faint font-mono text-[10.5px] tracking-[0.14em]">
+                  <span className="text-faint font-mono text-[12.5px] tracking-[0.14em]">
                     OUTCOME
                   </span>
                   <span

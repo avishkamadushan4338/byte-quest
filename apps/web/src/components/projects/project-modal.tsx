@@ -49,7 +49,7 @@ export const ProjectModal = ({
               background: `radial-gradient(60% 80% at 70% 30%, ${categoryTints[project.category]}, transparent 70%), repeating-linear-gradient(135deg,#061C16 0 12px,#04140F 12px 24px)`,
             }}
           >
-            <span className="text-faint-2 font-mono text-[11px] tracking-[0.1em]">
+            <span className="text-faint-2 font-mono text-[13px] tracking-[0.1em]">
               PROJECT IMAGE / VIDEO
             </span>
             <DialogClose
@@ -63,7 +63,7 @@ export const ProjectModal = ({
             <div className="flex flex-col gap-3.5">
               <div className="flex flex-wrap gap-1.5">
                 <span
-                  className="rounded-[6px] px-2 py-1 font-mono text-[10px] tracking-[0.12em]"
+                  className="rounded-[6px] px-2 py-1 font-mono text-[12.5px] tracking-[0.12em]"
                   style={{
                     color: divisionMeta[project.division].color,
                     border: `1px solid ${divisionMeta[project.division].line}`,
@@ -71,7 +71,7 @@ export const ProjectModal = ({
                 >
                   {project.division}
                 </span>
-                <span className="text-lime rounded-full bg-[rgba(82,255,61,0.07)] px-[9px] py-1 text-[11.5px]">
+                <span className="text-lime rounded-full bg-[rgba(82,255,61,0.07)] px-[9px] py-1 text-[13px]">
                   {project.category}
                 </span>
               </div>
@@ -85,10 +85,10 @@ export const ProjectModal = ({
             <div className="grid gap-px self-start overflow-hidden rounded-[14px] bg-[rgba(185,245,208,0.08)]">
               {detailRows(project).map((row) => (
                 <div
-                  className="bg-ink grid grid-cols-[110px_1fr] gap-3 px-4 py-3 text-[13.5px]"
+                  className="bg-ink grid grid-cols-[110px_1fr] gap-3 px-4 py-3 text-[15px]"
                   key={row.label}
                 >
-                  <span className="text-faint pt-0.5 font-mono text-[10px] tracking-[0.12em]">
+                  <span className="text-faint pt-0.5 font-mono text-[12.5px] tracking-[0.12em]">
                     {row.label}
                   </span>
                   <span className="text-fg-dim">{row.value}</span>

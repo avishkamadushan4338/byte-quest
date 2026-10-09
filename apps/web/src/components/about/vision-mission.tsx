@@ -23,7 +23,7 @@ export const VisionMission = () => (
             }}
           />
           <div
-            className="relative font-mono text-[11px] tracking-[0.16em]"
+            className="relative font-mono text-[13px] tracking-[0.16em]"
             style={{ color: card.color }}
           >
             {card.kicker}

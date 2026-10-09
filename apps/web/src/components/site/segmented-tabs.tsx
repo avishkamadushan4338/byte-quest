@@ -28,7 +28,7 @@ export const SegmentedTabs = ({
       return (
         <button
           aria-selected={active}
-          className="cursor-pointer rounded-[9px] border-none px-3.5 py-2 font-mono text-[11.5px] tracking-[0.06em] whitespace-nowrap"
+          className="cursor-pointer rounded-[9px] border-none px-3.5 py-2 font-mono text-[13px] tracking-[0.06em] whitespace-nowrap"
           key={option}
           onClick={() => onChange(index)}
           role="tab"

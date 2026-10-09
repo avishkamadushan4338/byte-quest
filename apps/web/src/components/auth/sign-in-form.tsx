@@ -70,7 +70,7 @@ export const SignInForm = () => {
   return (
     <form className="grid gap-5" noValidate onSubmit={handleSubmit}>
       <Field invalid={Boolean(errors.username)}>
-        <FieldLabel htmlFor="username">Username</FieldLabel>
+        <FieldLabel>Username</FieldLabel>
         <Input
           aria-describedby={errors.username ? "username-error" : undefined}
           aria-invalid={Boolean(errors.username) || undefined}
@@ -91,10 +91,10 @@ export const SignInForm = () => {
 
       <Field invalid={Boolean(errors.password)}>
         <div className="flex items-center justify-between gap-3">
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <FieldLabel>Password</FieldLabel>
           <button
             aria-pressed={revealed}
-            className="text-muted-2 hover:text-volt -m-2 cursor-pointer border-none bg-transparent p-2 font-mono text-[11px] tracking-[0.08em] uppercase transition-colors"
+            className="text-muted-2 hover:text-volt -m-2 cursor-pointer border-none bg-transparent p-2 font-mono text-[13px] tracking-[0.08em] uppercase transition-colors"
             onClick={() => setRevealed((current) => !current)}
             type="button"
           >
@@ -126,7 +126,7 @@ export const SignInForm = () => {
         <p
           aria-live="assertive"
           className={cn(
-            "border-destructive/40 text-destructive rounded-[14px] border px-4 py-3 text-[14px]"
+            "border-destructive/40 text-destructive rounded-[14px] border px-4 py-3 text-[15.5px]"
           )}
           role="alert"
         >

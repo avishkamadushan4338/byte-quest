@@ -49,7 +49,7 @@ export const ErrorPage = ({ reset }: Pick<ErrorComponentProps, "reset">) => {
           >
             !
           </div>
-          <div className="mt-7 font-mono text-[11px] tracking-[0.18em] text-[#ff8a7a]">
+          <div className="mt-7 font-mono text-[13px] tracking-[0.18em] text-[#ff8a7a]">
             SOMETHING WENT WRONG
           </div>
           <h1 className="font-display mt-3.5 mb-0 text-[clamp(30px,4vw,52px)] leading-none font-bold tracking-[-0.035em]">
@@ -71,7 +71,7 @@ export const ErrorPage = ({ reset }: Pick<ErrorComponentProps, "reset">) => {
               Back to home
             </Link>
           </div>
-          <div className="bg-surface mt-11 flex min-h-[46px] w-full flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-[14px] border border-[rgba(185,245,208,0.08)] px-[18px] py-3.5 font-mono text-[11px] tracking-[0.08em]">
+          <div className="bg-surface mt-11 flex min-h-[46px] w-full flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-[14px] border border-[rgba(185,245,208,0.08)] px-[18px] py-3.5 font-mono text-[13px] tracking-[0.08em]">
             <span className="text-faint">
               REFERENCE{" "}
               <span className="text-fg-dim" suppressHydrationWarning>

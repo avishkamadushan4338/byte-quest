@@ -41,10 +41,10 @@ export const Awards = () => (
             01
           </div>
           <div className="relative flex items-center justify-between gap-3">
-            <span className="text-gold-bright font-mono text-[11px] tracking-[0.2em]">
+            <span className="text-gold-bright font-mono text-[13px] tracking-[0.2em]">
               FIRST PLACE
             </span>
-            <span className="text-gold-bright rounded-full border border-[rgba(240,216,117,0.35)] px-3 py-1.5 font-mono text-[10px] tracking-[0.14em] whitespace-nowrap">
+            <span className="text-gold-bright rounded-full border border-[rgba(240,216,117,0.35)] px-3 py-1.5 font-mono text-[12.5px] tracking-[0.14em] whitespace-nowrap">
               JUNIOR · SENIOR
             </span>
           </div>
@@ -76,7 +76,7 @@ export const Awards = () => (
               </span>
               <div className="min-w-0">
                 <div
-                  className="font-mono text-[10.5px] tracking-[0.18em]"
+                  className="font-mono text-[12.5px] tracking-[0.18em]"
                   style={{ color: place.kickerColor }}
                 >
                   {place.kicker}
@@ -84,7 +84,7 @@ export const Awards = () => (
                 <div className="font-display mt-2 text-[clamp(24px,2.2vw,30px)] leading-none font-bold tracking-[-0.03em]">
                   {place.title}
                 </div>
-                <div className="mt-1.5 text-[14px] text-[#A9BBB3]">
+                <div className="mt-1.5 text-[15.5px] text-[#A9BBB3]">
                   {place.description}
                 </div>
               </div>
@@ -97,7 +97,7 @@ export const Awards = () => (
         <h3 className="m-0 text-[clamp(26px,2.6vw,34px)] tracking-[-0.03em]">
           Special awards
         </h3>
-        <span className="text-muted-2 font-mono text-[11px] tracking-[0.16em]">
+        <span className="text-muted-2 font-mono text-[13px] tracking-[0.16em]">
           EIGHT CATEGORIES · BOTH DIVISIONS
         </span>
       </div>
@@ -107,7 +107,7 @@ export const Awards = () => (
             className="flex items-baseline gap-[18px] border-t border-[rgba(212,175,55,0.18)] py-5 transition-[padding] duration-300 ease-in-out hover:pl-2"
             key={award}
           >
-            <span className="text-gold font-mono text-[11px] tracking-[0.12em]">
+            <span className="text-gold font-mono text-[13px] tracking-[0.12em]">
               {String(index + 1).padStart(2, "0")}
             </span>
             <span className="font-display text-fg text-[clamp(18px,1.6vw,21px)] font-semibold tracking-[-0.015em]">

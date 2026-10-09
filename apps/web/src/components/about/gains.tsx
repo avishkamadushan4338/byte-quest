@@ -65,7 +65,7 @@ export const Gains = () => (
                 />
               </span>
               <span
-                className="font-mono text-[11px] tracking-[0.14em]"
+                className="font-mono text-[13px] tracking-[0.14em]"
                 style={{ color: gain.color }}
               >
                 {gain.n}

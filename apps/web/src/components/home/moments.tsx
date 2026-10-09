@@ -49,7 +49,7 @@ export const Moments = () => {
                   >
                     {moment.n}
                   </span>
-                  <span className="text-gold-bright absolute top-3.5 right-4 rounded-full border border-[rgba(240,216,117,0.3)] px-[9px] py-[5px] font-mono text-[10px] tracking-[0.12em] whitespace-nowrap">
+                  <span className="text-gold-bright absolute top-3.5 right-4 rounded-full border border-[rgba(240,216,117,0.3)] px-[9px] py-[5px] font-mono text-[12.5px] tracking-[0.12em] whitespace-nowrap">
                     DATE TBA
                   </span>
                   {cubeSizes.map((size, cube) => (
@@ -72,7 +72,7 @@ export const Moments = () => {
                 <div className="flex flex-1 flex-col gap-4 px-[22px] pt-[22px] pb-5">
                   <div>
                     <div
-                      className="font-mono text-[10.5px] tracking-[0.14em]"
+                      className="font-mono text-[12.5px] tracking-[0.14em]"
                       style={{ color: moment.accent }}
                     >
                       {moment.kicker}
@@ -81,7 +81,7 @@ export const Moments = () => {
                       {moment.title}
                     </h3>
                   </div>
-                  <div className="text-muted flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[13.5px]">
+                  <div className="text-muted flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[15px]">
                     {moment.flow.map((step, stepIndex) => (
                       <span
                         className="inline-flex items-center gap-2 whitespace-nowrap"
@@ -99,7 +99,7 @@ export const Moments = () => {
                       </span>
                     ))}
                   </div>
-                  <div className="text-muted-2 grid gap-2 border-t border-[rgba(185,245,208,0.07)] pt-3.5 text-[13px] leading-[1.5]">
+                  <div className="text-muted-2 grid gap-2 border-t border-[rgba(185,245,208,0.07)] pt-3.5 text-[14.5px] leading-[1.5]">
                     <div className="flex justify-between gap-3">
                       <span className="text-fg-dim">Deliverables</span>
                       <span>With challenge brief</span>
@@ -110,7 +110,7 @@ export const Moments = () => {
                     </div>
                   </div>
                   <a
-                    className="text-fg hover:text-volt mt-auto flex items-center justify-between py-2 text-[13.5px] font-semibold"
+                    className="text-fg hover:text-volt mt-auto flex items-center justify-between py-2 text-[15px] font-semibold"
                     href="/programme"
                   >
                     View milestone{" "}

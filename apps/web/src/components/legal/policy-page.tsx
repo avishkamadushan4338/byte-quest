@@ -19,7 +19,7 @@ export interface PolicyMeta {
 }
 
 export const PolicyPage = ({ meta }: { meta: PolicyMeta }) => (
-  <>
+  <main className="bg-ink">
     <PageHero
       id={meta.slug}
       kicker={meta.kicker}
@@ -34,14 +34,14 @@ export const PolicyPage = ({ meta }: { meta: PolicyMeta }) => (
           className="lg:sticky lg:top-[110px] lg:h-fit"
         >
           <Kicker tone="faint">On this page</Kicker>
-          <ol className="text-muted-2 mt-4 grid gap-2.5 text-[14px]">
+          <ol className="text-muted-2 mt-4 grid gap-2.5 text-[15.5px]">
             {meta.sections.map((section, index) => (
               <li key={section.id}>
                 <a
                   className="hover:text-volt transition-colors"
                   href={`#${section.id}`}
                 >
-                  <span className="text-teal mr-2 font-mono text-[11px]">
+                  <span className="text-teal mr-2 font-mono text-[13px]">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   {section.heading}
@@ -65,5 +65,5 @@ export const PolicyPage = ({ meta }: { meta: PolicyMeta }) => (
         </div>
       </div>
     </div>
-  </>
+  </main>
 );

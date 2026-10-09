@@ -10,7 +10,7 @@ import { milestoneWeeks, phaseOf, weekTags, weeks } from "./data";
 const isMilestone = (week: number) => milestoneWeeks.includes(week);
 
 const weekButtonBase =
-  "flex size-11 items-center justify-center rounded-[12px] border font-mono text-[13px] transition-all duration-300";
+  "flex size-11 items-center justify-center rounded-[12px] border font-mono text-[14.5px] transition-all duration-300";
 
 const weekButtonClasses = (week: number, active: number) => {
   const isGold = week === 12;
@@ -88,7 +88,7 @@ export const Timeline = () => {
                     </span>
                     <span
                       className={cn(
-                        "font-mono text-[9.5px] tracking-[0.08em] whitespace-nowrap",
+                        "font-mono text-[13px] tracking-[0.08em] whitespace-nowrap",
                         week === 12 ? "text-gold-bright" : "text-lime"
                       )}
                     >
@@ -116,7 +116,7 @@ export const Timeline = () => {
             }}
           >
             <div className="flex items-center justify-between gap-3">
-              <div className="flex flex-wrap gap-2 font-mono text-[11px] tracking-[0.12em]">
+              <div className="flex flex-wrap gap-2 font-mono text-[13px] tracking-[0.12em]">
                 <span className="text-volt">WEEK {activeWeek}</span>
                 <span className="text-faint-2">/</span>
                 <span className="text-muted-2">{phaseOf(activeWeek)}</span>
@@ -150,32 +150,32 @@ export const Timeline = () => {
             </div>
 
             {isMilestone(activeWeek) ? (
-              <div className="border-lime/35 bg-lime/8 text-lime inline-flex items-center gap-2 self-start rounded-full border px-3 py-1.5 font-mono text-[10.5px] tracking-[0.12em] whitespace-nowrap">
+              <div className="border-lime/35 bg-lime/8 text-lime inline-flex items-center gap-2 self-start rounded-full border px-3 py-1.5 font-mono text-[12.5px] tracking-[0.12em] whitespace-nowrap">
                 ★ MAJOR MILESTONE
               </div>
             ) : null}
           </div>
 
           <div className="border-line-soft bg-surface rounded-[20px] border p-[clamp(22px,3vw,32px)]">
-            <div className="text-muted-2 font-mono text-[10.5px] tracking-[0.14em]">
+            <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.14em]">
               UP NEXT
             </div>
             <div className="mt-3 grid">
               {upcoming.map((item) => (
                 <button
-                  className="border-line-soft text-fg-dim hover:text-volt flex cursor-pointer items-center gap-3.5 border-b bg-transparent py-3 text-left text-[14px] transition-colors"
+                  className="border-line-soft text-fg-dim hover:text-volt flex cursor-pointer items-center gap-3.5 border-b bg-transparent py-3 text-left text-[15.5px] transition-colors"
                   key={item.week}
                   onClick={() => selectWeek(item.week)}
                   type="button"
                 >
-                  <span className="text-faint-2 w-12 shrink-0 font-mono text-[11px]">
+                  <span className="text-faint-2 w-12 shrink-0 font-mono text-[13px]">
                     WK {item.week}
                   </span>
                   {item.title}
                 </button>
               ))}
               {activeWeek === weeks.length ? (
-                <div className="text-gold-bright py-3 text-[14px]">
+                <div className="text-gold-bright py-3 text-[15.5px]">
                   The finale - see you at the Expo.
                 </div>
               ) : null}

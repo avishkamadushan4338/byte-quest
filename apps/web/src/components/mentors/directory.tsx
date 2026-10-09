@@ -48,10 +48,10 @@ export const Directory = () => {
               key={card.id}
             >
               <div className="relative flex aspect-[4/3] items-center justify-center bg-[repeating-linear-gradient(135deg,#061C16_0_10px,#04140F_10px_20px)]">
-                <span className="text-faint-2 font-mono text-[10.5px] tracking-[0.1em]">
+                <span className="text-faint-2 font-mono text-[12.5px] tracking-[0.1em]">
                   MENTOR PHOTO
                 </span>
-                <span className="text-volt absolute top-3 left-3 rounded-[6px] border border-[rgba(82,255,61,0.3)] bg-[rgba(2,8,7,0.85)] px-2 py-1 font-mono text-[10px] tracking-[0.12em]">
+                <span className="text-volt absolute top-3 left-3 rounded-[6px] border border-[rgba(82,255,61,0.3)] bg-[rgba(2,8,7,0.85)] px-2 py-1 font-mono text-[12.5px] tracking-[0.12em]">
                   {card.category}
                 </span>
               </div>
@@ -59,7 +59,7 @@ export const Directory = () => {
                 <div className="font-display text-muted text-[18px] font-semibold">
                   {mentorPlaceholderName}
                 </div>
-                <div className="grid gap-1.5 text-[13px]">
+                <div className="grid gap-1.5 text-[14.5px]">
                   <div className="flex justify-between gap-3">
                     <span className="text-faint">Role</span>
                     <span className="text-muted-2">{pending}</span>
@@ -74,7 +74,7 @@ export const Directory = () => {
           ))}
         </div>
 
-        <div className="text-muted mt-4 rounded-[14px] border border-dashed border-[rgba(185,245,208,0.18)] px-5 py-4 text-[14px]">
+        <div className="text-muted mt-4 rounded-[14px] border border-dashed border-[rgba(185,245,208,0.18)] px-5 py-4 text-[15.5px]">
           {directoryNote}
         </div>
       </div>

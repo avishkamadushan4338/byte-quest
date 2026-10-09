@@ -72,7 +72,7 @@ export const JoinRequests = ({ onChanged }: JoinRequestsProps) => {
           {joinRequestPanelCopy.pendingTitle}
         </h3>
         {pending.length === 0 ? (
-          <p className="text-muted-2 text-[13.5px] leading-[1.6]">
+          <p className="text-muted-2 text-[15px] leading-[1.6]">
             {joinRequestPanelCopy.emptyPending}
           </p>
         ) : (
@@ -85,7 +85,7 @@ export const JoinRequests = ({ onChanged }: JoinRequestsProps) => {
                 <div className="font-display text-fg text-[16px] font-semibold">
                   {`${joinRequestPanelCopy.gradePrefix}${request.grade}`}
                 </div>
-                <div className="text-muted-2 mt-1 text-[13.5px] leading-[1.5]">
+                <div className="text-muted-2 mt-1 text-[15px] leading-[1.5]">
                   {request.specialty === null
                     ? joinRequestPanelCopy.noSpecialty
                     : specialtyLabels[request.specialty]}

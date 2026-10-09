@@ -63,7 +63,7 @@ export const LoadingScreen = () => {
         />
 
         <header className="relative flex items-center justify-end gap-4">
-          <span className="text-faint font-mono text-[10.5px] tracking-[0.2em] whitespace-nowrap">
+          <span className="text-faint font-mono text-[12.5px] tracking-[0.2em] whitespace-nowrap">
             INTER SCHOOL · 2026
           </span>
         </header>
@@ -103,7 +103,7 @@ export const LoadingScreen = () => {
                 return (
                   <li
                     className={cn(
-                      "flex items-center justify-end gap-2.5 font-mono text-[11px] tracking-[0.16em] transition-colors duration-300",
+                      "flex items-center justify-end gap-2.5 font-mono text-[13px] tracking-[0.16em] transition-colors duration-300",
                       on ? "text-fg" : "text-[#3d5249]"
                     )}
                     key={step.label}

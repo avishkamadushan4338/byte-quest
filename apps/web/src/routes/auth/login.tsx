@@ -53,14 +53,14 @@ const LoginRoute = () => (
           <div className="border-line-soft mt-9 grid gap-4 border-y py-7">
             {accountTypes.map((account) => (
               <div className="flex gap-4" key={account.n}>
-                <span className="text-teal font-mono text-[11px] tracking-[0.12em]">
+                <span className="text-teal font-mono text-[13px] tracking-[0.12em]">
                   {account.n}
                 </span>
                 <div>
                   <div className="font-display text-fg text-[16px] font-semibold">
                     {account.title}
                   </div>
-                  <div className="text-muted-2 mt-1 text-[14px] leading-[1.5]">
+                  <div className="text-muted-2 mt-1 text-[15.5px] leading-[1.5]">
                     {account.detail}
                   </div>
                 </div>
@@ -70,19 +70,19 @@ const LoginRoute = () => (
 
           <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
             <Link
-              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[11.5px] tracking-[0.1em] transition-colors"
+              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[13px] tracking-[0.1em] transition-colors"
               to="/"
             >
               <ArrowLabel>← BACK TO HOME</ArrowLabel>
             </Link>
             <Link
-              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[11.5px] tracking-[0.1em] transition-colors"
+              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[13px] tracking-[0.1em] transition-colors"
               to="/register/team"
             >
               <ArrowLabel>REGISTER A TEAM →</ArrowLabel>
             </Link>
             <Link
-              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[11.5px] tracking-[0.1em] transition-colors"
+              className="text-muted-2 hover:text-volt inline-flex min-h-8 items-center font-mono text-[13px] tracking-[0.1em] transition-colors"
               to="/apply-admin"
             >
               <ArrowLabel>APPLY FOR ADMIN →</ArrowLabel>
@@ -93,7 +93,7 @@ const LoginRoute = () => (
         <div className="border-line-soft bg-surface rounded-3xl border p-[clamp(24px,4vw,36px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
           <div className="border-line-soft mb-7 flex items-center justify-between gap-4 border-b pb-5">
             <div>
-              <div className="text-muted-2 font-mono text-[10.5px] tracking-[0.16em]">
+              <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.16em]">
                 ACCOUNT
               </div>
               <div className="font-display mt-2 text-[24px] font-bold tracking-[-0.02em]">
@@ -103,7 +103,7 @@ const LoginRoute = () => (
             <Brand className="h-4" />
           </div>
           <SignInForm />
-          <p className="text-faint mt-6 text-[13px] leading-[1.6]">
+          <p className="text-faint mt-6 text-[14.5px] leading-[1.6]">
             No account yet? Register your{" "}
             <Link className="text-volt" to="/register/team">
               team

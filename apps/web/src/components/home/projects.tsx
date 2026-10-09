@@ -36,7 +36,7 @@ export const Projects = () => {
             {projectFilters.map((filter) => (
               <button
                 aria-pressed={activeFilter === filter}
-                className={`cursor-pointer rounded-[9px] border-none px-3.5 py-2 font-mono text-[11.5px] tracking-[0.06em] whitespace-nowrap transition-colors ${
+                className={`cursor-pointer rounded-[9px] border-none px-3.5 py-2 font-mono text-[13px] tracking-[0.06em] whitespace-nowrap transition-colors ${
                   activeFilter === filter
                     ? "bg-fg text-ink"
                     : "text-muted hover:text-fg bg-transparent"
@@ -49,7 +49,7 @@ export const Projects = () => {
               </button>
             ))}
           </div>
-          <div className="border-line-soft text-faint flex min-w-[200px] items-center gap-2 rounded-[9px] border px-3.5 py-2 text-[13px]">
+          <div className="border-line-soft text-faint flex min-w-[200px] items-center gap-2 rounded-[9px] border px-3.5 py-2 text-[14.5px]">
             <span aria-hidden="true">⌕</span>
             Search projects, schools…
           </div>
@@ -62,11 +62,11 @@ export const Projects = () => {
               key={`${slot.division}-${index}`}
             >
               <div className="relative flex aspect-video items-center justify-center bg-[repeating-linear-gradient(135deg,#061C16_0_10px,#04140F_10px_20px)]">
-                <span className="text-faint-2 font-mono text-[10.5px] tracking-[0.1em]">
+                <span className="text-faint-2 font-mono text-[12.5px] tracking-[0.1em]">
                   PROJECT THUMBNAIL
                 </span>
                 <span
-                  className="absolute top-3 left-3 rounded-[6px] border bg-[rgba(2,8,7,0.85)] px-2 py-1 font-mono text-[10px] tracking-[0.12em]"
+                  className="absolute top-3 left-3 rounded-[6px] border bg-[rgba(2,8,7,0.85)] px-2 py-1 font-mono text-[12.5px] tracking-[0.12em]"
                   style={{ color: slot.color, borderColor: slot.line }}
                 >
                   {slot.division}
@@ -77,14 +77,14 @@ export const Projects = () => {
                   <div className="font-display text-muted text-[18px] font-semibold">
                     Project title
                   </div>
-                  <span className="text-faint-2 font-mono text-[10px] tracking-[0.1em]">
+                  <span className="text-faint-2 font-mono text-[12.5px] tracking-[0.1em]">
                     TBA
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {["SCHOOL", "CATEGORY", "TECHNOLOGY"].map((meta) => (
                     <span
-                      className="bg-line-soft text-faint rounded-[6px] px-2 py-1 font-mono text-[10.5px] tracking-[0.06em]"
+                      className="bg-line-soft text-faint rounded-[6px] px-2 py-1 font-mono text-[12.5px] tracking-[0.06em]"
                       key={meta}
                     >
                       {meta}
@@ -97,12 +97,12 @@ export const Projects = () => {
         </div>
 
         <div className="border-line-strong mt-4 flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-dashed px-5 py-4">
-          <span className="text-muted text-[14px]">
+          <span className="text-muted text-[15.5px]">
             Approved projects are published here after{" "}
             <span className="text-fg font-semibold">Hackathon 01</span>.
           </span>
           <Link
-            className="font-mono text-[11.5px] tracking-[0.08em] whitespace-nowrap"
+            className="font-mono text-[13px] tracking-[0.08em] whitespace-nowrap"
             to="/auth/login"
           >
             <ArrowLabel>BE AMONG THE FIRST →</ArrowLabel>

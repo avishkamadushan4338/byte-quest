@@ -25,7 +25,7 @@ export const FactStrip = ({ facts, compact }: FactStripProps) => (
         className="border-r border-[rgba(185,245,208,0.08)] px-5 py-[18px]"
         key={fact.label}
       >
-        <div className="text-faint font-mono text-[10px] tracking-[0.14em]">
+        <div className="text-faint font-mono text-[12.5px] tracking-[0.14em]">
           {fact.label}
         </div>
         <div

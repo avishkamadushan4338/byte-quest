@@ -13,10 +13,10 @@ export const Schools = () => (
     style={{ background: "linear-gradient(180deg,#020807,#051712)" }}
   >
     <div className="mx-auto flex max-w-[1280px] flex-wrap items-center justify-between gap-3 px-[clamp(20px,5vw,64px)]">
-      <div className="text-teal font-mono text-[11px] tracking-[0.16em]">
+      <div className="text-teal font-mono text-[13px] tracking-[0.16em]">
         PARTICIPATING SCHOOLS
       </div>
-      <div className="text-faint font-mono text-[10.5px] tracking-[0.12em]">
+      <div className="text-faint font-mono text-[12.5px] tracking-[0.12em]">
         LOGOS PUBLISHED ON CONFIRMATION
       </div>
     </div>
@@ -27,7 +27,7 @@ export const Schools = () => (
           key={slot}
         >
           <span className="size-9 rounded-full border border-dashed border-[rgba(185,245,208,0.25)]" />
-          <span className="text-faint font-mono text-[10.5px] tracking-[0.1em]">
+          <span className="text-faint font-mono text-[12.5px] tracking-[0.1em]">
             SCHOOL LOGO
           </span>
         </div>

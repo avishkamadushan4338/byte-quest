@@ -41,7 +41,7 @@ export const Divisions = () => (
             <div className="relative flex items-start justify-between gap-4 px-[clamp(24px,3.4vw,40px)] pt-[clamp(24px,3.4vw,40px)]">
               <div className="min-w-0 flex-1">
                 <div
-                  className="inline-flex items-center gap-2 font-mono text-[10.5px] tracking-[0.16em] whitespace-nowrap"
+                  className="inline-flex items-center gap-2 font-mono text-[12.5px] tracking-[0.16em] whitespace-nowrap"
                   style={{ color: division.color }}
                 >
                   <span
@@ -58,7 +58,7 @@ export const Divisions = () => (
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-muted-2 font-mono text-[10px] tracking-[0.16em]">
+                <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.16em]">
                   GRADES
                 </div>
                 <div
@@ -77,13 +77,13 @@ export const Divisions = () => (
             </p>
 
             <div className="border-line-soft relative mt-7 border-t bg-[rgba(2,8,7,0.35)] px-[clamp(24px,3.4vw,40px)] pt-[18px] pb-[clamp(22px,3vw,30px)]">
-              <div className="text-faint font-mono text-[10px] tracking-[0.16em]">
+              <div className="text-faint font-mono text-[12.5px] tracking-[0.16em]">
                 BUILD WITH
               </div>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {division.platforms.map((platform) => (
                   <span
-                    className="rounded-[8px] border px-[11px] py-1.5 font-mono text-[11.5px] whitespace-nowrap"
+                    className="rounded-[8px] border px-[11px] py-1.5 font-mono text-[13px] whitespace-nowrap"
                     key={platform}
                     style={{
                       background: division.chipBackground,
@@ -113,10 +113,10 @@ export const Divisions = () => (
               {spec.value}
             </div>
             <div className="min-w-0">
-              <div className="text-muted-2 font-mono text-[10px] tracking-[0.16em]">
+              <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.16em]">
                 {spec.kicker}
               </div>
-              <div className="text-muted mt-1 text-[13.5px] leading-[1.45]">
+              <div className="text-muted mt-1 text-[15px] leading-[1.45]">
                 {spec.description}
               </div>
             </div>

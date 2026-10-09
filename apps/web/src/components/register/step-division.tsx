@@ -31,7 +31,7 @@ export const StepDivision = ({
             <span className="flex flex-wrap gap-[5px]">
               {platformsByDivision[option.value].map((platform) => (
                 <span
-                  className="rounded-[6px] px-2 py-1 font-mono text-[10.5px]"
+                  className="rounded-[6px] px-2 py-1 font-mono text-[12.5px]"
                   key={platform}
                   style={{
                     color: option.color,
@@ -46,7 +46,7 @@ export const StepDivision = ({
         ))}
       </div>
     </fieldset>
-    <div className="mt-2.5 min-h-4 text-[12px] text-[#FF8A7A]" role="alert">
+    <div className="mt-2.5 min-h-4 text-[13px] text-[#FF8A7A]" role="alert">
       {errors.divisions}
     </div>
   </>

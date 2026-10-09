@@ -269,7 +269,7 @@ export const JoinPanel = ({ division, onBack }: JoinPanelProps) => {
               }
             />
           </DataList>
-          <p className="text-muted-2 text-[13px] leading-[1.6]">
+          <p className="text-muted-2 text-[14.5px] leading-[1.6]">
             {joinPanelCopy.slotsHint}
           </p>
           <Callout

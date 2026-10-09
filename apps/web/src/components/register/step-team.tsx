@@ -48,7 +48,7 @@ const TeamFields = ({
       />
     </div>
     <div className="mt-1.5">
-      <div className="text-fg-dim text-[13px] font-semibold">Team size</div>
+      <div className="text-fg-dim text-[14.5px] font-semibold">Team size</div>
       <div
         aria-label="Team size"
         className="mt-2.5 flex gap-2"
@@ -79,7 +79,7 @@ const TeamFields = ({
           );
         })}
       </div>
-      <div className="text-muted-2 mt-2 text-[12.5px]">{teamSizeHint}</div>
+      <div className="text-muted-2 mt-2 text-[14px]">{teamSizeHint}</div>
     </div>
   </>
 );
@@ -109,7 +109,7 @@ export const StepTeam = ({
       {activeDivisions.map((division) => (
         <div key={division}>
           {showHeadings ? (
-            <div className="text-volt mb-3 font-mono text-[11px] tracking-[0.16em]">
+            <div className="text-volt mb-3 font-mono text-[13px] tracking-[0.16em]">
               {divisionLabels[division].toUpperCase()}
             </div>
           ) : null}

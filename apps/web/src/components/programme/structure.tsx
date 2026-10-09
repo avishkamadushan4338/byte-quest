@@ -31,22 +31,22 @@ export const Structure = () => (
             />
             <div className="flex items-center justify-between">
               <span
-                className="font-mono text-[11px] tracking-[0.14em]"
+                className="font-mono text-[13px] tracking-[0.14em]"
                 style={{ color: phase.color }}
               >
                 PHASE {phase.n}
               </span>
-              <span className="text-muted-2 font-mono text-[10.5px]">
+              <span className="text-muted-2 font-mono text-[12.5px]">
                 {phase.weeks}
               </span>
             </div>
             <div className="font-display text-[24px] font-bold tracking-[-0.02em]">
               {phase.title}
             </div>
-            <div className="text-muted text-[14px] leading-[1.55]">
+            <div className="text-muted text-[15.5px] leading-[1.55]">
               {phase.items}
             </div>
-            <div className="mt-auto flex justify-between gap-2.5 border-t border-[rgba(185,245,208,0.07)] pt-3 text-[13px]">
+            <div className="mt-auto flex justify-between gap-2.5 border-t border-[rgba(185,245,208,0.07)] pt-3 text-[14.5px]">
               <span className="text-faint">Milestone</span>
               <span
                 className="font-semibold"

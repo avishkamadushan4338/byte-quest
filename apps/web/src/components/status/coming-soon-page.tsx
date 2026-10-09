@@ -57,7 +57,7 @@ export const ComingSoonPage = ({
     >
       <main className="flex flex-1 items-center justify-center px-[clamp(20px,5vw,64px)] pt-8 pb-12">
         <div className="flex w-full max-w-[720px] flex-col items-center text-center">
-          <span className="text-gold-bright mb-8 inline-flex items-center gap-2 font-mono text-[10.5px] tracking-[0.16em] whitespace-nowrap">
+          <span className="text-gold-bright mb-8 inline-flex items-center gap-2 font-mono text-[12.5px] tracking-[0.16em] whitespace-nowrap">
             <span
               aria-hidden="true"
               className="bg-volt animate-pulse-dot size-1.5 rounded-full shadow-[0_0_10px_var(--color-volt)] motion-reduce:animate-none"
@@ -111,7 +111,7 @@ export const ComingSoonPage = ({
                   />
                 </label>
                 <button
-                  className="bg-volt text-ink hover:bg-lime cursor-pointer rounded-full border-0 px-5 py-[13px] text-[14px] font-bold whitespace-nowrap transition-colors duration-200 disabled:opacity-60"
+                  className="bg-volt text-ink hover:bg-lime cursor-pointer rounded-full border-0 px-5 py-[13px] text-[15.5px] font-bold whitespace-nowrap transition-colors duration-200 disabled:opacity-60"
                   disabled={submitting}
                   type="submit"
                 >
@@ -119,7 +119,7 @@ export const ComingSoonPage = ({
                 </button>
               </form>
               <div
-                className="mt-2 min-h-[18px] text-[12.5px] text-[#ff8a7a]"
+                className="mt-2 min-h-[18px] text-[14px] text-[#ff8a7a]"
                 id="notify-error"
                 role="alert"
               >

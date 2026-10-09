@@ -49,7 +49,7 @@ const Roster = ({
           >
             <div className="mb-3.5 flex items-center justify-between gap-3">
               <span className="flex items-center gap-2.5">
-                <span className="text-volt flex size-7 items-center justify-center rounded-[8px] border border-[rgba(82,255,61,0.35)] font-mono text-[11px]">
+                <span className="text-volt flex size-7 items-center justify-center rounded-[8px] border border-[rgba(82,255,61,0.35)] font-mono text-[13px]">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span className="font-display text-[16px] font-semibold">
@@ -58,7 +58,7 @@ const Roster = ({
               </span>
               <button
                 aria-pressed={isLeader}
-                className="cursor-pointer rounded-full px-3 py-1.5 font-mono text-[10.5px] tracking-[0.1em] whitespace-nowrap"
+                className="cursor-pointer rounded-full px-3 py-1.5 font-mono text-[12.5px] tracking-[0.1em] whitespace-nowrap"
                 onClick={() => onLeaderChange(index)}
                 style={{
                   background: isLeader
@@ -156,7 +156,7 @@ export const StepStudents = ({
       {activeDivisions.map((division) => (
         <div key={division}>
           {showHeadings ? (
-            <div className="text-volt mb-3 font-mono text-[11px] tracking-[0.16em]">
+            <div className="text-volt mb-3 font-mono text-[13px] tracking-[0.16em]">
               {divisionLabels[division].toUpperCase()}
             </div>
           ) : null}

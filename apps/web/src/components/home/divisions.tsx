@@ -34,7 +34,7 @@ export const Divisions = () => (
             <div className="relative flex items-start justify-between gap-4">
               <div>
                 <div
-                  className="font-mono text-[10.5px] tracking-[0.16em]"
+                  className="font-mono text-[12.5px] tracking-[0.16em]"
                   style={{ color: division.accent }}
                 >
                   {division.label}
@@ -44,7 +44,7 @@ export const Divisions = () => (
                 </h3>
               </div>
               <div className="shrink-0 text-right">
-                <div className="text-muted-2 font-mono text-[10px] tracking-[0.14em]">
+                <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.14em]">
                   GRADES
                 </div>
                 <div className="font-display mt-1 text-[32px] font-semibold tracking-[-0.03em] whitespace-nowrap">
@@ -54,7 +54,7 @@ export const Divisions = () => (
             </div>
 
             <div className="border-line-soft relative rounded-[14px] border bg-[rgba(2,8,7,0.45)] px-[18px] py-4">
-              <div className="text-muted-2 font-mono text-[10px] tracking-[0.14em]">
+              <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.14em]">
                 THE CHALLENGE
               </div>
               <p className="text-fg-strong mt-1.5 mb-0 text-[15.5px] leading-[1.5] text-pretty">
@@ -64,13 +64,13 @@ export const Divisions = () => (
 
             <div className="relative grid [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))] gap-[18px]">
               <div>
-                <div className="text-muted-2 mb-2.5 font-mono text-[10px] tracking-[0.14em]">
+                <div className="text-muted-2 mb-2.5 font-mono text-[12.5px] tracking-[0.14em]">
                   FOCUS
                 </div>
                 <div className="grid gap-[7px]">
                   {division.focus.map((item) => (
                     <div
-                      className="text-fg-dim flex items-center gap-2 text-[13.5px]"
+                      className="text-fg-dim flex items-center gap-2 text-[15px]"
                       key={item}
                     >
                       <span
@@ -84,13 +84,13 @@ export const Divisions = () => (
               </div>
 
               <div>
-                <div className="text-muted-2 mb-2.5 font-mono text-[10px] tracking-[0.14em]">
+                <div className="text-muted-2 mb-2.5 font-mono text-[12.5px] tracking-[0.14em]">
                   PLATFORMS
                 </div>
                 <div className="flex flex-wrap gap-1.5">
                   {division.platforms.map((platform) => (
                     <span
-                      className="rounded-[7px] border px-[9px] py-[5px] font-mono text-[11.5px] whitespace-nowrap"
+                      className="rounded-[7px] border px-[9px] py-[5px] font-mono text-[13px] whitespace-nowrap"
                       key={platform}
                       style={{
                         color: division.accent,

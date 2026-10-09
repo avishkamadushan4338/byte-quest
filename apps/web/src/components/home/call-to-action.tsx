@@ -12,7 +12,7 @@ export const CallToAction = () => (
     }}
   >
     <div className="relative mx-auto max-w-[960px] text-center">
-      <div className="text-volt font-mono text-[11px] tracking-[0.18em]">
+      <div className="text-volt font-mono text-[13px] tracking-[0.18em]">
         JOIN THE QUEST
       </div>
       <h2 className="mt-[22px] mb-0 text-[clamp(48px,8vw,112px)] leading-[0.9] tracking-[-0.05em]">
@@ -36,7 +36,7 @@ export const CallToAction = () => (
           Read the programme
         </Link>
       </div>
-      <p className="text-muted-2 mt-6 mb-0 font-mono text-[11px] tracking-[0.1em]">
+      <p className="text-muted-2 mt-6 mb-0 font-mono text-[13px] tracking-[0.1em]">
         TEAM REGISTRATION CLOSED · VOLUNTEER APPLICATIONS OPEN
       </p>
     </div>

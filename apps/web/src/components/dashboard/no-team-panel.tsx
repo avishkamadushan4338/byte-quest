@@ -93,7 +93,7 @@ export const NoTeamPanel = ({
         <span className="flex flex-wrap gap-1.5">
           {divisionPlatforms[division].map((platform) => (
             <span
-              className="border-line-strong text-muted-2 rounded-full border px-2.5 py-1 font-mono text-[10px] tracking-[0.1em] uppercase"
+              className="border-line-strong text-muted-2 rounded-full border px-2.5 py-1 font-mono text-[12.5px] tracking-[0.1em] uppercase"
               key={platform}
             >
               {platform}

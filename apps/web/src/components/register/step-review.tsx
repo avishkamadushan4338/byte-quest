@@ -120,12 +120,12 @@ export const StepReview = ({
           key={section.key}
         >
           <div className="flex items-center justify-between gap-3">
-            <span className="text-muted-2 font-mono text-[10.5px] tracking-[0.14em]">
+            <span className="text-muted-2 font-mono text-[12.5px] tracking-[0.14em]">
               {section.title}
             </span>
             <button
               aria-label={`Edit ${section.title.toLowerCase()} section`}
-              className="text-volt cursor-pointer border-none bg-transparent p-0 font-mono text-[11px] tracking-[0.08em]"
+              className="text-volt cursor-pointer border-none bg-transparent p-0 font-mono text-[13px] tracking-[0.08em]"
               onClick={() => onEdit(section.step)}
               type="button"
             >
@@ -135,8 +135,8 @@ export const StepReview = ({
           <div className="mt-2.5 grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))] gap-x-[18px] gap-y-2">
             {section.rows.map((row) => (
               <div className="min-w-0" key={row.label}>
-                <div className="text-faint text-[11.5px]">{row.label}</div>
-                <div className="text-fg-strong mt-0.5 text-[14px] [overflow-wrap:anywhere]">
+                <div className="text-faint text-[13px]">{row.label}</div>
+                <div className="text-fg-strong mt-0.5 text-[15.5px] [overflow-wrap:anywhere]">
                   {row.value.trim() || EMPTY_VALUE}
                 </div>
               </div>
@@ -145,7 +145,7 @@ export const StepReview = ({
         </div>
       ))}
     </div>
-    <label className="text-muted mt-[18px] flex cursor-pointer items-start gap-3 text-[13.5px] leading-[1.5]">
+    <label className="text-muted mt-[18px] flex cursor-pointer items-start gap-3 text-[15px] leading-[1.5]">
       <input
         checked={state.consent}
         className="accent-volt mt-[3px] size-4 shrink-0"
@@ -154,7 +154,7 @@ export const StepReview = ({
       />
       <span>{consentCopy}</span>
     </label>
-    <div className="mt-1.5 min-h-4 text-[12px] text-[#FF8A7A]" role="alert">
+    <div className="mt-1.5 min-h-4 text-[13px] text-[#FF8A7A]" role="alert">
       {errors.consent}
     </div>
   </>

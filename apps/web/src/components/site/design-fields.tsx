@@ -102,21 +102,21 @@ export const FieldShell = ({
 }: FieldShellProps) => (
   <div className="flex flex-col gap-[7px]">
     <label
-      className="text-fg-dim flex justify-between gap-2 text-[13px] font-semibold"
+      className="text-fg-dim flex justify-between gap-2 text-[14.5px] font-semibold"
       htmlFor={id}
     >
       {label}
       {requirement ? (
-        <span className="text-faint-2 font-mono text-[10px] font-normal tracking-[0.1em]">
+        <span className="text-faint-2 font-mono text-[12.5px] font-normal tracking-[0.1em]">
           {requirementLabels[requirement]}
         </span>
       ) : null}
     </label>
     {children}
     {hint && !error ? (
-      <span className="text-muted-2 text-[12px]">{hint}</span>
+      <span className="text-muted-2 text-[13px]">{hint}</span>
     ) : (
-      <span className="min-h-[15px] text-[12px] text-[#FF8A7A]" role="alert">
+      <span className="min-h-[15px] text-[13px] text-[#FF8A7A]" role="alert">
         {error}
       </span>
     )}

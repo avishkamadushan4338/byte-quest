@@ -56,7 +56,7 @@ export const SubpageHero = ({
         <div>
           <div
             className={cn(
-              "font-mono text-[11px] tracking-[0.16em]",
+              "font-mono text-[13px] tracking-[0.16em]",
               toneText[tone]
             )}
           >

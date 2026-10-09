@@ -13,7 +13,7 @@ export const Awards = () => (
             "linear-gradient(180deg,rgba(212,175,55,0.07),transparent 60%),#030F0B",
         }}
       >
-        <div className="text-gold font-mono text-[11px] tracking-[0.16em]">
+        <div className="text-gold font-mono text-[13px] tracking-[0.16em]">
           AWARDS
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -26,13 +26,13 @@ export const Awards = () => (
             </span>
           ))}
         </div>
-        <div className="text-muted-2 mt-[18px] font-mono text-[10px] tracking-[0.14em]">
+        <div className="text-muted-2 mt-[18px] font-mono text-[12.5px] tracking-[0.14em]">
           SPECIAL AWARDS
         </div>
         <div className="mt-2.5 grid [grid-template-columns:repeat(auto-fit,minmax(170px,1fr))] gap-x-4 gap-y-2">
           {specialAwards.map((award) => (
             <div
-              className="text-fg-dim flex items-center gap-[9px] text-[13.5px]"
+              className="text-fg-dim flex items-center gap-[9px] text-[15px]"
               key={award}
             >
               <span className="bg-gold size-[5px] shrink-0 rotate-45" />
@@ -42,23 +42,23 @@ export const Awards = () => (
         </div>
       </div>
       <div className="bg-surface rounded-[20px] border border-[rgba(185,245,208,0.09)] p-[clamp(22px,3vw,32px)]">
-        <div className="text-teal font-mono text-[11px] tracking-[0.16em]">
+        <div className="text-teal font-mono text-[13px] tracking-[0.16em]">
           KEY RULES
         </div>
         <div className="mt-3 grid">
           {keyRules.map((rule) => (
             <div
-              className="text-fg-dim grid grid-cols-[36px_1fr] gap-3 border-b border-[rgba(185,245,208,0.07)] py-3 text-[14px] leading-[1.5]"
+              className="text-fg-dim grid grid-cols-[36px_1fr] gap-3 border-b border-[rgba(185,245,208,0.07)] py-3 text-[15.5px] leading-[1.5]"
               key={rule.n}
             >
-              <span className="text-volt pt-0.5 font-mono text-[11px]">
+              <span className="text-volt pt-0.5 font-mono text-[13px]">
                 {rule.n}
               </span>
               {rule.text}
             </div>
           ))}
         </div>
-        <div className="text-faint mt-3.5 text-[12.5px]">{rulesFootnote}</div>
+        <div className="text-faint mt-3.5 text-[14px]">{rulesFootnote}</div>
       </div>
     </div>
   </section>

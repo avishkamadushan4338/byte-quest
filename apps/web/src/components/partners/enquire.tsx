@@ -15,7 +15,7 @@ export const Enquire = () => (
       }}
     >
       <div className="flex flex-col gap-5 p-[clamp(28px,4vw,48px)]">
-        <div className="text-gold font-mono text-[11px] tracking-[0.16em]">
+        <div className="text-gold font-mono text-[13px] tracking-[0.16em]">
           {enquireSection.kicker}
         </div>
         <h2 className="m-0 text-[clamp(28px,3.2vw,42px)] leading-[1.05] tracking-[-0.03em]">
@@ -26,13 +26,13 @@ export const Enquire = () => (
         </p>
         <div className="flex flex-wrap gap-2.5">
           <a
-            className="bg-gold text-ink hover:bg-gold-bright hover:text-ink rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
+            className="bg-gold text-ink hover:bg-gold-bright hover:text-ink rounded-full px-[22px] py-3.5 text-[15.5px] font-bold whitespace-nowrap"
             href={`mailto:?subject=${enquireSection.sponsorSubject}`}
           >
             <ArrowLabel>{enquireSection.sponsorAction}</ArrowLabel>
           </a>
           <a
-            className="text-fg hover:border-gold hover:text-fg rounded-full border border-[rgba(242,247,244,0.22)] px-[22px] py-3.5 text-[14px] font-semibold whitespace-nowrap"
+            className="text-fg hover:border-gold hover:text-fg rounded-full border border-[rgba(242,247,244,0.22)] px-[22px] py-3.5 text-[15.5px] font-semibold whitespace-nowrap"
             href={`mailto:?subject=${enquireSection.partnerSubject}`}
           >
             {enquireSection.partnerAction}
@@ -51,7 +51,7 @@ export const Enquire = () => (
             <div className="font-display text-[16px] font-semibold">
               {benefit.title}
             </div>
-            <div className="text-muted-2 text-[13px] leading-[1.5]">
+            <div className="text-muted-2 text-[14.5px] leading-[1.5]">
               {benefit.description}
             </div>
           </div>

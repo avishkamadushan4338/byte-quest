@@ -17,7 +17,7 @@ export const SectionHeading = ({
   <>
     <div
       className={cn(
-        "text-teal font-mono text-[11px] tracking-[0.16em]",
+        "text-teal font-mono text-[13px] tracking-[0.16em]",
         kickerClassName
       )}
     >

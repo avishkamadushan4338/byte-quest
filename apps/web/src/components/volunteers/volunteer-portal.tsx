@@ -64,7 +64,7 @@ export const VolunteerPortal = ({ application }: VolunteerPortalProps) => (
               }
             />
           </div>
-          <p className="text-faint mt-10 text-center text-[13px] leading-[1.6]">
+          <p className="text-faint mt-10 text-center text-[14.5px] leading-[1.6]">
             {idCard.tagline}
           </p>
         </>

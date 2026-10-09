@@ -20,7 +20,7 @@ export const Tiers = () => (
         >
           <div className="flex items-center justify-between">
             <span
-              className="font-mono text-[11px] tracking-[0.18em]"
+              className="font-mono text-[13px] tracking-[0.18em]"
               style={{ color: tier.accent }}
             >
               {tier.label}
@@ -35,14 +35,14 @@ export const Tiers = () => (
             />
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-muted-2 font-mono text-[11px]">LKR</span>
+            <span className="text-muted-2 font-mono text-[13px]">LKR</span>
             <span className="font-display text-[clamp(30px,2.6vw,38px)] leading-none font-bold tracking-[-0.035em]">
               {tier.amount}
             </span>
           </div>
           <a
             className={cn(
-              "text-fg-dim flex justify-between border-t border-[rgba(242,247,244,0.08)] pt-3.5 text-[13.5px] font-semibold",
+              "text-fg-dim flex justify-between border-t border-[rgba(242,247,244,0.08)] pt-3.5 text-[15px] font-semibold",
               tier.accentHover
             )}
             href="#enquire"

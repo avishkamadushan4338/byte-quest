@@ -103,7 +103,7 @@ export const AdminApplication = () => {
 
   if (submitted) {
     return (
-      <>
+      <main className="bg-ink">
         <PageHero
           id="apply-admin"
           kicker={adminApplyCopy.kicker}
@@ -145,12 +145,12 @@ export const AdminApplication = () => {
             </div>
           </Container>
         </Section>
-      </>
+      </main>
     );
   }
 
   return (
-    <>
+    <main className="bg-ink">
       <PageHero
         id="apply-admin"
         kicker={adminApplyCopy.kicker}
@@ -271,6 +271,6 @@ export const AdminApplication = () => {
           </div>
         </Container>
       </Section>
-    </>
+    </main>
   );
 };

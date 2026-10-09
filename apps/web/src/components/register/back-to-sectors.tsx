@@ -13,7 +13,7 @@ export const BackToSectors = () => (
   <div className="bg-ink px-[clamp(20px,5vw,64px)] pt-[130px] pb-1">
     <div className="mx-auto max-w-[1280px]">
       <Link
-        className="text-muted-2 hover:text-volt font-mono text-[11px] tracking-[0.1em]"
+        className="text-muted-2 hover:text-volt font-mono text-[13px] tracking-[0.1em]"
         to="/register"
       >
         <ArrowLabel>← CHOOSE A DIFFERENT OPTION</ArrowLabel>

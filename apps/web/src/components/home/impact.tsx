@@ -35,12 +35,12 @@ export const Impact = () => (
               style={{ width: `${(index + 1) * STEP_SHARE}%` }}
             />
             <div className="flex items-center justify-between gap-3">
-              <span className="text-lime font-mono text-[11px] tracking-[0.16em]">
+              <span className="text-lime font-mono text-[13px] tracking-[0.16em]">
                 {step.n}
               </span>
               <span
                 aria-hidden="true"
-                className="font-mono text-[14px]"
+                className="font-mono text-[15.5px]"
                 style={{
                   color: index === LAST_STEP ? "transparent" : "#5E7469",
                 }}

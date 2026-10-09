@@ -15,13 +15,13 @@ export const Hero = () => (
         </p>
         <div className="flex flex-wrap gap-2.5">
           <Link
-            className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[14px] font-bold whitespace-nowrap"
+            className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[15.5px] font-bold whitespace-nowrap"
             to="/register/team"
           >
             <ArrowLabel>Register your team →</ArrowLabel>
           </Link>
           <Link
-            className="text-fg hover:border-volt hover:text-fg rounded-full border border-[rgba(242,247,244,0.24)] px-[22px] py-3.5 text-[14px] font-semibold whitespace-nowrap"
+            className="text-fg hover:border-volt hover:text-fg rounded-full border border-[rgba(242,247,244,0.24)] px-[22px] py-3.5 text-[15.5px] font-semibold whitespace-nowrap"
             to="/journey"
           >
             See the 12-week journey
