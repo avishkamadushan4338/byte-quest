@@ -98,17 +98,6 @@ export const SiteHeader = () => {
 
         <div className="flex shrink-0 items-center gap-1.5">
           <Link
-            className="group text-fg hover:text-volt hover:border-volt/60 hidden min-h-11 items-center gap-1.5 rounded-full border border-[rgba(185,245,208,0.22)] bg-[rgba(185,245,208,0.04)] px-4 py-2.5 text-[14.5px] font-semibold tracking-[0.01em] whitespace-nowrap transition-colors duration-200 hover:bg-[rgba(82,255,61,0.09)] min-[620px]:inline-flex sm:px-5"
-            to="/register"
-          >
-            Register
-            <ArrowRightIcon
-              aria-hidden="true"
-              className="transition-transform duration-200 group-hover:translate-x-0.5"
-              weight="bold"
-            />
-          </Link>
-          <Link
             className="group bg-volt text-ink hover:text-ink hover:bg-lime hidden min-h-11 items-center gap-1.5 rounded-full px-4 py-2.5 text-[14.5px] font-bold tracking-[0.01em] whitespace-nowrap shadow-[0_0_0_1px_rgba(82,255,61,0.4),0_8px_28px_-6px_rgba(82,255,61,0.55),inset_0_1px_0_rgba(255,255,255,0.45)] transition-all duration-200 hover:-translate-y-px hover:shadow-[0_0_0_1px_rgba(183,240,0,0.5),0_12px_34px_-6px_rgba(183,240,0,0.6),inset_0_1px_0_rgba(255,255,255,0.5)] min-[480px]:inline-flex sm:px-5"
             to="/volunteers"
           >
