@@ -18,13 +18,14 @@ import {
   AlertDialogViewport,
 } from "@byte-quest/ui/primitives/alert-dialog";
 import { Button } from "@byte-quest/ui/primitives/button";
-import { CheckIcon, CopyIcon, KeyIcon } from "@phosphor-icons/react";
+import { KeyIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { orpc } from "@/utils/orpc";
 
+import { Credentials } from "./credentials";
 import type {
   VolunteerApplicationRow,
   VolunteerApplicationStatus,
@@ -144,7 +145,6 @@ export const VolunteersPanel = () => {
     password: string;
   } | null>(null);
 
-  const [copied, setCopied] = useState(false);
   const [rotatedCreds, setRotatedCreds] = useState<{
     fullName: string;
     open: boolean;
@@ -196,7 +196,6 @@ export const VolunteersPanel = () => {
           password: data.password,
           username: matched?.username ?? undefined,
         });
-        setCopied(false);
         toast.success("Password rotated successfully");
       },
     })
@@ -227,17 +226,6 @@ export const VolunteersPanel = () => {
     })
   );
 
-  const handleCopyPassword = async (password: string) => {
-    try {
-      await navigator.clipboard.writeText(password);
-      setCopied(true);
-      toast.success("Password copied to clipboard");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error("Failed to copy password");
-    }
-  };
-
   return (
     <div className="grid gap-5">
       {issued ? (
@@ -246,12 +234,14 @@ export const VolunteersPanel = () => {
           tone="success"
         >
           <p>
-            Share this one-time password with the volunteer. It is shown only
-            once.
+            Share these one-time login details with the volunteer. They are
+            shown only once and nobody is signed in automatically.
           </p>
-          <p className="text-volt mt-3 font-mono text-[15px] tracking-[0.06em]">
-            {issued.username} / {issued.password}
-          </p>
+          <Credentials
+            className="mt-3"
+            password={issued.password}
+            username={issued.username}
+          />
           <Button
             className="mt-3"
             onClick={() => setIssued(null)}
@@ -465,52 +455,13 @@ export const VolunteersPanel = () => {
                 </div>
               </div>
 
-              <div className="mt-4 rounded-[14px] border border-[rgba(185,245,208,0.18)] bg-[rgba(0,0,0,0.3)] p-3.5">
-                {rotatedCreds.username ? (
-                  <div className="mb-2.5 flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] pb-2 text-[13px]">
-                    <span className="text-faint font-mono text-[11px] tracking-wide">
-                      USERNAME
-                    </span>
-                    <span className="text-volt font-mono font-semibold">
-                      @{rotatedCreds.username}
-                    </span>
-                  </div>
-                ) : null}
-
-                <div className="text-faint font-mono text-[11px] tracking-wide">
-                  NEW PASSWORD
-                </div>
-                <div className="mt-1.5 flex items-center justify-between gap-2">
-                  <code className="text-volt selection:bg-volt selection:text-ink font-mono text-[14px] font-bold tracking-wider select-all">
-                    {rotatedCreds.password}
-                  </code>
-                  <Button
-                    aria-label="Copy password to clipboard"
-                    className="shrink-0"
-                    onClick={() => handleCopyPassword(rotatedCreds.password)}
-                    size="sm"
-                    variant="outline"
-                  >
-                    {copied ? (
-                      <>
-                        <CheckIcon
-                          aria-hidden="true"
-                          className="text-volt mr-1.5 size-3.5"
-                        />
-                        Copied
-                      </>
-                    ) : (
-                      <>
-                        <CopyIcon
-                          aria-hidden="true"
-                          className="mr-1.5 size-3.5"
-                        />
-                        Copy
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
+              <Credentials
+                className="mt-4"
+                password={rotatedCreds.password}
+                passwordLabel="New Password"
+                showUsername={Boolean(rotatedCreds.username)}
+                username={rotatedCreds.username ?? ""}
+              />
 
               <div className="mt-6 flex justify-end">
                 <AlertDialogClose

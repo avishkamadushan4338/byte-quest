@@ -215,3 +215,53 @@
     touch-action: manipulation;
   }
 }
+
+/* Sponsorship tier cards. */
+@keyframes bq-tier-sheen {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  55%,
+  100% {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+@keyframes bq-tier-halo {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@keyframes bq-tier-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@utility animate-tier-sheen {
+  animation: bq-tier-sheen 5.5s cubic-bezier(0.55, 0, 0.35, 1) infinite;
+}
+
+@utility animate-tier-halo {
+  animation: bq-tier-halo 4.5s ease-in-out infinite;
+}
+
+@utility animate-tier-spin {
+  animation: bq-tier-spin 14s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-tier-sheen,
+  .animate-tier-halo,
+  .animate-tier-spin {
+    animation: none !important;
+  }
+}

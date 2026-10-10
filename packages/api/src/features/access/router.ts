@@ -9,6 +9,7 @@ import {
   publicProcedure,
 } from "../../index";
 import { generatePassword, generateUsername } from "../../lib/credentials";
+import { provisionCredentialUser } from "../../lib/provision";
 
 /** Primary division covers grades 6-9; secondary covers grades 10-13. */
 export const inferDivision = (grade: string): "primary" | "secondary" =>
@@ -118,29 +119,24 @@ export const accessRouter = {
       .input(signupInputSchema)
       .output(signupOutputSchema)
       .handler(async ({ context, input }) => {
-        let created: Awaited<ReturnType<typeof context.auth.api.signUpEmail>>;
-        try {
-          created = await context.auth.api.signUpEmail({
-            body: {
-              email: input.email,
-              name: input.fullName,
-              password: input.password,
-              username: input.username.toLowerCase(),
-            },
-          });
-        } catch (error) {
-          throw new ORPCError("CONFLICT", {
-            message:
-              error instanceof Error && error.message
-                ? error.message
-                : "That username or email is already taken",
-          });
-        }
+        const userId = await provisionCredentialUser(context, {
+          email: input.email,
+          name: input.fullName,
+          username: input.username.toLowerCase(),
+          password: input.password,
+        }).catch((error: unknown) => {
+          if (error instanceof ORPCError && error.code === "CONFLICT") {
+            throw new ORPCError("CONFLICT", {
+              message: "That username or email is already taken",
+            });
+          }
+          throw error;
+        });
 
         const [profile] = await context.db
           .insert(userProfile)
           .values({
-            userId: created.user.id,
+            userId,
             fullName: input.fullName,
             nationalId: input.nationalId,
             birthday: input.birthday,
@@ -155,7 +151,7 @@ export const accessRouter = {
         }
 
         return {
-          userId: created.user.id,
+          userId,
           profileId: profile.id,
           role: input.role,
         };
@@ -291,25 +287,12 @@ export const accessRouter = {
           input.email?.trim() ||
           `${username}@${input.role === "volunteer" ? "volunteers" : "users"}.bytequest.lk`;
 
-        let userId: string;
-        try {
-          const createdUser = await context.auth.api.signUpEmail({
-            body: {
-              email,
-              name: input.fullName.trim(),
-              password,
-              username,
-            },
-          });
-          userId = createdUser.user.id;
-        } catch (error) {
-          throw new ORPCError("CONFLICT", {
-            message:
-              error instanceof Error && error.message
-                ? error.message
-                : "Could not create user account",
-          });
-        }
+        const userId = await provisionCredentialUser(context, {
+          email,
+          name: input.fullName.trim(),
+          username,
+          password,
+        });
 
         await context.db.insert(userProfile).values({
           userId,
@@ -604,25 +587,12 @@ export const accessRouter = {
 
         const password = generatePassword();
 
-        let userId: string;
-        try {
-          const created = await context.auth.api.signUpEmail({
-            body: {
-              email: row.email,
-              name: row.fullName,
-              password,
-              username: row.username,
-            },
-          });
-          userId = created.user.id;
-        } catch (error) {
-          throw new ORPCError("CONFLICT", {
-            message:
-              error instanceof Error && error.message
-                ? error.message
-                : "Could not provision the account for this application",
-          });
-        }
+        const userId = await provisionCredentialUser(context, {
+          email: row.email,
+          name: row.fullName,
+          username: row.username,
+          password,
+        });
 
         await context.db.insert(userProfile).values({
           userId,

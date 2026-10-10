@@ -1,7 +1,7 @@
 import type { ImgHTMLAttributes } from "react";
 import { cn } from "@byte-quest/ui/lib/utils";
 
-const BRAND_LOGO_SRC = "/assets/bq-logo.webp";
+export const BRAND_LOGO_SRC = "/assets/bq-logo.webp";
 
 type BrandProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src" | "alt"> & {
   size?: "sm" | "lg";

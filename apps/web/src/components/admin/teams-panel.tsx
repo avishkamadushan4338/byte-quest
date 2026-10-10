@@ -18,6 +18,7 @@ import { toast } from "sonner";
 
 import { orpc } from "@/utils/orpc";
 
+import { Credentials } from "./credentials";
 import {
   divisionBadgeTones,
   divisionLabels,
@@ -63,12 +64,14 @@ export const TeamsPanel = () => {
           tone="success"
         >
           <p>
-            Share this one-time password with the team&apos;s captain. It is
-            shown only once.
+            Share these one-time login details with the team&apos;s captain.
+            They are shown only once and nobody is signed in automatically.
           </p>
-          <p className="text-volt mt-3 font-mono text-[15px] tracking-[0.06em]">
-            {issued.username} / {issued.password}
-          </p>
+          <Credentials
+            className="mt-3"
+            password={issued.password}
+            username={issued.username}
+          />
           <Button
             className="mt-3"
             onClick={() => setIssued(null)}

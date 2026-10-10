@@ -10,6 +10,7 @@ import {
   publicProcedure,
 } from "../../index";
 import { generatePassword, generateUsername } from "../../lib/credentials";
+import { provisionCredentialUser } from "../../lib/provision";
 
 const statusSchema = z.enum(["pending", "approved", "rejected"]);
 
@@ -222,20 +223,12 @@ export const volunteersRouter = {
         const password = generatePassword();
         const email = `${username}@volunteers.bytequest.lk`;
 
-        let userId: string;
-        try {
-          const createdUser = await context.auth.api.signUpEmail({
-            body: { email, name: row.fullName, password, username },
-          });
-          userId = createdUser.user.id;
-        } catch (error) {
-          throw new ORPCError("CONFLICT", {
-            message:
-              error instanceof Error && error.message
-                ? error.message
-                : "Could not provision the volunteer's account",
-          });
-        }
+        const userId = await provisionCredentialUser(context, {
+          email,
+          name: row.fullName,
+          username,
+          password,
+        });
 
         await context.db.insert(userProfile).values({
           userId,

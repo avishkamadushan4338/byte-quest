@@ -8,6 +8,10 @@ export interface PartnerTier {
   amount: string;
   slots: number;
   slotHeight: string;
+  /** Platinum takes the full first row and gets the richer treatment. */
+  featured?: boolean;
+  badge?: string;
+  highlights?: string[];
 }
 
 export interface PartnerBenefit {
@@ -27,11 +31,20 @@ export const partnerTiers: PartnerTier[] = [
     label: "PLATINUM",
     accent: "#E6F2EC",
     accentHover: "hover:text-[#E6F2EC]",
-    border: "rgba(230,242,236,0.3)",
-    background: "linear-gradient(160deg,#16231F,#030F0B)",
+    border: "rgba(230,242,236,0.34)",
+    background:
+      "radial-gradient(90% 140% at 0% 0%, rgba(82,255,61,0.14), transparent 55%), radial-gradient(70% 120% at 100% 100%, rgba(0,169,154,0.16), transparent 60%), linear-gradient(150deg,#16231F,#030F0B 65%)",
     amount: "800K / 500K",
     slots: 2,
     slotHeight: "72px",
+    featured: true,
+    badge: "Flagship tier",
+    highlights: [
+      "Title sponsor across the programme",
+      "Main-stage and Grand Final branding",
+      "Keynote slot at the Innovation Expo",
+      "Reserved judging and mentorship access",
+    ],
   },
   {
     name: "Gold",

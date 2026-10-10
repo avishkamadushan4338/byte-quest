@@ -22,18 +22,14 @@ import {
 } from "@byte-quest/ui/primitives/alert-dialog";
 import { Button } from "@byte-quest/ui/primitives/button";
 import { Skeleton } from "@byte-quest/ui/primitives/skeleton";
-import {
-  CheckIcon,
-  CopyIcon,
-  KeyIcon,
-  UserPlusIcon,
-} from "@phosphor-icons/react";
+import { KeyIcon, UserPlusIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { orpc } from "@/utils/orpc";
 
+import { Credentials } from "./credentials";
 import type { UserRole } from "./data";
 import { roleBadgeTones, roleLabels, usersCopy, usersEmpty } from "./data";
 
@@ -58,7 +54,6 @@ export const UsersPanel = () => {
   const queryClient = useQueryClient();
   const users = useQuery(orpc.access.listUsers.queryOptions());
   const me = useQuery(orpc.access.me.queryOptions());
-  const [copied, setCopied] = useState(false);
   const [rotatedCreds, setRotatedCreds] = useState<PasswordDialogState>({
     fullName: "",
     open: false,
@@ -90,7 +85,6 @@ export const UsersPanel = () => {
           open: true,
           password: data.password,
         });
-        setCopied(false);
         toast.success(usersCopy.rotatePasswordSuccess);
       },
     })
@@ -120,7 +114,6 @@ export const UsersPanel = () => {
           password: data.password,
           username: data.username,
         });
-        setCopied(false);
         toast.success(usersCopy.addUserSuccess);
       },
     })
@@ -136,20 +129,6 @@ export const UsersPanel = () => {
       return;
     }
     rotatePassword.mutate({ userId });
-  };
-
-  const handleCopyPassword = async () => {
-    if (!rotatedCreds.password) {
-      return;
-    }
-    try {
-      await navigator.clipboard.writeText(rotatedCreds.password);
-      setCopied(true);
-      toast.success(usersCopy.copiedPassword);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      toast.error("Failed to copy to clipboard");
-    }
   };
 
   const rows = users.data ?? [];
@@ -343,51 +322,15 @@ export const UsersPanel = () => {
                 {usersCopy.rotatePasswordDescription}
               </AlertDialogDescription>
 
-              <div className="bg-ink/70 mt-5 rounded-[14px] border border-[rgba(185,245,208,0.14)] p-4">
-                {rotatedCreds.username ? (
-                  <div className="mb-3 border-b border-[rgba(185,245,208,0.1)] pb-2.5">
-                    <span className="text-muted-2 block font-mono text-[11px] tracking-[0.14em] uppercase">
-                      Username (Handle)
-                    </span>
-                    <span className="text-volt mt-1 block font-mono text-[16px] font-bold">
-                      @{rotatedCreds.username}
-                    </span>
-                  </div>
-                ) : null}
-                <span className="text-muted-2 block font-mono text-[11px] tracking-[0.14em] uppercase">
-                  {rotatedCreds.isNewUser
-                    ? "Temporary Password"
-                    : "New Password"}
-                </span>
-                <div className="mt-2 flex items-center justify-between gap-3">
-                  <code className="text-volt font-mono text-[16px] font-bold tracking-wider select-all">
-                    {rotatedCreds.password}
-                  </code>
-                  <Button
-                    onClick={handleCopyPassword}
-                    size="sm"
-                    variant={copied ? "primary" : "outline"}
-                  >
-                    {copied ? (
-                      <>
-                        <CheckIcon
-                          aria-hidden="true"
-                          className="mr-1.5 size-3.5"
-                        />
-                        Copied
-                      </>
-                    ) : (
-                      <>
-                        <CopyIcon
-                          aria-hidden="true"
-                          className="mr-1.5 size-3.5"
-                        />
-                        {usersCopy.copyPassword}
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </div>
+              <Credentials
+                className="mt-5"
+                password={rotatedCreds.password}
+                passwordLabel={
+                  rotatedCreds.isNewUser ? "Temporary Password" : "New Password"
+                }
+                showUsername={Boolean(rotatedCreds.username)}
+                username={rotatedCreds.username ?? ""}
+              />
 
               <div className="mt-6 flex justify-end">
                 <AlertDialogClose

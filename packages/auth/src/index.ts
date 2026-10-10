@@ -3,7 +3,6 @@ import type { Database } from "@byte-quest/db";
 import * as schema from "@byte-quest/db/schema/auth";
 import { betterAuth } from "better-auth";
 import { username } from "better-auth/plugins";
-import { tanstackStartCookies } from "better-auth/tanstack-start";
 
 export { ensureBootstrapAdmin, ADMIN_USERNAME } from "./admin";
 export type { AdminBootstrapConfig } from "./admin";
@@ -70,7 +69,20 @@ export const createAuth = (
       },
     },
     plugins: [
-      tanstackStartCookies(),
+      /**
+       * Do NOT add `tanstackStartCookies()` here.
+       *
+       * It short-circuits for the HTTP router (`apps/web/src/routes/api/auth/$`),
+       * so it contributes nothing to browser sign-in. Its `after` hook matches
+       * *every* endpoint, including the server-side `auth.api.signUpEmail()`
+       * calls that provision volunteer/captain/user logins. Those calls mint a
+       * session (see `autoSignIn` above) and the hook pushed that Set-Cookie
+       * into the ambient request scope - so approving a volunteer silently
+       * overwrote the reviewing admin's session cookie and logged them out.
+       *
+       * Sessions are only ever established by the browser hitting
+       * `/api/auth/*`, which returns its own Set-Cookie.
+       */
       username({
         usernameValidator: isValidUsername,
         minUsernameLength: USERNAME_MIN_LENGTH,

@@ -20,6 +20,7 @@ import type {
   ApplicationStatus,
   ApplicationStatusFilter,
 } from "./application-data";
+import { Credentials } from "./credentials";
 
 const PAGE_SIZE = 25;
 
@@ -178,12 +179,15 @@ export const ApplicationsPanel = () => {
           tone="success"
         >
           <p>
-            Share this one-time password with the applicant. It is shown only
-            once.
+            Share these one-time login details with the applicant. They are
+            shown only once and nobody is signed in automatically.
           </p>
-          <p className="text-volt mt-3 font-mono text-[15px] tracking-[0.06em]">
-            {issued.username} / {issued.password}
-          </p>
+          <Credentials
+            className="mt-3"
+            password={issued.password}
+            showUsername={Boolean(issued.username)}
+            username={issued.username}
+          />
           <Button
             className="mt-3"
             onClick={() => setIssued(null)}

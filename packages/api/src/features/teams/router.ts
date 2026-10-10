@@ -18,6 +18,7 @@ import {
   publicProcedure,
 } from "../../index";
 import { generatePassword, generateUsername } from "../../lib/credentials";
+import { provisionCredentialUser } from "../../lib/provision";
 import { inferDivision } from "../access/router";
 import { findOrCreateSchool } from "../schools/router";
 
@@ -762,20 +763,12 @@ export const teamsRouter = {
         const password = generatePassword();
         const email = `${username}@captains.bytequest.lk`;
 
-        let userId: string;
-        try {
-          const createdUser = await context.auth.api.signUpEmail({
-            body: { email, name: leaderMember.fullName, password, username },
-          });
-          userId = createdUser.user.id;
-        } catch (error) {
-          throw new ORPCError("CONFLICT", {
-            message:
-              error instanceof Error && error.message
-                ? error.message
-                : "Could not provision the captain's account",
-          });
-        }
+        const userId = await provisionCredentialUser(context, {
+          email,
+          name: leaderMember.fullName,
+          username,
+          password,
+        });
 
         await context.db.insert(userProfile).values({
           userId,
