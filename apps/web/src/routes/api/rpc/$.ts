@@ -7,6 +7,14 @@ import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { createContext } from "../../../context";
+import { clientIp, guardRequest } from "../../../lib/rate-limit";
+
+/** Shared budget for every /api/rpc call: generous for normal app traffic. */
+const RPC_LIMITS = {
+  limit: 300,
+  windowMs: 60_000,
+  maxBodyBytes: 512 * 1024,
+};
 
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
@@ -32,6 +40,11 @@ const apiHandler = new OpenAPIHandler(appRouter, {
 });
 
 const handle = async ({ request }: { request: Request }) => {
+  const guarded = guardRequest(request, `rpc:${clientIp(request)}`, RPC_LIMITS);
+  if (guarded) {
+    return guarded;
+  }
+
   const rpcResult = await rpcHandler.handle(request, {
     prefix: "/api/rpc",
     context: await createContext({ req: request }),

@@ -35,6 +35,8 @@ import { roleBadgeTones, roleLabels, usersCopy, usersEmpty } from "./data";
 
 const SKELETON_KEYS = ["skeleton-1", "skeleton-2", "skeleton-3", "skeleton-4"];
 
+const PAGE_SIZE = 25;
+
 interface PasswordDialogState {
   fullName: string;
   open: boolean;
@@ -52,7 +54,12 @@ interface NewUserForm {
 
 export const UsersPanel = () => {
   const queryClient = useQueryClient();
-  const users = useQuery(orpc.access.listUsers.queryOptions());
+  const [pageIndex, setPageIndex] = useState(0);
+  const users = useQuery(
+    orpc.access.listUsers.queryOptions({
+      input: { limit: PAGE_SIZE, offset: pageIndex * PAGE_SIZE },
+    })
+  );
   const me = useQuery(orpc.access.me.queryOptions());
   const [rotatedCreds, setRotatedCreds] = useState<PasswordDialogState>({
     fullName: "",
@@ -131,7 +138,9 @@ export const UsersPanel = () => {
     rotatePassword.mutate({ userId });
   };
 
-  const rows = users.data ?? [];
+  const rows = users.data?.items ?? [];
+  const total = users.data?.total ?? 0;
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="grid gap-5">
@@ -290,6 +299,33 @@ export const UsersPanel = () => {
             </TableBody>
           </Table>
         </TableWrapper>
+      ) : null}
+
+      {total > PAGE_SIZE ? (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span className="text-muted font-mono text-[12.5px]">
+            {pageIndex * PAGE_SIZE + 1}–
+            {Math.min(total, pageIndex * PAGE_SIZE + rows.length)} of {total}
+          </span>
+          <div className="flex gap-2">
+            <Button
+              disabled={pageIndex === 0}
+              onClick={() => setPageIndex((prev) => prev - 1)}
+              size="sm"
+              variant="outline"
+            >
+              Previous
+            </Button>
+            <Button
+              disabled={pageIndex + 1 >= pageCount}
+              onClick={() => setPageIndex((prev) => prev + 1)}
+              size="sm"
+              variant="outline"
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       ) : null}
 
       <AlertDialogRoot

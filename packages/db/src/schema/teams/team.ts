@@ -3,6 +3,7 @@ import {
   sqliteTable,
   text,
   integer,
+  index,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
@@ -114,6 +115,9 @@ export const teamMember = sqliteTable(
       .notNull(),
   },
   (table) => [
+    // Per-user lookups ("my team", "my submissions") filter on user_id alone;
+    // the composite unique index below cannot serve them (team_id leads).
+    index("team_member_user_id_idx").on(table.userId),
     uniqueIndex("team_member_team_user_unique").on(table.teamId, table.userId),
     uniqueIndex("team_member_leader_unique")
       .on(table.teamId)
@@ -151,6 +155,7 @@ export const joinRequest = sqliteTable(
       .notNull(),
   },
   (table) => [
+    index("join_request_user_id_idx").on(table.userId),
     uniqueIndex("join_request_team_user_unique").on(table.teamId, table.userId),
   ]
 );

@@ -24,6 +24,17 @@ import { Credentials } from "./credentials";
 
 const PAGE_SIZE = 25;
 
+/** Columns the server can sort by; DataTable sort keys must stay in sync. */
+const sortableKeys = [
+  "createdAt",
+  "fullName",
+  "organization",
+  "username",
+  "status",
+] as const;
+
+type ApplicationSortKey = (typeof sortableKeys)[number];
+
 const formatDate = (value: string | null) => {
   if (!value) {
     return "-";
@@ -119,12 +130,45 @@ export const ApplicationsPanel = () => {
     { id: string; fullName: string; username: string; password: string }[]
   >([]);
 
+  const sortKey =
+    sort && (sortableKeys as readonly string[]).includes(sort.key)
+      ? (sort.key as ApplicationSortKey)
+      : undefined;
+
   const query = useQuery(
     orpc.access.listAdminApplications.queryOptions({
-      input: status === "all" ? {} : { status },
+      input: {
+        ...(status === "all" ? {} : { status }),
+        limit: PAGE_SIZE,
+        offset: pageIndex * PAGE_SIZE,
+        ...(sort && sortKey
+          ? { sort: sortKey, direction: sort.direction }
+          : {}),
+      },
       placeholderData: (previous) => previous,
     })
   );
+
+  // Sorting and paging happen server-side so the count, ordering and window
+  // always agree; this page only renders the slice it was handed.
+  const rows = (query.data?.items ?? []) as ApplicationRow[];
+  const total = query.data?.total ?? 0;
+
+  /**
+   * Deciding rows shrinks the result set from under the current page; step
+   * back to the last real page instead of stranding the table on an empty
+   * window. Only moves backwards, and only when the page really fell off the
+   * end, so a decision that leaves the list intact keeps its position.
+   */
+  const clampPageAfterDecision = (decidedCount: number) => {
+    const lastPage = Math.max(
+      0,
+      Math.ceil((total - decidedCount) / PAGE_SIZE) - 1
+    );
+    if (pageIndex > lastPage) {
+      setPageIndex(lastPage);
+    }
+  };
 
   const decide = useMutation(
     orpc.access.decideAdminApplication.mutationOptions({
@@ -132,8 +176,9 @@ export const ApplicationsPanel = () => {
         queryClient.invalidateQueries({
           queryKey: orpc.access.listAdminApplications.key(),
         });
+        clampPageAfterDecision(1);
         if (result.password) {
-          const application = query.data?.find(
+          const application = query.data?.items.find(
             (entry) => entry.id === result.id
           );
           setIssued({
@@ -163,6 +208,7 @@ export const ApplicationsPanel = () => {
         queryClient.invalidateQueries({
           queryKey: orpc.access.listAdminApplications.key(),
         });
+        clampPageAfterDecision(result.approved.length + result.rejected.length);
         setSelectedIds([]);
         if (result.approved.length > 0) {
           setIssuedBatch(result.approved);
@@ -197,22 +243,6 @@ export const ApplicationsPanel = () => {
         );
       },
     })
-  );
-
-  const rows = (query.data ?? []) as ApplicationRow[];
-  const sorted = sort
-    ? rows.toSorted((left, right) => {
-        const leftValue = String(left[sort.key as keyof ApplicationRow] ?? "");
-        const rightValue = String(
-          right[sort.key as keyof ApplicationRow] ?? ""
-        );
-        const order = leftValue.localeCompare(rightValue);
-        return sort.direction === "asc" ? order : -order;
-      })
-    : rows;
-  const paged = sorted.slice(
-    pageIndex * PAGE_SIZE,
-    pageIndex * PAGE_SIZE + PAGE_SIZE
   );
 
   const active = rows.find((row) => row.id === reviewId);
@@ -320,7 +350,10 @@ export const ApplicationsPanel = () => {
         isRowSelectable={(row) => row.status === "pending"}
         onPaginationChange={(next) => setPageIndex(next.pageIndex)}
         onSelectionChange={setSelectedIds}
-        onSortChange={setSort}
+        onSortChange={(next) => {
+          setSort(next);
+          setPageIndex(0);
+        }}
         pagination={{ pageIndex, pageSize: PAGE_SIZE }}
         renderRowActions={(row) =>
           row.status === "pending" ? (
@@ -340,10 +373,10 @@ export const ApplicationsPanel = () => {
             </span>
           )
         }
-        rows={paged}
+        rows={rows}
         selectedRowIds={selectedIds}
         sort={sort}
-        total={sorted.length}
+        total={total}
       />
 
       {selectedCount > 0 ? (

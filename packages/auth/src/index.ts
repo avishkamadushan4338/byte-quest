@@ -55,6 +55,25 @@ export const createAuth = (
     },
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_URL,
+    /**
+     * Better Auth rate limits every endpoint per IP + path, with built-in
+     * tighter rules for sign-in/sign-up (3 requests / 10s) and password
+     * reset (3 / 60s). Storage is in-memory by default; on this single-node
+     * deployment that is intentional — no Redis to share counters with.
+     */
+    rateLimit: {
+      enabled: process.env.NODE_ENV === "production",
+      storage: "memory",
+      window: 10,
+      max: 100,
+    },
+    advanced: {
+      ipAddress: {
+        // Read the proxy-set header first; also accept the direct fallbacks
+        // so each client still gets its own bucket.
+        ipAddressHeaders: ["x-forwarded-for", "x-real-ip", "cf-connecting-ip"],
+      },
+    },
     session: {
       expiresIn: 60 * 60 * 24 * 7,
       updateAge: 60 * 60 * 24,

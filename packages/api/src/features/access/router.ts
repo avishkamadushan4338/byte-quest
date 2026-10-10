@@ -1,6 +1,6 @@
 import { account, adminApplication, user, userProfile } from "@byte-quest/db";
 import { ORPCError } from "@orpc/server";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import {
@@ -8,6 +8,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../../index";
+import { auditLog } from "../../lib/audit";
 import { generatePassword, generateUsername } from "../../lib/credentials";
 import { provisionCredentialUser } from "../../lib/provision";
 
@@ -105,6 +106,30 @@ const adminApplicationOutputSchema = z.object({
   reviewedAt: z.string().nullable(),
   createdAt: z.string(),
 });
+
+/** Rows returned per page unless the caller asks for something smaller. */
+const DEFAULT_PAGE_SIZE = 25;
+
+const paginationSchema = z.object({
+  limit: z.number().int().min(1).max(100).default(DEFAULT_PAGE_SIZE),
+  offset: z.number().int().min(0).default(0),
+});
+
+const applicationSortKeys = [
+  "createdAt",
+  "fullName",
+  "organization",
+  "username",
+  "status",
+] as const;
+
+const applicationSortColumns = {
+  createdAt: adminApplication.createdAt,
+  fullName: adminApplication.fullName,
+  organization: adminApplication.organization,
+  username: adminApplication.username,
+  status: adminApplication.status,
+} as const;
 
 export const accessRouter = {
   access: {
@@ -230,19 +255,33 @@ export const accessRouter = {
         };
       }),
 
-    /** Admin: list all users and their roles. */
+    /**
+     * Admin: list a page of users and their roles (alphabetically), plus the
+     * total row count so the panel can render a pager.
+     */
     listUsers: adminProcedure
+      .input(paginationSchema.optional())
       .output(
-        z.array(
-          z.object({
-            userId: z.string(),
-            username: z.string().nullable(),
-            role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
-            fullName: z.string(),
-          })
-        )
+        z.object({
+          items: z.array(
+            z.object({
+              userId: z.string(),
+              username: z.string().nullable(),
+              role: z.enum(["admin", "mic", "leader", "student", "volunteer"]),
+              fullName: z.string(),
+            })
+          ),
+          total: z.number(),
+        })
       )
-      .handler(async ({ context }) => {
+      .handler(async ({ context, input }) => {
+        const limit = input?.limit ?? DEFAULT_PAGE_SIZE;
+        const offset = input?.offset ?? 0;
+
+        const [totalRow] = await context.db
+          .select({ value: count() })
+          .from(userProfile);
+
         const rows = await context.db
           .select({
             userId: userProfile.userId,
@@ -251,13 +290,21 @@ export const accessRouter = {
             fullName: userProfile.fullName,
           })
           .from(userProfile)
-          .leftJoin(user, eq(userProfile.userId, user.id));
-        return rows.map((row) => ({
-          userId: row.userId,
-          username: row.username ?? null,
-          role: row.role,
-          fullName: row.fullName,
-        }));
+          .leftJoin(user, eq(userProfile.userId, user.id))
+          // fullName alone is not unique; userId keeps page boundaries stable.
+          .orderBy(asc(userProfile.fullName), asc(userProfile.userId))
+          .limit(limit)
+          .offset(offset);
+
+        return {
+          items: rows.map((row) => ({
+            userId: row.userId,
+            username: row.username ?? null,
+            role: row.role,
+            fullName: row.fullName,
+          })),
+          total: totalRow?.value ?? 0,
+        };
       }),
 
     /** Admin: create a new user account with a provisioned username & password. */
@@ -303,6 +350,13 @@ export const accessRouter = {
           role: input.role,
         });
 
+        auditLog({
+          action: "user.create",
+          actorUserId: context.profile.userId,
+          targetUserId: userId,
+          details: { role: input.role, username },
+        });
+
         return {
           userId,
           fullName: input.fullName.trim(),
@@ -338,6 +392,14 @@ export const accessRouter = {
         if (!updated) {
           throw new Error("User not found");
         }
+
+        auditLog({
+          action: "user.set-role",
+          actorUserId: context.profile.userId,
+          targetUserId: updated.userId,
+          details: { role: updated.role },
+        });
+
         return { userId: updated.userId, role: updated.role };
       }),
 
@@ -418,6 +480,13 @@ export const accessRouter = {
           }
         }
 
+        auditLog({
+          action: "user.rotate-password",
+          actorUserId: context.profile.userId,
+          targetUserId: targetProfile.userId,
+          details: { fullName: targetProfile.fullName },
+        });
+
         return {
           userId: targetProfile.userId,
           fullName: targetProfile.fullName,
@@ -490,39 +559,73 @@ export const accessRouter = {
         return { id: created.id, status: "pending" as const };
       }),
 
-    /** Admin: list applications, newest first, optionally by status. */
+    /**
+     * Admin: list one page of applications (newest first by default),
+     * optionally filtered by status, plus the total row count for the pager.
+     */
     listAdminApplications: adminProcedure
       .input(
         z
           .object({
             status: z.enum(["pending", "approved", "rejected"]).optional(),
+            sort: z.enum(applicationSortKeys).optional(),
+            direction: z.enum(["asc", "desc"]).optional(),
+            limit: z.number().int().min(1).max(100).default(DEFAULT_PAGE_SIZE),
+            offset: z.number().int().min(0).default(0),
           })
           .optional()
       )
-      .output(z.array(adminApplicationOutputSchema))
+      .output(
+        z.object({
+          items: z.array(adminApplicationOutputSchema),
+          total: z.number(),
+        })
+      )
       .handler(async ({ context, input }) => {
+        const limit = input?.limit ?? DEFAULT_PAGE_SIZE;
+        const offset = input?.offset ?? 0;
+        const where = input?.status
+          ? eq(adminApplication.status, input.status)
+          : undefined;
+
+        const [totalRow] = await context.db
+          .select({ value: count() })
+          .from(adminApplication)
+          .where(where);
+
+        const sortColumn = applicationSortColumns[input?.sort ?? "createdAt"];
+        // Newest first unless the caller picked a column to sort by.
+        const direction = input?.direction ?? (input?.sort ? "asc" : "desc");
+        const order = direction === "asc" ? asc(sortColumn) : desc(sortColumn);
+        const tiebreak =
+          direction === "asc"
+            ? asc(adminApplication.id)
+            : desc(adminApplication.id);
+
         const rows = await context.db
           .select()
           .from(adminApplication)
-          .where(
-            input?.status
-              ? eq(adminApplication.status, input.status)
-              : undefined
-          )
-          .orderBy(desc(adminApplication.createdAt));
-        return rows.map((row) => ({
-          id: row.id,
-          fullName: row.fullName,
-          email: row.email,
-          username: row.username,
-          organization: row.organization,
-          role: row.role,
-          experience: row.experience,
-          status: row.status,
-          reviewNote: row.reviewNote,
-          reviewedAt: row.reviewedAt ? row.reviewedAt.toISOString() : null,
-          createdAt: row.createdAt.toISOString(),
-        }));
+          .where(where)
+          .orderBy(order, tiebreak)
+          .limit(limit)
+          .offset(offset);
+
+        return {
+          items: rows.map((row) => ({
+            id: row.id,
+            fullName: row.fullName,
+            email: row.email,
+            username: row.username,
+            organization: row.organization,
+            role: row.role,
+            experience: row.experience,
+            status: row.status,
+            reviewNote: row.reviewNote,
+            reviewedAt: row.reviewedAt ? row.reviewedAt.toISOString() : null,
+            createdAt: row.createdAt.toISOString(),
+          })),
+          total: totalRow?.value ?? 0,
+        };
       }),
 
     /**
@@ -578,6 +681,13 @@ export const accessRouter = {
               message: "Failed to reject application",
             });
           }
+
+          auditLog({
+            action: "admin-application.reject",
+            actorUserId: context.profile.userId,
+            details: { applicationId: rejected.id, note: input.note ?? null },
+          });
+
           return {
             id: rejected.id,
             status: "rejected" as const,
@@ -618,6 +728,13 @@ export const accessRouter = {
             message: "Failed to approve application",
           });
         }
+
+        auditLog({
+          action: "admin-application.approve",
+          actorUserId: context.profile.userId,
+          targetUserId: userId,
+          details: { applicationId: approved.id, note: input.note ?? null },
+        });
 
         return {
           id: approved.id,
@@ -706,6 +823,15 @@ export const accessRouter = {
               });
             }
           }
+          auditLog({
+            action: "admin-application.bulk-reject",
+            actorUserId: context.profile.userId,
+            details: {
+              applicationIds: rejectedRows.map((row) => row.id),
+              note: input.note ?? null,
+              skipped: skipped.length,
+            },
+          });
           return {
             approved: [],
             rejected: rejectedRows.map((row) => ({ id: row.id })),
@@ -773,6 +899,16 @@ export const accessRouter = {
             skipped.push(outcome.value);
           }
         }
+
+        auditLog({
+          action: "admin-application.bulk-approve",
+          actorUserId: context.profile.userId,
+          details: {
+            applicationIds: approved.map((entry) => entry.id),
+            note: input.note ?? null,
+            skipped: skipped.length,
+          },
+        });
 
         return { approved, rejected: [], skipped };
       }),

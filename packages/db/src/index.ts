@@ -50,10 +50,19 @@ export async function createDb(envConfig?: DatabaseConfig): Promise<Database> {
 
   mkdirSync(dirname(resolveDatabasePath(url)), { recursive: true });
   const { drizzle } = await import("drizzle-orm/libsql/node");
-  return drizzle({
+  const db = drizzle({
     connection: { url: resolveDatabaseUrl(url) },
     schema,
   }) as unknown as Database;
+
+  // Local file connections benefit from WAL (readers never block the writer),
+  // a busy timeout instead of immediate SQLITE_BUSY under concurrent requests,
+  // and NORMAL sync, which is safe for durability with WAL.
+  await db.$client.execute("PRAGMA journal_mode = WAL;");
+  await db.$client.execute("PRAGMA busy_timeout = 5000;");
+  await db.$client.execute("PRAGMA synchronous = NORMAL;");
+
+  return db;
 }
 
 export * from "./schema";
