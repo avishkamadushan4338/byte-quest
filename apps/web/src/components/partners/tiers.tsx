@@ -55,20 +55,6 @@ const FeaturedTier = ({ tier }: { tier: PartnerTier }) => (
       {/* Rotating conic halo behind the card, kept behind the content. */}
       <span
         aria-hidden="true"
-        className="animate-tier-spin pointer-events-none absolute -inset-px rounded-[18px] opacity-60 motion-reduce:hidden"
-        style={{
-          background: `conic-gradient(from 0deg, transparent 0deg, ${tier.accent}22 40deg, transparent 120deg, transparent 240deg, ${tier.accent}1A 290deg, transparent 360deg)`,
-          maskImage:
-            "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-          WebkitMaskImage:
-            "linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)",
-          maskComposite: "exclude",
-          WebkitMaskComposite: "xor",
-          padding: 1,
-        }}
-      />
-      <span
-        aria-hidden="true"
         className="animate-tier-halo pointer-events-none absolute -top-24 -left-16 size-[340px] rounded-full bg-[radial-gradient(circle_closest-side,rgba(82,255,61,0.22),transparent)] blur-2xl motion-reduce:hidden"
       />
       <span
