@@ -110,10 +110,14 @@ export const ApplicationsPanel = () => {
   } | null>(null);
   const [reviewId, setReviewId] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [issued, setIssued] = useState<{
     username: string;
     password: string;
   } | null>(null);
+  const [issuedBatch, setIssuedBatch] = useState<
+    { id: string; fullName: string; username: string; password: string }[]
+  >([]);
 
   const query = useQuery(
     orpc.access.listAdminApplications.queryOptions({
@@ -153,6 +157,48 @@ export const ApplicationsPanel = () => {
     })
   );
 
+  const bulkDecide = useMutation(
+    orpc.access.decideAdminApplications.mutationOptions({
+      onSuccess: (result) => {
+        queryClient.invalidateQueries({
+          queryKey: orpc.access.listAdminApplications.key(),
+        });
+        setSelectedIds([]);
+        if (result.approved.length > 0) {
+          setIssuedBatch(result.approved);
+          toast.success(
+            applicationCopy.bulkApproved.replace(
+              "{count}",
+              String(result.approved.length)
+            )
+          );
+        } else if (result.rejected.length > 0) {
+          toast.success(
+            applicationCopy.bulkRejected.replace(
+              "{count}",
+              String(result.rejected.length)
+            )
+          );
+        }
+        const [firstSkip] = result.skipped;
+        if (firstSkip) {
+          toast.warning(
+            applicationCopy.bulkSkipped
+              .replace("{count}", String(result.skipped.length))
+              .replace("{reason}", firstSkip.reason)
+          );
+        }
+      },
+      onError: (error: unknown) => {
+        toast.error(
+          error instanceof Error && error.message
+            ? error.message
+            : applicationCopy.failed
+        );
+      },
+    })
+  );
+
   const rows = (query.data ?? []) as ApplicationRow[];
   const sorted = sort
     ? rows.toSorted((left, right) => {
@@ -170,9 +216,44 @@ export const ApplicationsPanel = () => {
   );
 
   const active = rows.find((row) => row.id === reviewId);
+  const selectedCount = selectedIds.length;
 
   return (
     <div className="grid gap-5">
+      {issuedBatch.length > 0 ? (
+        <Callout
+          title={applicationCopy.credentialsTitle.replace(
+            "{count}",
+            String(issuedBatch.length)
+          )}
+          tone="success"
+        >
+          <p>{applicationCopy.credentialsNote}</p>
+          <div className="mt-3 grid gap-3">
+            {issuedBatch.map((entry) => (
+              <div key={entry.id}>
+                <p className="text-fg mb-1.5 text-[14px] font-semibold">
+                  {entry.fullName}
+                </p>
+                <Credentials
+                  password={entry.password}
+                  showUsername
+                  username={entry.username}
+                />
+              </div>
+            ))}
+          </div>
+          <Button
+            className="mt-3"
+            onClick={() => setIssuedBatch([])}
+            size="sm"
+            variant="outline"
+          >
+            Done
+          </Button>
+        </Callout>
+      ) : null}
+
       {issued ? (
         <Callout
           title={`Account created for ${issued.username}`}
@@ -216,6 +297,7 @@ export const ApplicationsPanel = () => {
               onClick={() => {
                 setStatus(option);
                 setPageIndex(0);
+                setSelectedIds([]);
               }}
               type="button"
             >
@@ -231,10 +313,13 @@ export const ApplicationsPanel = () => {
         emptyContent={applicationCopy.empty}
         errorContent={applicationCopy.failed}
         getRowId={(row) => row.id}
+        getRowSelectionLabel={(row) => `Select ${row.fullName}`}
         isError={query.isError}
         isFetching={query.isFetching}
         isLoading={query.isPending}
+        isRowSelectable={(row) => row.status === "pending"}
         onPaginationChange={(next) => setPageIndex(next.pageIndex)}
+        onSelectionChange={setSelectedIds}
         onSortChange={setSort}
         pagination={{ pageIndex, pageSize: PAGE_SIZE }}
         renderRowActions={(row) =>
@@ -256,9 +341,60 @@ export const ApplicationsPanel = () => {
           )
         }
         rows={paged}
+        selectedRowIds={selectedIds}
         sort={sort}
         total={sorted.length}
       />
+
+      {selectedCount > 0 ? (
+        <div className="border-volt/25 bg-surface flex flex-wrap items-center justify-between gap-3 rounded-[18px] border px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+          <span className="text-muted text-[13.5px]">
+            {selectedCount === 1
+              ? applicationCopy.selectedOne
+              : applicationCopy.selectedMany.replace(
+                  "{count}",
+                  String(selectedCount)
+                )}
+          </span>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button
+              onClick={() => setSelectedIds([])}
+              size="sm"
+              variant="outline"
+            >
+              {applicationCopy.clearSelection}
+            </Button>
+            <Button
+              aria-busy={bulkDecide.isPending}
+              disabled={bulkDecide.isPending}
+              onClick={() =>
+                bulkDecide.mutate({
+                  applicationIds: selectedIds,
+                  approve: false,
+                  note: note.trim() || undefined,
+                })
+              }
+              variant="outline"
+            >
+              {applicationCopy.rejectSelected}
+            </Button>
+            <Button
+              aria-busy={bulkDecide.isPending}
+              disabled={bulkDecide.isPending}
+              onClick={() =>
+                bulkDecide.mutate({
+                  applicationIds: selectedIds,
+                  approve: true,
+                  note: note.trim() || undefined,
+                })
+              }
+            >
+              <Check className="size-4" />
+              {applicationCopy.approveSelected}
+            </Button>
+          </div>
+        </div>
+      ) : null}
 
       {active ? (
         <div className="border-volt/25 bg-surface rounded-[24px] border p-[clamp(20px,3vw,28px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">

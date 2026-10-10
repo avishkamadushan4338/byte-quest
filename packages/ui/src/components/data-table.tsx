@@ -2,6 +2,7 @@ import { cn } from "@byte-quest/ui/lib/utils";
 import type { ReactNode } from "react";
 
 import { ChevronDown, ChevronRight, ChevronUp } from "@byte-quest/ui/components/icons";
+import { Checkbox } from "@byte-quest/ui/primitives/checkbox";
 
 export type SortDirection = "asc" | "desc";
 
@@ -45,6 +46,12 @@ type DataTableProps<Row> = {
   onPaginationChange?: (pagination: DataTablePagination) => void;
   rowHref?: (row: Row) => string | undefined;
   renderRowActions?: (row: Row) => ReactNode;
+  /** Pass with `selectedRowIds` to render the row checkbox column. */
+  selectedRowIds?: string[];
+  onSelectionChange?: (ids: string[]) => void;
+  /** Rows that cannot be selected, e.g. already-decided entries. */
+  isRowSelectable?: (row: Row) => boolean;
+  getRowSelectionLabel?: (row: Row) => string;
 };
 
 const alignClasses = {
@@ -80,10 +87,44 @@ function DataTable<Row>({
   onPaginationChange,
   rowHref,
   renderRowActions,
+  selectedRowIds,
+  onSelectionChange,
+  isRowSelectable,
+  getRowSelectionLabel,
 }: DataTableProps<Row>) {
   const columnCount = columns.length;
   const cellAlign = (column: DataTableColumn<Row>) =>
     alignClasses[column.align ?? "left"];
+
+  const selectable = Boolean(onSelectionChange && selectedRowIds);
+  const selected = selectedRowIds ?? [];
+  const selectableIds = rows
+    .filter((row) => isRowSelectable?.(row) ?? true)
+    .map(getRowId);
+  const selectedOnPage = selectableIds.filter((id) => selected.includes(id));
+  const allOnPageSelected =
+    selectableIds.length > 0 && selectedOnPage.length === selectableIds.length;
+  const someOnPageSelected =
+    selectedOnPage.length > 0 && selectedOnPage.length < selectableIds.length;
+
+  const toggleRow = (id: string) => {
+    onSelectionChange?.(
+      selected.includes(id)
+        ? selected.filter((value) => value !== id)
+        : [...selected, id]
+    );
+  };
+
+  const toggleAllOnPage = () => {
+    if (!onSelectionChange) {
+      return;
+    }
+    onSelectionChange(
+      allOnPageSelected
+        ? selected.filter((id) => !selectableIds.includes(id))
+        : [...new Set([...selected, ...selectableIds])]
+    );
+  };
 
   const handleSort = (column: DataTableColumn<Row>) => {
     if (!column.sortKey || !onSortChange) {
@@ -103,6 +144,11 @@ function DataTable<Row>({
     if (isLoading) {
       return Array.from({ length: skeletonRows }).map((_, rowIndex) => (
         <tr className="border-line-soft border-t" key={`skeleton-${rowIndex}`}>
+          {selectable ? (
+            <td className="w-10 px-3 py-4">
+              <span className="bg-surface-2 block size-5 animate-pulse rounded-md" />
+            </td>
+          ) : null}
           {columns.map((column) => (
             <td
               className={cn("px-5 py-4", cellAlign(column), column.cellClassName)}
@@ -138,12 +184,27 @@ function DataTable<Row>({
     return rows.map((row) => {
       const id = getRowId(row);
       const href = rowHref?.(row);
+      const canSelect = isRowSelectable?.(row) ?? true;
 
       return (
         <tr
-          className="border-line-soft hover:bg-volt/4 border-t transition-colors"
+          className={cn(
+            "border-line-soft hover:bg-volt/4 border-t transition-colors",
+            selectable && selected.includes(id) && "bg-volt/6"
+          )}
           key={id}
         >
+          {selectable ? (
+            <td className="w-10 px-3 py-4 align-middle">
+              <Checkbox
+                aria-label={getRowSelectionLabel?.(row) ?? `Select ${id}`}
+                checked={selected.includes(id)}
+                className="size-[18px]"
+                disabled={!canSelect}
+                onCheckedChange={() => toggleRow(id)}
+              />
+            </td>
+          ) : null}
           {columns.map((column) => (
             <td
               className={cn(
@@ -203,6 +264,18 @@ function DataTable<Row>({
           <caption className="sr-only">{caption}</caption>
           <thead className="bg-surface-2">
             <tr>
+              {selectable ? (
+                <th className="w-10 px-3 py-4" scope="col">
+                  <Checkbox
+                    aria-label="Select all rows on this page"
+                    checked={allOnPageSelected}
+                    className="size-[18px]"
+                    disabled={selectableIds.length === 0}
+                    indeterminate={someOnPageSelected}
+                    onCheckedChange={toggleAllOnPage}
+                  />
+                </th>
+              ) : null}
               {columns.map((column) => {
                 const isSorted = sort !== null && sort.key === column.sortKey;
                 return (

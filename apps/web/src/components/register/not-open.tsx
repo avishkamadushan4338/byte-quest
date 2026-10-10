@@ -59,7 +59,7 @@ export const RegistrationNotOpen = ({ onOpen }: RegistrationNotOpenProps) => {
 
   const parts = remaining === null ? null : splitRemaining(remaining);
   const units = [
-    { label: "DAYS", value: parts ? String(parts.days) : "--" },
+    { label: "DAYS", value: parts ? pad(parts.days) : "--" },
     { label: "HOURS", value: parts ? pad(parts.hours) : "--" },
     { label: "MINUTES", value: parts ? pad(parts.minutes) : "--" },
     { label: "SECONDS", value: parts ? pad(parts.seconds) : "--" },
@@ -99,18 +99,18 @@ export const RegistrationNotOpen = ({ onOpen }: RegistrationNotOpenProps) => {
             </div>
 
             <div
-              className="mt-8 grid grid-cols-4 gap-2.5 sm:gap-3.5"
+              className="mt-8 grid grid-cols-4 gap-2 sm:gap-3.5"
               role="timer"
             >
               {units.map((unit) => (
                 <div
-                  className="rounded-[16px] border border-[rgba(185,245,208,0.1)] bg-[rgba(2,8,7,0.55)] px-2 py-4 text-center sm:py-5"
+                  className="min-w-0 rounded-[16px] border border-[rgba(185,245,208,0.1)] bg-[rgba(2,8,7,0.55)] px-1 py-4 text-center sm:px-2 sm:py-5"
                   key={unit.label}
                 >
                   <div className="font-display text-fg text-[clamp(26px,4.2vw,46px)] leading-none font-bold tracking-[-0.03em] tabular-nums">
                     {unit.value}
                   </div>
-                  <div className="text-faint mt-2 font-mono text-[12.5px] tracking-[0.14em] sm:text-[13px]">
+                  <div className="text-faint mt-2 font-mono text-[10px] leading-tight tracking-[0.04em] whitespace-nowrap sm:text-[13px] sm:tracking-[0.14em]">
                     {unit.label}
                   </div>
                 </div>

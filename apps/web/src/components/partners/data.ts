@@ -6,8 +6,11 @@ export interface PartnerTier {
   border: string;
   background: string;
   amount: string;
+  /** Logo slots shown on the wall. The wall is capped at two per tier. */
   slots: number;
   slotHeight: string;
+  /** Title sponsorships are uncapped, so the wall shows an ∞ marker. */
+  unlimited?: boolean;
   /** Platinum takes the full first row and gets the richer treatment. */
   featured?: boolean;
   badge?: string;
@@ -54,7 +57,7 @@ export const partnerTiers: PartnerTier[] = [
     border: "rgba(212,175,55,0.38)",
     background: "linear-gradient(160deg,#1C190B,#030F0B)",
     amount: "400,000+",
-    slots: 3,
+    slots: 2,
     slotHeight: "64px",
   },
   {
@@ -65,7 +68,7 @@ export const partnerTiers: PartnerTier[] = [
     border: "rgba(184,196,191,0.22)",
     background: "#030F0B",
     amount: "300,000+",
-    slots: 4,
+    slots: 2,
     slotHeight: "56px",
   },
   {
@@ -76,7 +79,7 @@ export const partnerTiers: PartnerTier[] = [
     border: "rgba(201,139,90,0.28)",
     background: "#030F0B",
     amount: "200,000+",
-    slots: 5,
+    slots: 2,
     slotHeight: "48px",
   },
   {
@@ -87,8 +90,9 @@ export const partnerTiers: PartnerTier[] = [
     border: "rgba(242,247,244,0.2)",
     background: "#030F0B",
     amount: "100,000+",
-    slots: 6,
+    slots: 0,
     slotHeight: "44px",
+    unlimited: true,
   },
 ];
 

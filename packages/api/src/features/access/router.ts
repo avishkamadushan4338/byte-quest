@@ -1,6 +1,6 @@
 import { account, adminApplication, user, userProfile } from "@byte-quest/db";
 import { ORPCError } from "@orpc/server";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import {
@@ -624,6 +624,157 @@ export const accessRouter = {
           status: "approved" as const,
           password,
         };
+      }),
+
+    /**
+     * Admin: approve or reject several applications at once. Rows that were
+     * already decided are skipped rather than throwing, so a stale table
+     * selection can never abort the whole batch.
+     */
+    decideAdminApplications: adminProcedure
+      .input(
+        z.object({
+          applicationIds: z.array(z.string()).min(1, "Select at least one row"),
+          approve: z.boolean(),
+          note: z.string().optional(),
+        })
+      )
+      .output(
+        z.object({
+          approved: z.array(
+            z.object({
+              id: z.string(),
+              fullName: z.string(),
+              username: z.string(),
+              password: z.string(),
+            })
+          ),
+          rejected: z.array(z.object({ id: z.string() })),
+          skipped: z.array(z.object({ id: z.string(), reason: z.string() })),
+        })
+      )
+      .handler(async ({ context, input }) => {
+        const ids = [...new Set(input.applicationIds)];
+        const rows = await context.db
+          .select()
+          .from(adminApplication)
+          .where(inArray(adminApplication.id, ids));
+
+        const byId = new Map(rows.map((row) => [row.id, row]));
+        const skipped: { id: string; reason: string }[] = [];
+        const decided: typeof rows = [];
+
+        for (const id of ids) {
+          const row = byId.get(id);
+          if (!row) {
+            skipped.push({ id, reason: "Application not found" });
+            continue;
+          }
+          if (row.status !== "pending") {
+            skipped.push({ id, reason: "Already decided" });
+            continue;
+          }
+          decided.push(row);
+        }
+
+        const reviewFields = {
+          reviewedByUserId: context.profile.userId,
+          reviewedAt: new Date(),
+          reviewNote: input.note ?? null,
+        };
+
+        if (!input.approve) {
+          if (decided.length === 0) {
+            return { approved: [], rejected: [], skipped };
+          }
+          const rejectedRows = await context.db
+            .update(adminApplication)
+            .set({ ...reviewFields, status: "rejected" })
+            .where(
+              inArray(
+                adminApplication.id,
+                decided.map((row) => row.id)
+              )
+            )
+            .returning({ id: adminApplication.id });
+          const rejectedIds = new Set(rejectedRows.map((row) => row.id));
+          for (const row of decided) {
+            if (!rejectedIds.has(row.id)) {
+              skipped.push({
+                id: row.id,
+                reason: "Failed to reject application",
+              });
+            }
+          }
+          return {
+            approved: [],
+            rejected: rejectedRows.map((row) => ({ id: row.id })),
+            skipped,
+          };
+        }
+
+        const outcomes = await Promise.all(
+          decided.map(async (row) => {
+            const password = generatePassword();
+            try {
+              const userId = await provisionCredentialUser(context, {
+                email: row.email,
+                name: row.fullName,
+                username: row.username,
+                password,
+              });
+
+              await context.db.insert(userProfile).values({
+                userId,
+                fullName: row.fullName,
+                nationalId: row.username,
+                birthday: "1970-01-01",
+                grade: "13",
+                role: "admin",
+              });
+
+              await context.db
+                .update(adminApplication)
+                .set({ ...reviewFields, status: "approved" })
+                .where(eq(adminApplication.id, row.id));
+
+              return {
+                ok: true as const,
+                value: {
+                  id: row.id,
+                  fullName: row.fullName,
+                  username: row.username,
+                  password,
+                },
+              };
+            } catch (error) {
+              return {
+                ok: false as const,
+                value: {
+                  id: row.id,
+                  reason:
+                    error instanceof Error ? error.message : "Approval failed",
+                },
+              };
+            }
+          })
+        );
+
+        const approved: {
+          id: string;
+          fullName: string;
+          username: string;
+          password: string;
+        }[] = [];
+        for (const outcome of outcomes) {
+          if (outcome.ok) {
+            approved.push(outcome.value);
+          } else {
+            skipped.push(outcome.value);
+          }
+        }
+
+        return { approved, rejected: [], skipped };
       }),
   },
 };

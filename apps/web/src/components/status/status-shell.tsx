@@ -33,7 +33,7 @@ export const StatusOverlay = ({
 }: StatusShellProps) => (
   <div
     className={cn(
-      "bg-ink text-fg fixed inset-0 z-[70] overflow-x-hidden overflow-y-auto",
+      "bg-ink text-fg fixed inset-0 z-[70] scrollbar-none overflow-x-hidden overflow-y-auto",
       className
     )}
     style={{ background }}

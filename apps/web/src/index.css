@@ -46,3 +46,15 @@
 [role="listbox"]::-webkit-scrollbar {
   display: none;
 }
+
+/* Overlays that scroll internally (loader, status screens) keep the scrollbar hidden. */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}

@@ -23,6 +23,17 @@ export const applicationCopy = {
   rejected: "Application rejected",
   failed: "We could not complete that decision",
   empty: "No applications match this status.",
+  selectedOne: "1 selected",
+  selectedMany: "{count} selected",
+  approveSelected: "Approve selected",
+  rejectSelected: "Reject selected",
+  clearSelection: "Clear",
+  bulkApproved: "Approved {count}",
+  bulkRejected: "Rejected {count}",
+  bulkSkipped: "{count} skipped: {reason}",
+  credentialsTitle: "Credentials issued ({count})",
+  credentialsNote:
+    "Share these one-time login details. They are shown only once and nobody is signed in automatically.",
   statusLabels: {
     approved: "Approved",
     pending: "Pending",
