@@ -13,7 +13,7 @@ import { clientIp, guardRequest } from "../../../lib/rate-limit";
 const RPC_LIMITS = {
   limit: 300,
   windowMs: 60_000,
-  maxBodyBytes: 512 * 1024,
+  maxBodyBytes: 10 * 1024 * 1024,
 };
 
 const rpcHandler = new RPCHandler(appRouter, {
