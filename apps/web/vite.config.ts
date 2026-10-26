@@ -43,6 +43,9 @@ const securityHeaders = (mode: string) => {
 };
 
 export default defineConfig(({ mode }) => ({
+  define: {
+    __BUILD_DATE__: JSON.stringify(new Date().toISOString().slice(0, 10)),
+  },
   server: {
     port: 5001,
   },

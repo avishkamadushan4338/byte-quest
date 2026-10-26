@@ -9,6 +9,8 @@ import {
   buildJsonLd,
   buildLlmsTxt,
   buildRobotsTxt,
+  AI_SEARCH_CRAWLERS,
+  ICON_LINKS,
   buildSitemapXml,
   getSitemapPages,
   normalizeOrigin,
@@ -167,6 +169,13 @@ describe("head tags", () => {
   });
 });
 
+const pageGraph = (path: string) =>
+  JSON.parse(buildHeadForPath(path, ORIGIN).scripts[1]?.children ?? "{}")[
+    "@graph"
+  ] as Record<string, unknown>[];
+
+const typesOf = (path: string) => pageGraph(path).map((node) => node["@type"]);
+
 describe("structured data", () => {
   it("serialises to valid JSON that cannot close the script tag", () => {
     const hostile = "</script><script>alert(1)</script>";
@@ -178,12 +187,14 @@ describe("structured data", () => {
   it("only uses types backed by verified facts, with stable ids", () => {
     const graph = buildJsonLd(ORIGIN)["@graph"];
     expect(graph.map((node) => node["@type"]).toSorted()).toEqual([
+      "EducationalOrganization",
       "Organization",
       "WebSite",
     ]);
     expect(graph.map((node) => node["@id"])).toEqual([
       `${ORIGIN}/#website`,
       `${ORIGIN}/#organization`,
+      `${ORIGIN}/#organizer`,
     ]);
     const serialised = JSON.stringify(graph);
     for (const forbidden of [
@@ -197,12 +208,30 @@ describe("structured data", () => {
     }
   });
 
+  it("adds a BreadcrumbList to inner pages only", () => {
+    expect(typesOf("/")).not.toContain("BreadcrumbList");
+    expect(typesOf("/about")).toContain("BreadcrumbList");
+    expect(typesOf("/privacy")).toContain("BreadcrumbList");
+  });
+
+  it("describes the programme Event with the published registration date", () => {
+    for (const path of ["/", "/programme"]) {
+      const event = pageGraph(path).find((node) => node["@type"] === "Event");
+      expect(event?.startDate).toBe("2026-11-10");
+      expect(event?.organizer).toEqual({ "@id": `${ORIGIN}/#organizer` });
+    }
+    expect(pageGraph("/about").some((node) => node["@type"] === "Event")).toBe(
+      false
+    );
+  });
+
   it("emits a WebPage node for indexable pages, and none for noindex ones", () => {
     for (const page of seoPages.filter((entry) => entry.indexable)) {
       const { links, scripts } = buildHeadForPath(page.path, ORIGIN);
       expect(scripts).toHaveLength(2);
-      const node = JSON.parse(scripts[1]?.children ?? "{}");
-      expect(node["@context"]).toBe("https://schema.org");
+      const graph = JSON.parse(scripts[1]?.children ?? "{}");
+      expect(graph["@context"]).toBe("https://schema.org");
+      const [node] = graph["@graph"];
       expect(node["@type"]).toBe("WebPage");
       expect(node.url).toBe(
         links.find((link) => link.rel === "canonical")?.href
@@ -245,7 +274,14 @@ describe("sitemap.xml and robots.txt", () => {
     ]) {
       expect(xml).not.toContain(`${ORIGIN}${path}<`);
     }
-    expect(xml).not.toContain("<lastmod>");
+  });
+
+  it("emits lastmod only from a supplied build date", () => {
+    expect(buildSitemapXml(ORIGIN)).not.toContain("<lastmod>");
+    const xml = buildSitemapXml(ORIGIN, "2026-10-26");
+    expect(xml.match(/<lastmod>2026-10-26<\/lastmod>/gu)).toHaveLength(
+      getSitemapPages().length
+    );
   });
 
   it("references the sitemap and blocks the API", () => {
@@ -255,6 +291,30 @@ describe("sitemap.xml and robots.txt", () => {
     expect(txt).not.toContain("Allow: /api/");
     expect(txt).not.toMatch(ROOT_DISALLOW_PATTERN);
     expect(txt).not.toContain("localhost");
+  });
+
+  it("does not block mainstream AI search crawlers from public pages", () => {
+    const txt = buildRobotsTxt(ORIGIN);
+    for (const bot of AI_SEARCH_CRAWLERS) {
+      expect(txt).toContain(`User-agent: ${bot}`);
+    }
+    expect(txt).toContain("Allow: /\n");
+  });
+});
+
+describe("icons", () => {
+  it("links ico, 32/48/192 png, apple-touch-icon and the manifest", () => {
+    const hrefs = ICON_LINKS.map((link) => link.href);
+    for (const href of [
+      "/favicon.ico",
+      "/favicon-32x32.png",
+      "/favicon-48x48.png",
+      "/icon-192x192.png",
+      "/apple-touch-icon.png",
+      "/site.webmanifest",
+    ]) {
+      expect(hrefs).toContain(href);
+    }
   });
 });
 
@@ -268,6 +328,9 @@ describe("llms.txt", () => {
     expect(txt).toContain(SITE_CONFIG.contactEmail);
     expect(txt).toContain(SITE_CONFIG.motto);
     expect(txt).toContain("10 November 2026");
+    expect(txt).toContain("10 January 2027");
+    expect(txt).toContain("Junior Division: Grades 6-8");
+    expect(txt).toContain("Senior Division: Grades 9-13");
     expect(txt).toContain("## Pages");
   });
 

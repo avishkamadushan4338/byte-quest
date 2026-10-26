@@ -28,7 +28,41 @@ export const SITE_CONFIG = {
     alt: "BYTE QUEST - Learn. Build. Innovate. Inspire.",
   },
   logoPath: "/assets/bq-logo.webp",
+  organizerLogoPath: "/assets/sacoba-logo.webp",
+  /** Published on the registration page (`REGISTRATION_OPENS_AT` / `_CLOSES_AT`). */
+  registrationOpens: "2026-11-10",
+  registrationCloses: "2027-01-10",
+  eventName: "BYTE QUEST 2026",
+  divisions: [
+    { name: "Junior Division", grades: "Grades 6-8" },
+    { name: "Senior Division", grades: "Grades 9-13" },
+  ],
 } as const;
+
+/** Icons referenced by `<head>`, the web manifest and the checks. */
+export const ICON_LINKS = [
+  { rel: "icon", href: "/favicon.ico", sizes: "any" },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "32x32",
+    href: "/favicon-32x32.png",
+  },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "48x48",
+    href: "/favicon-48x48.png",
+  },
+  {
+    rel: "icon",
+    type: "image/png",
+    sizes: "192x192",
+    href: "/icon-192x192.png",
+  },
+  { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+  { rel: "manifest", href: "/site.webmanifest" },
+] as const;
 
 export type MetaTag = Record<string, string>;
 export type LinkTag = Record<string, string>;
@@ -79,12 +113,12 @@ export const serializeJsonLd = (data: unknown): string =>
     .replaceAll("\u2029", "\\u2029");
 
 /**
- * Schema.org graph that only states verified facts:
- *  - the website, and
- *  - BYTE QUEST as an Organization (the programme brand).
- * The school and the OBA are deliberately NOT asserted to be the same entity as
- * BYTE QUEST, and no address, coordinates, social profiles, events or ratings
- * are published until the organisers confirm them.
+ * Site-wide Schema.org graph, repeated on every indexable page:
+ *  - the website,
+ *  - BYTE QUEST (the programme brand) and
+ *  - the Old Boys' Association of St. Aloysius' College, Galle, its organiser.
+ * No address, coordinates, social profiles or ratings are published until the
+ * organisers confirm them.
  */
 export const buildJsonLd = (origin: string) => ({
   "@context": "https://schema.org",
@@ -103,9 +137,41 @@ export const buildJsonLd = (origin: string) => ({
       name: SITE_CONFIG.name,
       url: origin,
       logo: `${origin}${SITE_CONFIG.logoPath}`,
+      email: SITE_CONFIG.contactEmail,
       description:
         "An inter-school innovation and coding programme for Sri Lankan students, organised by the Old Boys' Association of St. Aloysius' College, Galle.",
+      parentOrganization: { "@id": `${origin}/#organizer` },
     },
+    {
+      "@type": "EducationalOrganization",
+      "@id": `${origin}/#organizer`,
+      name: SITE_CONFIG.organizer,
+      logo: `${origin}${SITE_CONFIG.organizerLogoPath}`,
+      email: SITE_CONFIG.contactEmail,
+    },
+  ],
+});
+
+/** `Event` node for the programme itself; dates are the published registration window. */
+const buildEventNode = (origin: string) => ({
+  "@type": "Event",
+  "@id": `${origin}/#event`,
+  name: SITE_CONFIG.eventName,
+  description: `A three-month inter-school innovation and coding programme with Junior and Senior Divisions, two hackathons and a Grand Final. Registration opens on 10 November 2026 and closes on 10 January 2027; programme dates will be announced.`,
+  url: absoluteUrl(origin, "/programme"),
+  image: `${origin}${SITE_CONFIG.defaultImage.path}`,
+  startDate: SITE_CONFIG.registrationOpens,
+  eventStatus: "https://schema.org/EventScheduled",
+  organizer: { "@id": `${origin}/#organizer` },
+  inLanguage: SITE_CONFIG.language,
+});
+
+const buildBreadcrumbNode = (origin: string, url: string, name: string) => ({
+  "@type": "BreadcrumbList",
+  "@id": `${url}#breadcrumb`,
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: `${origin}/` },
+    { "@type": "ListItem", position: 2, name, item: url },
   ],
 });
 
@@ -193,19 +259,26 @@ export const buildHeadForPath = (
   }
 
   /**
-   * Per-page `WebPage` node: gives crawlers and generative engines a
-   * self-contained, machine-readable description of this exact URL and ties it
-   * back to the site-wide `WebSite` / `Organization` graph by `@id`.
+   * Per-page graph: a `WebPage` node tied back to the site-wide graph by `@id`,
+   * a `BreadcrumbList` on inner pages and the `Event` on programme pages.
    */
+  const isHome = normalizePath(page.canonicalPath ?? page.path) === "/";
   const pageJsonLd = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
-    "@id": `${url}#webpage`,
-    url,
-    name: title,
-    description: page.description,
-    inLanguage: SITE_CONFIG.language,
-    isPartOf: { "@id": `${origin}/#website` },
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": `${url}#webpage`,
+        url,
+        name: title,
+        description: page.description,
+        inLanguage: SITE_CONFIG.language,
+        isPartOf: { "@id": `${origin}/#website` },
+        ...(isHome ? {} : { breadcrumb: { "@id": `${url}#breadcrumb` } }),
+      },
+      ...(isHome ? [] : [buildBreadcrumbNode(origin, url, page.title)]),
+      ...(page.describesProgramme ? [buildEventNode(origin)] : []),
+    ],
   };
 
   return {
@@ -240,14 +313,16 @@ const escapeXml = (value: string) =>
     .replaceAll("'", "&apos;");
 
 /**
- * No `<lastmod>` is emitted: the content is code-defined, so there is no
- * trustworthy per-page modification date and an artificial one would be noise.
+ * `lastmod` is the build date (the content is code-defined, so a deploy is the
+ * only moment it changes). It is omitted when no build date is known rather
+ * than invented per request.
  */
-export const buildSitemapXml = (origin: string): string => {
+export const buildSitemapXml = (origin: string, lastmod?: string): string => {
+  const stamp = lastmod ? `\n    <lastmod>${escapeXml(lastmod)}</lastmod>` : "";
   const urls = getSitemapPages()
     .map(
       (page) =>
-        `  <url>\n    <loc>${escapeXml(absoluteUrl(origin, page.path))}</loc>\n  </url>`
+        `  <url>\n    <loc>${escapeXml(absoluteUrl(origin, page.path))}</loc>${stamp}\n  </url>`
     )
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
@@ -258,9 +333,22 @@ export const buildSitemapXml = (origin: string): string => {
  * pages are protected by authentication and carry `noindex`, and are
  * intentionally left crawlable so that directive can be seen.
  */
+export const AI_SEARCH_CRAWLERS = [
+  "OAI-SearchBot",
+  "ChatGPT-User",
+  "PerplexityBot",
+  "Claude-SearchBot",
+  "Claude-User",
+] as const;
+
 export const buildRobotsTxt = (origin: string): string =>
   [
     "User-agent: *",
+    "Disallow: /api/",
+    "",
+    "# AI search and assistant crawlers are explicitly welcome on public pages.",
+    ...AI_SEARCH_CRAWLERS.map((bot) => `User-agent: ${bot}`),
+    "Allow: /",
     "Disallow: /api/",
     "",
     `Sitemap: ${origin}/sitemap.xml`,
@@ -283,13 +371,18 @@ export const buildLlmsTxt = (origin: string): string =>
     "## Key facts",
     "- Organised by the Old Boys' Association of St. Aloysius' College, Galle (SACOBA).",
     "- A three-month inter-school innovation and coding programme for students in Grades 6-13 in Sri Lanka.",
-    "- Schools enter teams of 3-5 students with a teacher in charge, in Junior and Senior Divisions.",
+    ...SITE_CONFIG.divisions.map(
+      (division) => `- ${division.name}: ${division.grades}.`
+    ),
+    "- Schools enter teams of 3-5 students with a teacher in charge.",
     "- Teams work through mentor-guided phases, two hackathons and a Grand Final.",
-    "- School team registration opens on 10 November 2026.",
+    "- School team registration opens on 10 November 2026 and closes on 10 January 2027.",
+    "- Official programme dates (hackathons and Grand Final) have not been announced yet.",
     `- Motto: ${SITE_CONFIG.motto}.`,
     "",
     "## Contact",
     `- Organising committee: ${SITE_CONFIG.contactEmail}`,
+    `- Organiser: ${SITE_CONFIG.organizer}`,
     "",
     "## Pages",
     ...getSitemapPages().map(

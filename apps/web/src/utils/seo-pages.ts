@@ -10,6 +10,8 @@ export interface SeoPage {
   /** Path whose canonical differs from itself (duplicate-content variants). */
   canonicalPath?: string;
   description: string;
+  /** Page describes the programme itself, so it also carries `Event` JSON-LD. */
+  describesProgramme?: boolean;
   indexable: boolean;
   path: string;
   title: string;
@@ -23,6 +25,7 @@ const PLACEHOLDER_NOTE =
 export const seoPages: SeoPage[] = [
   {
     path: "/",
+    describesProgramme: true,
     indexable: true,
     absoluteTitle: true,
     title: "BYTE QUEST | Inter-School Innovation & Coding Programme",
@@ -38,6 +41,7 @@ export const seoPages: SeoPage[] = [
   },
   {
     path: "/programme",
+    describesProgramme: true,
     indexable: true,
     title: "Programme: Divisions, Phases & Hackathons",
     description:

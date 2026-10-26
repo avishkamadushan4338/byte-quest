@@ -23,7 +23,7 @@ import { SiteFooter } from "../components/site/site-footer";
 import { SiteHeader } from "../components/site/site-header";
 import { LoadingScreen } from "../components/status/loading-screen";
 import { getSiteOrigin } from "../functions/get-site-origin";
-import { NOT_FOUND_PATH, buildHeadForPath } from "../utils/seo";
+import { ICON_LINKS, NOT_FOUND_PATH, buildHeadForPath } from "../utils/seo";
 
 import appCss from "../index.css?url";
 
@@ -97,15 +97,14 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
           name: "viewport",
           content: "width=device-width, initial-scale=1, viewport-fit=cover",
         },
+        { name: "theme-color", content: "#020807" },
         ...seo.meta,
       ],
       scripts: seo.scripts,
       links: [
         ...seo.links,
         { rel: "stylesheet", href: appCss },
-        { rel: "icon", type: "image/webp", href: "/assets/favicon.webp" },
-        { rel: "shortcut icon", href: "/favicon.ico" },
-        { rel: "apple-touch-icon", href: "/assets/favicon.webp" },
+        ...ICON_LINKS,
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         {
           rel: "preconnect",

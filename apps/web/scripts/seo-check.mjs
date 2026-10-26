@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop, prefer-destructuring, prefer-named-capture-group, require-await, no-await-expression-member -- sequential CLI smoke script */
 // Rendered-HTML SEO smoke test against a running server.
 //   node scripts/seo-check.mjs [baseUrl]      (default http://localhost:5001)
 // Start the production build first: `node .output/server/index.mjs`.
@@ -16,7 +17,12 @@ const INDEXABLE = [
   "/code-of-conduct",
   "/submission-guidelines",
 ];
-const NOINDEX_PAGES = ["/mentors", "/projects", "/coming-soon", "/this-page-does-not-exist"];
+const NOINDEX_PAGES = [
+  "/mentors",
+  "/projects",
+  "/coming-soon",
+  "/this-page-does-not-exist",
+];
 const REDIRECTS = {
   "/register": "/register/team",
   "/dashboard": "/auth/login",
@@ -32,7 +38,8 @@ const check = (ok, label, detail = "") => {
 };
 
 const tags = (html, re) => [...html.matchAll(re)].map((m) => m[1]);
-const get = async (path, init) => fetch(`${base}${path}`, { redirect: "manual", ...init });
+const get = async (path, init) =>
+  fetch(`${base}${path}`, { redirect: "manual", ...init });
 
 const titles = new Map();
 const descriptions = new Map();
@@ -45,73 +52,278 @@ for (const path of INDEXABLE) {
   const canon = tags(html, /<link rel="canonical" href="([^"]*)"/gu);
   const desc = tags(html, /<meta name="description" content="([^"]*)"/gu);
   const robots = tags(html, /<meta name="robots" content="([^"]*)"/gu);
-  const ld = tags(html, /<script type="application\/ld\+json">([^<]*)<\/script>/gu);
-  check(t.length === 1 && t[0].length > 0, `${path} has exactly one non-empty <title>`, t.join("|"));
-  check(canon.length === 1 && /^https:\/\//u.test(canon[0]), `${path} has one absolute https canonical`, canon.join("|"));
-  check(desc.length === 1 && desc[0].length > 40, `${path} has one meta description`, desc.join("|"));
-  check(robots.length === 1 && !/noindex/u.test(robots[0]), `${path} is indexable`, robots.join("|"));
-  check(tags(html, /<meta property="og:image" content="([^"]*)"/gu).length === 1, `${path} has og:image`);
-  check(tags(html, /<meta property="og:url" content="([^"]*)"/gu)[0] === canon[0], `${path} og:url equals canonical`);
-  check(tags(html, /<meta name="twitter:card" content="([^"]*)"/gu).length === 1, `${path} has twitter:card`);
-  check(tags(html, /<html lang="([^"]*)"/gu)[0] === "en", `${path} declares lang=en`);
-  check((html.match(/<h1[\s>]/gu) ?? []).length === 1, `${path} has exactly one <h1>`, String((html.match(/<h1[\s>]/gu) ?? []).length));
-  let ldOk = ld.length === 1;
+  const ld = tags(
+    html,
+    /<script type="application\/ld\+json">([^<]*)<\/script>/gu
+  );
+  check(
+    t.length === 1 && t[0].length > 0,
+    `${path} has exactly one non-empty <title>`,
+    t.join("|")
+  );
+  check(
+    canon.length === 1 && canon[0].startsWith("https://"),
+    `${path} has one absolute https canonical`,
+    canon.join("|")
+  );
+  check(
+    desc.length === 1 && desc[0].length > 40,
+    `${path} has one meta description`,
+    desc.join("|")
+  );
+  check(
+    robots.length === 1 && !/noindex/u.test(robots[0]),
+    `${path} is indexable`,
+    robots.join("|")
+  );
+  check(
+    tags(html, /<meta property="og:image" content="([^"]*)"/gu).length === 1,
+    `${path} has og:image`
+  );
+  check(
+    tags(html, /<meta property="og:url" content="([^"]*)"/gu)[0] === canon[0],
+    `${path} og:url equals canonical`
+  );
+  check(
+    tags(html, /<meta name="twitter:card" content="([^"]*)"/gu).length === 1,
+    `${path} has twitter:card`
+  );
+  check(
+    tags(html, /<html lang="([^"]*)"/gu)[0] === "en",
+    `${path} declares lang=en`
+  );
+  check(
+    (html.match(/<h1[\s>]/gu) ?? []).length === 1,
+    `${path} has exactly one <h1>`,
+    String((html.match(/<h1[\s>]/gu) ?? []).length)
+  );
+  let ldOk = ld.length === 2;
+  const types = [];
   try {
-    JSON.parse(ld[0] ?? "");
+    for (const block of ld) {
+      const data = JSON.parse(block);
+      for (const node of data["@graph"] ?? [data]) {
+        types.push(node["@type"]);
+      }
+    }
   } catch {
     ldOk = false;
   }
-  check(ldOk, `${path} has one valid JSON-LD block`);
-  if (t[0]) titles.set(t[0], [...(titles.get(t[0]) ?? []), path]);
-  if (desc[0]) descriptions.set(desc[0], [...(descriptions.get(desc[0]) ?? []), path]);
+  check(ldOk, `${path} has two valid JSON-LD blocks`, String(ld.length));
+  for (const type of [
+    "WebSite",
+    "Organization",
+    "EducationalOrganization",
+    "WebPage",
+  ]) {
+    check(types.includes(type), `${path} JSON-LD has ${type}`, types.join(","));
+  }
+  check(
+    types.includes("BreadcrumbList") === (path !== "/"),
+    `${path} BreadcrumbList only on inner pages`,
+    types.join(",")
+  );
+  check(
+    types.includes("Event") === (path === "/" || path === "/programme"),
+    `${path} Event only on programme pages`,
+    types.join(",")
+  );
+  const img =
+    tags(html, /<meta property="og:image" content="([^"]*)"/gu)[0] ?? "";
+  check(img.startsWith("https://"), `${path} og:image is absolute`, img);
+  check(
+    tags(html, /<meta property="og:locale" content="([^"]*)"/gu)[0] === "en_LK",
+    `${path} og:locale is en_LK`
+  );
+  check(
+    tags(html, /<meta name="twitter:image" content="([^"]*)"/gu).length === 1,
+    `${path} has twitter:image`
+  );
+  if (t[0]) {
+    titles.set(t[0], [...(titles.get(t[0]) ?? []), path]);
+  }
+  if (desc[0]) {
+    descriptions.set(desc[0], [...(descriptions.get(desc[0]) ?? []), path]);
+  }
 }
-for (const [what, map] of [["title", titles], ["description", descriptions]]) {
+for (const [what, map] of [
+  ["title", titles],
+  ["description", descriptions],
+]) {
   const dupes = [...map.values()].filter((paths) => paths.length > 1);
-  check(dupes.length === 0, `no duplicate ${what} across indexable pages`, JSON.stringify(dupes));
+  check(
+    dupes.length === 0,
+    `no duplicate ${what} across indexable pages`,
+    JSON.stringify(dupes)
+  );
 }
 
 for (const path of NOINDEX_PAGES) {
   const res = await get(path);
   const html = await res.text();
   const expected = path === "/this-page-does-not-exist" ? 404 : 200;
-  check(res.status === expected, `${path} returns ${expected}`, String(res.status));
-  check(/<meta name="robots" content="noindex, nofollow"/u.test(html), `${path} is noindex`);
+  check(
+    res.status === expected,
+    `${path} returns ${expected}`,
+    String(res.status)
+  );
+  if (path === "/this-page-does-not-exist") {
+    check(/not found/iu.test(html), `${path} renders the not-found page`);
+  }
+  check(
+    /<meta name="robots" content="noindex, nofollow"/u.test(html),
+    `${path} is noindex`
+  );
   check(!/rel="canonical"/u.test(html), `${path} has no canonical`);
 }
 
 for (const [from, to] of Object.entries(REDIRECTS)) {
   const res = await get(from);
   const loc = res.headers.get("location") ?? "";
-  check(res.status >= 300 && res.status < 400 && new URL(loc, base).pathname === to, `${from} redirects once to ${to}`, `${res.status} ${loc}`);
+  check(
+    res.status >= 300 && res.status < 400 && new URL(loc, base).pathname === to,
+    `${from} redirects once to ${to}`,
+    `${res.status} ${loc}`
+  );
   const next = await get(to);
-  check(next.status === 200, `${to} (redirect target) returns 200`, String(next.status));
+  check(
+    next.status === 200,
+    `${to} (redirect target) returns 200`,
+    String(next.status)
+  );
 }
 
 const robots = await (await get("/robots.txt")).text();
-check(/^Sitemap: https:\/\/\S+\/sitemap\.xml$/mu.test(robots), "robots.txt references an https sitemap");
-check(!/^Disallow:\s*\/\s*$/mu.test(robots), "robots.txt does not block the whole site");
+check(
+  /^Sitemap: https:\/\/\S+\/sitemap\.xml$/mu.test(robots),
+  "robots.txt references an https sitemap"
+);
+check(
+  !/^Disallow:\s*\/\s*$/mu.test(robots),
+  "robots.txt does not block the whole site"
+);
+
+check(
+  /AI-?bots?|OAI-SearchBot/u.test(robots) &&
+    [
+      "OAI-SearchBot",
+      "ChatGPT-User",
+      "PerplexityBot",
+      "Claude-SearchBot",
+      "Claude-User",
+    ].every((bot) => robots.includes(`User-agent: ${bot}`)),
+  "robots.txt names the AI search crawlers"
+);
+check(
+  !/^Disallow:\s*\/(?!api\/)\S*/mu.test(robots),
+  "robots.txt disallows only /api/"
+);
+
+const mistyped = await get("/sitemaps.xml");
+check(
+  mistyped.status === 301 &&
+    new URL(mistyped.headers.get("location") ?? "", base).pathname ===
+      "/sitemap.xml",
+  "/sitemaps.xml 301-redirects to /sitemap.xml",
+  `${mistyped.status} ${mistyped.headers.get("location")}`
+);
+
+const llms = await get("/llms.txt");
+const llmsText = await llms.text();
+check(
+  llms.status === 200 && llmsText.startsWith("# BYTE QUEST"),
+  "llms.txt is served"
+);
+for (const fact of [
+  "10 November 2026",
+  "10 January 2027",
+  "Junior Division",
+  "Senior Division",
+  "bytequest@aloysiuscollege.lk",
+]) {
+  check(llmsText.includes(fact), `llms.txt mentions ${fact}`);
+}
+
+const iconsHtml = await (await get("/")).text();
+for (const href of [
+  "/favicon.ico",
+  "/favicon-32x32.png",
+  "/favicon-48x48.png",
+  "/icon-192x192.png",
+  "/apple-touch-icon.png",
+  "/site.webmanifest",
+]) {
+  check(iconsHtml.includes(`href="${href}"`), `home links ${href}`);
+  const res = await get(href);
+  check(
+    res.status === 200 &&
+      !/text\/html/u.test(res.headers.get("content-type") ?? ""),
+    `${href} is served as a file`,
+    `${res.status} ${res.headers.get("content-type")}`
+  );
+}
+const manifest = await (await get("/site.webmanifest")).json();
+check(
+  manifest.icons?.length >= 2 && manifest.name === "BYTE QUEST",
+  "web manifest is valid"
+);
 
 const sitemapRes = await get("/sitemap.xml");
 const sitemap = await sitemapRes.text();
-check(sitemapRes.status === 200 && /xml/u.test(sitemapRes.headers.get("content-type") ?? ""), "sitemap.xml served as XML");
+check(
+  sitemapRes.status === 200 &&
+    /xml/u.test(sitemapRes.headers.get("content-type") ?? ""),
+  "sitemap.xml served as XML"
+);
+const lastmods = tags(sitemap, /<lastmod>([^<]+)<\/lastmod>/gu);
+check(
+  lastmods.length === INDEXABLE.length &&
+    lastmods.every((d) => /^\d{4}-\d{2}-\d{2}$/u.test(d)),
+  "every sitemap URL has a <lastmod> date",
+  lastmods.join(",")
+);
 const locs = tags(sitemap, /<loc>([^<]+)<\/loc>/gu);
-check(locs.length === INDEXABLE.length, `sitemap lists ${INDEXABLE.length} URLs`, String(locs.length));
+check(
+  locs.length === INDEXABLE.length,
+  `sitemap lists ${INDEXABLE.length} URLs`,
+  String(locs.length)
+);
 for (const loc of locs) {
   const path = new URL(loc).pathname;
   const res = await get(path);
   const html = await res.text();
   const canon = tags(html, /<link rel="canonical" href="([^"]*)"/gu)[0];
-  check(res.status === 200 && canon === loc, `sitemap URL ${loc} is 200 and self-canonical`, `${res.status} ${canon}`);
+  check(
+    res.status === 200 && canon === loc,
+    `sitemap URL ${loc} is 200 and self-canonical`,
+    `${res.status} ${canon}`
+  );
 }
 
 const vol = await (await get("/register/volunteer")).text();
-check(tags(vol, /<link rel="canonical" href="([^"]*)"/gu)[0]?.endsWith("/volunteers"), "/register/volunteer canonicalises to /volunteers");
-check(!sitemap.includes("/register/volunteer"), "duplicate /register/volunteer is not in the sitemap");
+check(
+  tags(vol, /<link rel="canonical" href="([^"]*)"/gu)[0]?.endsWith(
+    "/volunteers"
+  ),
+  "/register/volunteer canonicalises to /volunteers"
+);
+check(
+  !sitemap.includes("/register/volunteer"),
+  "duplicate /register/volunteer is not in the sitemap"
+);
 
 for (const path of ["/api/rpc/ping", "/api/auth/get-session"]) {
   const res = await get(path);
-  check((res.headers.get("x-robots-tag") ?? "").includes("noindex"), `${path} sends X-Robots-Tag noindex`, res.headers.get("x-robots-tag") ?? "none");
+  check(
+    (res.headers.get("x-robots-tag") ?? "").includes("noindex"),
+    `${path} sends X-Robots-Tag noindex`,
+    res.headers.get("x-robots-tag") ?? "none"
+  );
 }
 
-console.log(failures === 0 ? "\nAll SEO checks passed." : `\n${failures} SEO check(s) failed.`);
+console.log(
+  failures === 0
+    ? "\nAll SEO checks passed."
+    : `\n${failures} SEO check(s) failed.`
+);
 process.exit(failures === 0 ? 0 : 1);
