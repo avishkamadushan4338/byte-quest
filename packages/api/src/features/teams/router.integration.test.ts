@@ -77,7 +77,6 @@ const member = (grade: string, suffix: string) => ({
 });
 
 const basePayload = (overrides: Partial<Record<string, unknown>> = {}) => ({
-  teamName: "Byte Falcons",
   division: "primary" as const,
   school: {
     name: `Register School ${randomUUID()}`,
@@ -468,7 +467,7 @@ describe("teams.register (public, no-auth school registration)", () => {
       input: basePayload(),
     });
 
-    expect(result.name).toBe("Byte Falcons");
+    expect(result.name).toMatch(/ · Junior$/);
     expect(result.memberCount).toBe(3);
 
     const members = await testDb.db
@@ -559,7 +558,6 @@ describe("teams.register (public, no-auth school registration)", () => {
       call(teamsRouter.teams.register, {
         context: noAuthContext,
         input: basePayload({
-          teamName: "Second Team",
           school: schoolInput,
         }),
       })
@@ -582,7 +580,6 @@ describe("teams.register (public, no-auth school registration)", () => {
     const secondary = await call(teamsRouter.teams.register, {
       context: noAuthContext,
       input: basePayload({
-        teamName: "Senior Team",
         division: "secondary" as const,
         school: schoolInput,
         members: [member("9", "D"), member("10", "E"), member("11", "F")],
@@ -609,7 +606,6 @@ describe("teams.register (public, no-auth school registration)", () => {
     const second = await call(teamsRouter.teams.register, {
       context: noAuthContext,
       input: basePayload({
-        teamName: "Senior Reuse",
         division: "secondary" as const,
         school: schoolInput,
         members: [member("9", "D"), member("10", "E"), member("11", "F")],
@@ -641,7 +637,7 @@ describe("teams.register editToken + teams.update/getByEditToken", () => {
       input: { editToken: result.editToken },
     });
     expect(fetched.teamId).toBe(result.id);
-    expect(fetched.teamName).toBe("Byte Falcons");
+    expect(fetched.teamName).toMatch(/ · Junior$/);
     expect(fetched.members).toHaveLength(3);
     expect(fetched.members[0]?.fullName).toBe("Student A");
   });
@@ -657,14 +653,13 @@ describe("teams.register editToken + teams.update/getByEditToken", () => {
     const updated = await call(teamsRouter.teams.update, {
       context: noAuthContext,
       input: basePayload({
-        teamName: "Byte Falcons Renamed",
         members: [member("6", "X"), member("7", "Y"), member("8", "Z")],
         editToken: created.editToken,
       }),
     });
 
     expect(updated.id).toBe(created.id);
-    expect(updated.name).toBe("Byte Falcons Renamed");
+    expect(updated.name).toMatch(/ · Junior$/);
 
     const members = await testDb.db
       .select()

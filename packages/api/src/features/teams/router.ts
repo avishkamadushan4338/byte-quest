@@ -82,8 +82,11 @@ export const teamOutputSchema = z.object({
   memberCount: z.number(),
 });
 
+/** Team name is derived from the school and division; it is never typed by the user. */
+const teamNameFor = (schoolName: string, division: "primary" | "secondary") =>
+  `${schoolName} · ${division === "primary" ? "Junior" : "Senior"}`;
+
 const registerInputSchema = z.object({
-  teamName: z.string().min(1, "Team name is required"),
   division: z.enum(["primary", "secondary"]),
   school: z.object({
     name: z.string().min(1, "School name is required"),
@@ -213,7 +216,7 @@ export const teamsRouter = {
         const [created] = await context.db
           .insert(team)
           .values({
-            name: input.teamName,
+            name: teamNameFor(resolved.name, input.division),
             division: input.division,
             schoolId: resolved.id,
             teacherName: input.teacher.name.trim(),
@@ -255,7 +258,7 @@ export const teamsRouter = {
             to: input.leaderEmail.trim(),
             ...teamRegistrationEmail({
               referenceCode,
-              teamName: input.teamName.trim(),
+              teamName: teamNameFor(resolved.name, input.division),
               schoolName: resolved.name,
               division: input.division === "primary" ? "junior" : "senior",
             }),
@@ -286,6 +289,7 @@ export const teamsRouter = {
       .output(
         registerInputSchema.extend({
           teamId: z.string(),
+          teamName: z.string(),
           editToken: z.string(),
         })
       )
@@ -388,7 +392,6 @@ export const teamsRouter = {
         const [updated] = await context.db
           .update(team)
           .set({
-            name: input.teamName,
             teacherName: input.teacher.name.trim(),
             teacherDesignation: input.teacher.designation.trim(),
             teacherPhone: input.teacher.phone.trim(),

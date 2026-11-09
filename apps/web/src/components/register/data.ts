@@ -19,7 +19,6 @@ export interface SchoolDetails {
 }
 
 export interface TeamDetails {
-  name: string;
   size: string;
   leaderEmail: string;
 }
@@ -60,7 +59,6 @@ export interface SchoolErrors {
 }
 
 export interface TeamErrors {
-  name?: string;
   leaderEmail?: string;
 }
 
@@ -233,7 +231,6 @@ export const reviewTitles = {
 export const reviewEditLabel = "EDIT";
 
 export const confirmationCopy = {
-  fallbackTeam: "team",
   referenceLabel: "REFERENCE",
   teamLabel: "TEAM",
   divisionLabel: "DIVISION",
@@ -298,6 +295,12 @@ export const divisionLabels: Record<Division, string> = {
   senior: "Senior · Grades 9–13",
 };
 
+/** Team name shown to the user; the API derives the same string on save. */
+export const teamDisplayName = (
+  schoolName: string,
+  division: Division
+): string => `${schoolName} · ${division === "junior" ? "Junior" : "Senior"}`;
+
 export const divisionGrades: Record<Division, string[]> = {
   junior: ["6", "7", "8"],
   senior: ["9", "10", "11", "12", "13"],
@@ -342,7 +345,6 @@ export const createEmptyMember = (): MemberDetails => ({
 });
 
 const createEmptyTeam = (): TeamDetails => ({
-  name: "",
   size: "3",
   leaderEmail: "",
 });

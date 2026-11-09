@@ -47,7 +47,6 @@ const buildSections = (state: RegisterState): ReviewSection[] => {
     title: `${reviewTitles.team}${suffix(division)}`,
     step: "team",
     rows: [
-      { label: "Team name", value: state.teams[division].name },
       {
         label: "Team size",
         value: teamSizeSummary(state.teams[division].size),

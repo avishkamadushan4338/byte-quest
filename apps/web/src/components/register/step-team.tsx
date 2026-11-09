@@ -26,15 +26,6 @@ const TeamFields = ({
   <>
     <div className={fieldGridClass}>
       <InputField
-        error={error?.name}
-        id={`team-name-${division}`}
-        label="Team name"
-        onValueChange={(value) => onChange({ name: value })}
-        placeholder="Something memorable"
-        requirement="required"
-        value={team.name}
-      />
-      <InputField
         error={error?.leaderEmail}
         id={`team-leader-email-${division}`}
         label="Leader email"

@@ -80,9 +80,6 @@ const validateSchool = (school: SchoolDetails): SchoolErrors => {
 const validateTeam = (team: TeamDetails): TeamErrors => {
   const errors: TeamErrors = {};
 
-  if (team.name.trim().length === 0) {
-    errors.name = validationCopy.required;
-  }
   const leaderEmail = team.leaderEmail.trim();
   if (leaderEmail.length === 0) {
     errors.leaderEmail = validationCopy.required;
@@ -424,12 +421,10 @@ export const Register = () => {
   const submitAll = async (): Promise<typeof references | null> => {
     setPending(true);
     const nextReferences: Partial<Record<Division, string>> = { ...references };
-    const teamErrors: Partial<Record<Division, TeamErrors>> = {};
 
     const outcomes = await Promise.allSettled(
       activeDivisions.map(async (division) => {
         const payload = {
-          teamName: state.teams[division].name.trim(),
           division: divisionToApi(division),
           school: {
             name: state.school.name.trim(),
@@ -475,9 +470,6 @@ export const Register = () => {
           nextReferences[division] = outcome.value.referenceCode;
         }
       } else {
-        teamErrors[division] = {
-          name: messageFor(outcome.reason, "We could not register that team"),
-        };
         toast.error(
           messageFor(outcome.reason, "We could not register that team")
         );
@@ -488,8 +480,7 @@ export const Register = () => {
     persist({ references: nextReferences });
     setPending(false);
 
-    if (Object.keys(teamErrors).length > 0) {
-      setErrors({ teams: teamErrors });
+    if (outcomes.some((outcome) => outcome.status === "rejected")) {
       return null;
     }
 

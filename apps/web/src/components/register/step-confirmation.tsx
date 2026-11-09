@@ -8,6 +8,7 @@ import {
   confirmationCopy,
   divisionLabels,
   divisionOrder,
+  teamDisplayName,
   registerSteps,
 } from "./data";
 
@@ -39,7 +40,7 @@ export const StepConfirmation = ({
     return [
       {
         label: withDivisionTag(confirmationCopy.teamLabel, division),
-        value: state.teams[division].name,
+        value: teamDisplayName(state.school.name, division),
       },
       {
         label: withDivisionTag(confirmationCopy.leaderLabel, division),
@@ -54,13 +55,9 @@ export const StepConfirmation = ({
     { label: confirmationCopy.statusLabel, value: confirmationCopy.statusValue },
   ];
 
-  const teamNames = activeDivisions
-    .map((division) => state.teams[division].name.trim())
-    .filter((name) => name.length > 0);
-  const welcomeNames =
-    teamNames.length > 0
-      ? teamNames.join(" and ")
-      : confirmationCopy.fallbackTeam;
+  const welcomeNames = activeDivisions
+    .map((division) => teamDisplayName(state.school.name, division))
+    .join(" and ");
 
   return (
     <output className="flex flex-col gap-5">
