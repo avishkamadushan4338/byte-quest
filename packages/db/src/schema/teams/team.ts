@@ -64,6 +64,10 @@ export const team = sqliteTable(
      * and edit this team's registration without an account.
      */
     editToken: text("edit_token").unique(),
+    /** Public reference code (BQ + 3 digits) shown to the school and emailed to the leader. */
+    referenceCode: text("reference_code").unique(),
+    /** Team leader's email; receives the registration confirmation. */
+    leaderEmail: text("leader_email"),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
       .$defaultFn(() => new Date())
       .notNull(),
@@ -106,6 +110,20 @@ export const teamMember = sqliteTable(
     admissionNumber: text("admission_number"),
     nationalId: text("national_id"),
     birthday: text("birthday"),
+    whatsapp: text("whatsapp"),
+    address: text("address"),
+    guardianName: text("guardian_name"),
+    guardianPhone: text("guardian_phone"),
+    minorAgeCategory: integer("minor_age_category", { mode: "boolean" })
+      .default(false)
+      .notNull(),
+    skills: text("skills", { mode: "json" })
+      .$type<string[]>()
+      .notNull()
+      .default(sql`'[]'`),
+    isPresenter: integer("is_presenter", { mode: "boolean" })
+      .default(false)
+      .notNull(),
     createdAt: integer("created_at", { mode: "timestamp_ms" })
       .$defaultFn(() => new Date())
       .notNull(),
@@ -122,6 +140,9 @@ export const teamMember = sqliteTable(
     uniqueIndex("team_member_leader_unique")
       .on(table.teamId)
       .where(sql`${table.teamRole} = 'leader'`),
+    uniqueIndex("team_member_presenter_unique")
+      .on(table.teamId)
+      .where(sql`${table.isPresenter} = 1`),
   ]
 );
 

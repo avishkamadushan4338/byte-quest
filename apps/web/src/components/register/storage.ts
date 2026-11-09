@@ -1,6 +1,6 @@
 import type { Division, RegisterState } from "./data";
 
-const STORAGE_KEY = "byte-quest:register-draft:v1";
+const STORAGE_KEY = "byte-quest:register-draft:v3";
 
 export interface RegisterDraft {
   state: RegisterState;
@@ -8,14 +8,12 @@ export interface RegisterDraft {
   maxStep: number;
   submitted: boolean;
   references: Partial<Record<Division, string>>;
-  editTokens: Partial<Record<Division, string>>;
 }
 
 /**
  * The wizard has no accounts, so progress only survives a refresh if it's
- * saved to the browser itself. This also carries each submitted division's
- * edit token, which is what lets the MIC/principal come back and revise
- * their registration before the closing date.
+ * saved to the browser itself. Once submitted, the draft keeps the
+ * registration locked in this browser.
  */
 export const loadDraft = (): RegisterDraft | null => {
   if (typeof window === "undefined") {

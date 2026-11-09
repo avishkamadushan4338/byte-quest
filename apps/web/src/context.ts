@@ -2,7 +2,7 @@ import type { Context as ApiContext } from "@byte-quest/api/context";
 import { userProfile } from "@byte-quest/db";
 import { eq } from "drizzle-orm";
 
-import { db, auth } from "./services";
+import { auth, db, mail } from "./services";
 
 export const createContext = async ({
   req,
@@ -24,6 +24,7 @@ export const createContext = async ({
 
   return {
     auth,
+    mail,
     db,
     session,
     profile,

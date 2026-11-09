@@ -36,6 +36,27 @@
       "when": 1791644582504,
       "tag": "0004_huge_azazel",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1794235229278,
+      "tag": "0005_wandering_landau",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1794238548627,
+      "tag": "0006_amusing_umar",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1794240513452,
+      "tag": "0007_aromatic_stone_men",
+      "breakpoints": true
     }
   ]
 }

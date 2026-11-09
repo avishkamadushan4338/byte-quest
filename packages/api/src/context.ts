@@ -1,5 +1,6 @@
 import type { Auth, Session } from "@byte-quest/auth";
 import type { Database, UserProfile } from "@byte-quest/db";
+import type { MailDelivery } from "./lib/mail";
 
 export interface Context {
   session: Session | null;
@@ -7,6 +8,8 @@ export interface Context {
   db: Database;
   /** The Better Auth instance, for provisioning accounts server-side. */
   auth: Auth;
+  /** Outbound email: registration confirmations, operator alerts. */
+  mail: MailDelivery;
 }
 
 /** The authenticated caller's context variant. */

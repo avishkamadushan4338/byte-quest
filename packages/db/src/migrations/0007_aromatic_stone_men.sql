@@ -1,0 +1,1 @@
+ALTER TABLE `team_member` ADD `minor_age_category` integer DEFAULT false NOT NULL;

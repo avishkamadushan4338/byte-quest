@@ -4,11 +4,15 @@ import { ArrowLabel } from "@/components/site/arrow-label";
 
 import type { Division, RegisterState } from "./data";
 import {
+  LEADER_INDEX,
   confirmationCopy,
   divisionLabels,
   divisionOrder,
   registerSteps,
 } from "./data";
+
+export const COMPETITION_RULES_HREF =
+  "/downloads/byte-quest-2027-competition-rules.pdf";
 
 interface StepConfirmationProps {
   onReset: () => void;
@@ -31,38 +35,23 @@ export const StepConfirmation = ({
       : base;
 
   const teamFacts = activeDivisions.flatMap((division) => {
-    const leader = state.students[division][state.leaderIndex[division]];
+    const leader = state.students[division][LEADER_INDEX];
     return [
-      {
-        label: withDivisionTag(confirmationCopy.referenceLabel, division),
-        value: references[division] ?? "-",
-        color: "#52FF3D",
-      },
       {
         label: withDivisionTag(confirmationCopy.teamLabel, division),
         value: state.teams[division].name,
-        color: "#F2F7F4",
       },
       {
         label: withDivisionTag(confirmationCopy.leaderLabel, division),
         value: leader?.fullName || "-",
-        color: "#F2F7F4",
       },
     ];
   });
 
   const facts = [
     ...teamFacts,
-    {
-      label: confirmationCopy.schoolLabel,
-      value: state.school.name,
-      color: "#F2F7F4",
-    },
-    {
-      label: confirmationCopy.statusLabel,
-      value: confirmationCopy.statusValue,
-      color: "#F0D875",
-    },
+    { label: confirmationCopy.schoolLabel, value: state.school.name },
+    { label: confirmationCopy.statusLabel, value: confirmationCopy.statusValue },
   ];
 
   const teamNames = activeDivisions
@@ -90,16 +79,33 @@ export const StepConfirmation = ({
           the teacher in charge.
         </p>
       </div>
+      {activeDivisions.map((division) => (
+        <div
+          className="rounded-[16px] border border-[rgba(82,255,61,0.35)] bg-[rgba(82,255,61,0.06)] px-[18px] py-5"
+          key={division}
+        >
+          <div className="text-muted-2 font-mono text-[12.5px] tracking-[0.14em]">
+            {withDivisionTag(confirmationCopy.referenceLabel, division)}
+          </div>
+          <div className="font-display text-volt mt-1.5 text-[clamp(28px,4vw,40px)] font-bold tracking-[0.04em]">
+            {references[division] ?? "-"}
+          </div>
+          <p className="text-muted mt-2 mb-0 text-[14.5px]">
+            Keep this code. It identifies your team in any follow-up.
+          </p>
+        </div>
+      ))}
+      <p className="text-muted m-0 rounded-[14px] border border-[rgba(240,216,117,0.3)] bg-[rgba(240,216,117,0.08)] px-4 py-3 text-[14.5px] text-[#F0D875]">
+        This registration is submitted and locked. It cannot be edited from
+        this page.
+      </p>
       <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-px overflow-hidden rounded-[16px] border border-[rgba(185,245,208,0.08)] bg-[rgba(185,245,208,0.08)]">
         {facts.map((fact) => (
           <div className="bg-ink min-w-0 px-[18px] py-4" key={fact.label}>
             <div className="text-faint font-mono text-[12.5px] tracking-[0.14em]">
               {fact.label}
             </div>
-            <div
-              className="mt-1.5 text-[15px] [overflow-wrap:anywhere]"
-              style={{ color: fact.color }}
-            >
+            <div className="mt-1.5 text-[15px] [overflow-wrap:anywhere] text-[#F2F7F4]">
               {fact.value}
             </div>
           </div>
@@ -122,6 +128,13 @@ export const StepConfirmation = ({
         </div>
       </div>
       <div className="flex flex-wrap gap-2.5">
+        <a
+          className="text-fg hover:border-volt rounded-full border border-[rgba(242,247,244,0.25)] px-[22px] py-3.5 text-[15.5px] font-semibold whitespace-nowrap"
+          download
+          href={COMPETITION_RULES_HREF}
+        >
+          {confirmationCopy.rulesLabel}
+        </a>
         <Link
           className="bg-volt text-ink hover:bg-lime hover:text-ink rounded-full px-[22px] py-3.5 text-[15.5px] font-bold whitespace-nowrap"
           to="/journey"

@@ -18,6 +18,7 @@
     "@orpc/server": "catalog:",
     "@orpc/zod": "catalog:",
     "drizzle-orm": "catalog:",
+    "nodemailer": "^10.4.0",
     "zod": "catalog:"
   },
   "devDependencies": {

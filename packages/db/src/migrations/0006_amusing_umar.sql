@@ -1,0 +1,1 @@
+ALTER TABLE `team_member` ADD `skills` text DEFAULT '[]' NOT NULL;

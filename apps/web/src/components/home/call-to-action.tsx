@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
 
 import { ArrowLabel } from "@/components/site/arrow-label";
+import {
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_HREF,
+} from "@/components/site/contact";
 
 export const CallToAction = () => (
   <section
@@ -39,6 +43,18 @@ export const CallToAction = () => (
       <p className="text-muted-2 mt-6 mb-0 font-mono text-[13px] tracking-[0.1em]">
         TEAM REGISTRATION CLOSED · VOLUNTEER APPLICATIONS OPEN
       </p>
+      <div className="text-muted mx-auto mt-8 mb-0 max-w-[460px] text-[15px] leading-[1.6]">
+        <p className="m-0">
+          If any of the phone numbers does not work, please contact us
+          immediately.
+        </p>
+        <a
+          className="text-volt hover:text-lime mt-2 inline-block font-mono text-[15px] tracking-[0.04em]"
+          href={CONTACT_PHONE_HREF}
+        >
+          Backup contact: {CONTACT_PHONE_DISPLAY}
+        </a>
+      </div>
     </div>
   </section>
 );

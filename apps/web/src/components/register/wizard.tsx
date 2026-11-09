@@ -22,9 +22,10 @@ import type {
 } from "./data";
 import {
   createEmptyMember,
-  divisionGrades,
+  allowedGradesForMember,
   divisionOrder,
   REGISTRATION_OPENS_AT,
+  LEADER_INDEX,
   initialRegisterState,
   registerAside,
   registerHero,
@@ -52,9 +53,6 @@ const REGISTRATION_CLOSES_AT = new Date("2027-01-10T23:59:59+05:30");
 
 const isPhone = (value: string) =>
   PHONE_PATTERN.test(value.replaceAll(/[\s-]/gu, ""));
-
-const isGradeAllowed = (division: Division, grade: string) =>
-  divisionGrades[division].includes(grade);
 
 /** The API names the divisions differently to the wizard. */
 const divisionToApi = (division: Division): "primary" | "secondary" =>
@@ -85,6 +83,12 @@ const validateTeam = (team: TeamDetails): TeamErrors => {
   if (team.name.trim().length === 0) {
     errors.name = validationCopy.required;
   }
+  const leaderEmail = team.leaderEmail.trim();
+  if (leaderEmail.length === 0) {
+    errors.leaderEmail = validationCopy.required;
+  } else if (!EMAIL_PATTERN.test(leaderEmail)) {
+    errors.leaderEmail = validationCopy.email;
+  }
 
   return errors;
 };
@@ -104,12 +108,18 @@ const validateStudents = (
     if (member.className.trim().length === 0) {
       entry.className = validationCopy.required;
     }
-    if (member.admissionNumber.trim().length === 0) {
-      entry.admissionNumber = validationCopy.required;
+    if (member.whatsapp.trim().length === 0) {
+      entry.whatsapp = validationCopy.required;
+    } else if (!isPhone(member.whatsapp)) {
+      entry.whatsapp = validationCopy.phone;
     }
     if (member.grade === null) {
       entry.grade = validationCopy.required;
-    } else if (!isGradeAllowed(division, member.grade)) {
+    } else if (
+      !allowedGradesForMember(division, member.minorAgeCategory).includes(
+        member.grade
+      )
+    ) {
       entry.grade = validationCopy.divisionGrade;
     }
 
@@ -204,17 +214,21 @@ const validateStep = (step: number, state: RegisterState): RegisterErrors => {
   return errors;
 };
 
-const draftToState = (draft: RegisterDraft | null) => ({
-  state: draft?.state ?? initialRegisterState,
-  step: draft?.step ?? 0,
-  maxStep: draft?.maxStep ?? 0,
-  submitted: draft?.submitted ?? false,
-  references: draft?.references ?? {},
-  editTokens: draft?.editTokens ?? {},
-});
+const CONFIRMATION_STEP = stepOrder.indexOf("confirmation");
+
+const draftToState = (draft: RegisterDraft | null) => {
+  const submitted = draft?.submitted ?? false;
+  return {
+    state: draft?.state ?? initialRegisterState,
+    step: submitted ? CONFIRMATION_STEP : (draft?.step ?? 0),
+    maxStep: submitted ? CONFIRMATION_STEP : (draft?.maxStep ?? 0),
+    submitted,
+    references: draft?.references ?? {},
+  };
+};
 
 export const Register = () => {
-  const initial = draftToState(loadDraft());
+  const initial = draftToState(null);
   const [state, setState] = useState<RegisterState>(initial.state);
   const [step, setStep] = useState(initial.step);
   const [maxStep, setMaxStep] = useState(initial.maxStep);
@@ -223,9 +237,6 @@ export const Register = () => {
   const [references, setReferences] = useState<
     Partial<Record<Division, string>>
   >(initial.references);
-  const [editTokens, setEditTokens] = useState<
-    Partial<Record<Division, string>>
-  >(initial.editTokens);
   const [pending, setPending] = useState(false);
   const [isOpen, setIsOpen] = useState(
     () => Date.now() >= REGISTRATION_OPENS_AT.getTime()
@@ -234,6 +245,18 @@ export const Register = () => {
   const [isClosed, setIsClosed] = useState(
     () => Date.now() > REGISTRATION_CLOSES_AT.getTime()
   );
+
+  // Restore the saved draft after mount, not in the first render: reading
+  // localStorage during render makes the client disagree with the server HTML,
+  // and React then leaves the inputs empty instead of showing the draft.
+  useEffect(() => {
+    const restored = draftToState(loadDraft());
+    setState(restored.state);
+    setStep(restored.step);
+    setMaxStep(restored.maxStep);
+    setSubmitted(restored.submitted);
+    setReferences(restored.references);
+  }, []);
 
   useEffect(() => {
     if (isClosed) {
@@ -247,8 +270,6 @@ export const Register = () => {
     return () => window.clearInterval(timer);
   }, [isClosed]);
 
-  const isEditing = Object.values(editTokens).some(Boolean);
-
   const persist = (patch: Partial<RegisterDraft>) => {
     const draft: RegisterDraft = {
       state,
@@ -256,7 +277,6 @@ export const Register = () => {
       maxStep,
       submitted,
       references,
-      editTokens,
       ...patch,
     };
     saveDraft(draft);
@@ -266,6 +286,9 @@ export const Register = () => {
   const content = registerSteps[currentKey];
   const isConfirmation = currentKey === "confirmation";
   const reviewStep = stepOrder.indexOf("review");
+  const activeDivisions = divisionOrder.filter((division) =>
+    state.divisions.includes(division)
+  );
 
   const handleSchoolChange = (patch: Partial<SchoolDetails>) => {
     setState((current) => {
@@ -276,12 +299,9 @@ export const Register = () => {
     setErrors((current) => ({ ...current, school: undefined }));
   };
 
-  const handleDivisionToggle = (division: Division) => {
+  const handleDivisionSelect = (division: Division) => {
     setState((current) => {
-      const divisions = current.divisions.includes(division)
-        ? current.divisions.filter((d) => d !== division)
-        : [...current.divisions, division];
-      const next = { ...current, divisions };
+      const next = { ...current, divisions: [division] };
       persist({ state: next });
       return next;
     });
@@ -326,10 +346,6 @@ export const Register = () => {
               current.students[division][index] ?? createEmptyMember()
           ),
         },
-        leaderIndex: {
-          ...current.leaderIndex,
-          [division]: Math.min(current.leaderIndex[division], count - 1),
-        },
       };
       persist({ state: next });
       return next;
@@ -360,11 +376,23 @@ export const Register = () => {
     }));
   };
 
-  const handleLeaderChange = (division: Division, index: number) => {
+  const handleApplyClassPreset = (division: Division) => {
     setState((current) => {
+      const [source] = current.students[division];
       const next = {
         ...current,
-        leaderIndex: { ...current.leaderIndex, [division]: index },
+        students: {
+          ...current.students,
+          [division]: current.students[division].map((member, index) =>
+            index === 0
+              ? member
+              : {
+                  ...member,
+                  grade: source.grade,
+                  className: source.className,
+                }
+          ),
+        },
       };
       persist({ state: next });
       return next;
@@ -390,19 +418,12 @@ export const Register = () => {
   };
 
   /**
-   * Submit (or resubmit) every selected division. No account is created -
-   * the school's MIC or principal submits this directly, and the edit
-   * token returned for each division lets them revise it later from this
-   * same browser, up to the closing date.
+   * Submit every selected division. The registration is final: no edit path
+   * exists, so the submitted state is locked once this succeeds.
    */
-  const submitAll = async (): Promise<boolean> => {
-    const activeDivisions = divisionOrder.filter((division) =>
-      state.divisions.includes(division)
-    );
-
+  const submitAll = async (): Promise<typeof references | null> => {
     setPending(true);
     const nextReferences: Partial<Record<Division, string>> = { ...references };
-    const nextEditTokens: Partial<Record<Division, string>> = { ...editTokens };
     const teamErrors: Partial<Record<Division, TeamErrors>> = {};
 
     const outcomes = await Promise.allSettled(
@@ -410,7 +431,6 @@ export const Register = () => {
         const payload = {
           teamName: state.teams[division].name.trim(),
           division: divisionToApi(division),
-          idea: state.teams[division].idea.trim() || undefined,
           school: {
             name: state.school.name.trim(),
             province: state.school.province ?? "",
@@ -420,10 +440,17 @@ export const Register = () => {
           members: state.students[division].map((member) => ({
             fullName: member.fullName.trim(),
             grade: member.grade ?? "",
+            minorAgeCategory: member.minorAgeCategory,
             className: member.className.trim(),
-            admissionNumber: member.admissionNumber.trim(),
+            birthday: member.birthday.trim(),
+            whatsapp: member.whatsapp.trim(),
+            address: member.address.trim(),
+            guardianName: member.guardianName.trim(),
+            guardianPhone: member.guardianPhone.trim(),
           })),
-          leaderIndex: state.leaderIndex[division],
+          leaderIndex: LEADER_INDEX,
+          leaderEmail: state.teams[division].leaderEmail.trim(),
+          presenterIndex: LEADER_INDEX,
           teacher: {
             name: state.teacher.name.trim(),
             designation: state.teacher.designation.trim(),
@@ -433,16 +460,8 @@ export const Register = () => {
           principal: state.teacher.principal.trim() || undefined,
         };
 
-        const existingToken = editTokens[division];
-        if (existingToken) {
-          const result = await orpc.teams.update.call({
-            ...payload,
-            editToken: existingToken,
-          });
-          return { division, id: result.id, editToken: existingToken };
-        }
         const result = await orpc.teams.register.call(payload);
-        return { division, id: result.id, editToken: result.editToken };
+        return { division, referenceCode: result.referenceCode };
       })
     );
 
@@ -452,8 +471,9 @@ export const Register = () => {
         continue;
       }
       if (outcome.status === "fulfilled") {
-        nextReferences[division] = outcome.value.id;
-        nextEditTokens[division] = outcome.value.editToken;
+        if (outcome.value.referenceCode) {
+          nextReferences[division] = outcome.value.referenceCode;
+        }
       } else {
         teamErrors[division] = {
           name: messageFor(outcome.reason, "We could not register that team"),
@@ -465,16 +485,15 @@ export const Register = () => {
     }
 
     setReferences(nextReferences);
-    setEditTokens(nextEditTokens);
-    persist({ references: nextReferences, editTokens: nextEditTokens });
+    persist({ references: nextReferences });
     setPending(false);
 
     if (Object.keys(teamErrors).length > 0) {
       setErrors({ teams: teamErrors });
-      return false;
+      return null;
     }
 
-    return true;
+    return nextReferences;
   };
 
   const handleNext = async () => {
@@ -486,27 +505,32 @@ export const Register = () => {
       return;
     }
 
+    let nextReferences = references;
     if (currentKey === "review") {
-      const ok = await submitAll();
-      if (!ok) {
+      const submittedReferences = await submitAll();
+      if (!submittedReferences) {
         return;
       }
+      nextReferences = submittedReferences;
     }
 
     const nextStep = Math.min(step + 1, stepOrder.length - 1);
     const nextKey = stepOrder[nextStep];
+    const nextSubmitted = nextKey === "confirmation";
 
     setErrors({});
     setStep(nextStep);
     setMaxStep((current) => Math.max(current, nextStep));
-    persist({ step: nextStep, maxStep: Math.max(maxStep, nextStep) });
+    setSubmitted(nextSubmitted);
+    persist({
+      step: nextStep,
+      maxStep: Math.max(maxStep, nextStep),
+      submitted: nextSubmitted,
+      references: nextReferences,
+    });
 
-    if (nextKey === "confirmation") {
-      setSubmitted(true);
-      persist({ submitted: true });
-      toast.success(
-        isEditing ? "Registration updated" : "Registration received"
-      );
+    if (nextSubmitted) {
+      toast.success("Registration received");
     }
 
     window.scrollTo({ top: 200, behavior: "smooth" });
@@ -515,11 +539,7 @@ export const Register = () => {
   const goToStep = (target: number) => {
     setErrors({});
     setStep(target);
-    const leavingConfirmation = stepOrder[target] !== "confirmation";
-    if (leavingConfirmation) {
-      setSubmitted(false);
-    }
-    persist({ step: target, submitted: !leavingConfirmation && submitted });
+    persist({ step: target });
   };
 
   const handleBack = () => {
@@ -527,7 +547,7 @@ export const Register = () => {
   };
 
   const handleSelect = (index: number) => {
-    if (index > maxStep) {
+    if (submitted || index > maxStep) {
       return;
     }
     goToStep(index);
@@ -540,14 +560,13 @@ export const Register = () => {
     setSubmitted(false);
     setErrors({});
     setReferences({});
-    setEditTokens({});
     clearDraft();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const advanceLabel = (() => {
     if (step === reviewStep) {
-      return isEditing ? "Save changes →" : registerAside.submitLabel;
+      return registerAside.submitLabel;
     }
     return registerAside.continueLabel;
   })();
@@ -564,7 +583,7 @@ export const Register = () => {
       <StepDivision
         divisions={state.divisions}
         errors={errors}
-        onToggle={handleDivisionToggle}
+        onSelect={handleDivisionSelect}
       />
     ),
     team: (
@@ -580,9 +599,8 @@ export const Register = () => {
       <StepStudents
         divisions={state.divisions}
         errors={errors}
-        leaderIndex={state.leaderIndex}
-        onLeaderChange={handleLeaderChange}
         onMemberChange={handleMemberChange}
+        onApplyClassPreset={handleApplyClassPreset}
         students={state.students}
       />
     ),

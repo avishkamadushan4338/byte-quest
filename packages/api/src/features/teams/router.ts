@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomInt } from "node:crypto";
 
 import type { Database, MemberSpecialty } from "@byte-quest/db";
 import {
@@ -18,6 +18,7 @@ import {
   publicProcedure,
 } from "../../index";
 import { generatePassword, generateUsername } from "../../lib/credentials";
+import { teamRegistrationEmail } from "../../lib/mail";
 import { provisionCredentialUser } from "../../lib/provision";
 import { inferDivision } from "../access/router";
 import { findOrCreateSchool } from "../schools/router";
@@ -29,6 +30,23 @@ const MAX_MEMBERS = 5;
 export const REGISTRATION_CLOSES_AT = new Date("2027-01-10T23:59:59+05:30");
 
 const generateEditToken = () => randomBytes(16).toString("hex");
+
+const REFERENCE_ATTEMPTS = 20;
+
+/** Public reference: "BQ" plus 3 digits, unique per team; retries on collision. */
+const generateReferenceCode = async (db: Database): Promise<string> => {
+  for (let attempt = 0; attempt < REFERENCE_ATTEMPTS; attempt += 1) {
+    const code = `BQ${randomInt(100, 1000)}`;
+    const [taken] = await db
+      .select({ id: team.id })
+      .from(team)
+      .where(eq(team.referenceCode, code));
+    if (!taken) {
+      return code;
+    }
+  }
+  throw new Error("Could not allocate a registration reference, please retry");
+};
 
 const assertRegistrationOpen = () => {
   if (Date.now() > REGISTRATION_CLOSES_AT.getTime()) {
@@ -67,7 +85,6 @@ export const teamOutputSchema = z.object({
 const registerInputSchema = z.object({
   teamName: z.string().min(1, "Team name is required"),
   division: z.enum(["primary", "secondary"]),
-  idea: z.string().trim().optional(),
   school: z.object({
     name: z.string().min(1, "School name is required"),
     province: z.string().min(1, "Province is required"),
@@ -80,12 +97,19 @@ const registerInputSchema = z.object({
         fullName: z.string().min(1, "Full name is required"),
         grade: z.string().min(1, "Grade is required"),
         className: z.string().min(1, "Class is required"),
-        admissionNumber: z.string().min(1, "Admission number is required"),
+        birthday: z.string().default(""),
+        whatsapp: z.string().min(1, "WhatsApp number is required"),
+        address: z.string().default(""),
+        guardianName: z.string().default(""),
+        guardianPhone: z.string().default(""),
+        minorAgeCategory: z.boolean().default(false),
       })
     )
     .min(MIN_MEMBERS, `A team needs at least ${MIN_MEMBERS} members`)
     .max(MAX_MEMBERS, `A team can have at most ${MAX_MEMBERS} members`),
   leaderIndex: z.number().int().min(0),
+  presenterIndex: z.number().int().min(0),
+  leaderEmail: z.email("Enter a valid leader email"),
   teacher: z.object({
     name: z.string().min(1, "Teacher name is required"),
     designation: z.string().min(1, "Designation is required"),
@@ -99,8 +123,13 @@ const assertValidRoster = (input: z.infer<typeof registerInputSchema>) => {
   if (input.leaderIndex >= input.members.length) {
     throw new Error("Team leader must be one of the registered members");
   }
-  const allowedGrades = DIVISION_GRADES[input.division];
+  if (input.presenterIndex >= input.members.length) {
+    throw new Error("Presenter must be one of the registered members");
+  }
   for (const member of input.members) {
+    const allowedGrades = member.minorAgeCategory
+      ? [...DIVISION_GRADES.primary, ...DIVISION_GRADES.secondary]
+      : DIVISION_GRADES[input.division];
     if (!allowedGrades.includes(member.grade)) {
       throw new Error(
         `${member.fullName || "A member"}'s grade (${member.grade}) does not match the ${input.division} division`
@@ -152,6 +181,7 @@ export const teamsRouter = {
         teamOutputSchema.extend({
           schoolName: z.string(),
           editToken: z.string(),
+          referenceCode: z.string(),
         })
       )
       .handler(async ({ context, input }) => {
@@ -179,19 +209,21 @@ export const teamsRouter = {
         }
 
         const editToken = generateEditToken();
+        const referenceCode = await generateReferenceCode(context.db);
         const [created] = await context.db
           .insert(team)
           .values({
             name: input.teamName,
             division: input.division,
             schoolId: resolved.id,
-            idea: input.idea?.trim() || null,
             teacherName: input.teacher.name.trim(),
             teacherDesignation: input.teacher.designation.trim(),
             teacherPhone: input.teacher.phone.trim(),
             teacherEmail: input.teacher.email.trim(),
             principalName: input.principal?.trim() || null,
             editToken,
+            referenceCode,
+            leaderEmail: input.leaderEmail.trim(),
           })
           .returning();
         if (!created) {
@@ -207,15 +239,40 @@ export const teamsRouter = {
             grade: member.grade,
             fullName: member.fullName.trim(),
             className: member.className.trim(),
-            admissionNumber: member.admissionNumber.trim(),
+            birthday: member.birthday.trim(),
+            whatsapp: member.whatsapp.trim(),
+            address: member.address.trim(),
+            guardianName: member.guardianName.trim(),
+            guardianPhone: member.guardianPhone.trim(),
+            minorAgeCategory: member.minorAgeCategory,
+            isPresenter: index === input.presenterIndex,
           }))
         );
+
+        // The registration is saved already: a mail failure is logged, never thrown.
+        try {
+          await context.mail({
+            to: input.leaderEmail.trim(),
+            ...teamRegistrationEmail({
+              referenceCode,
+              teamName: input.teamName.trim(),
+              schoolName: resolved.name,
+              division: input.division === "primary" ? "junior" : "senior",
+            }),
+          });
+        } catch (error) {
+          console.error(
+            "[teams] Could not send the registration email:",
+            error
+          );
+        }
 
         return {
           ...created,
           memberCount: input.members.length,
           schoolName: resolved.name,
           editToken,
+          referenceCode,
         };
       }),
 
@@ -253,13 +310,13 @@ export const teamsRouter = {
           .where(eq(teamMember.teamId, teamRow.id))
           .orderBy(teamMember.createdAt);
         const leaderIndex = members.findIndex((m) => m.teamRole === "leader");
+        const presenterIndex = members.findIndex((m) => m.isPresenter);
 
         return {
           teamId: teamRow.id,
           editToken: teamRow.editToken ?? input.editToken,
           teamName: teamRow.name,
           division: teamRow.division,
-          idea: teamRow.idea ?? undefined,
           school: {
             name: schoolRow.name,
             province: schoolRow.province ?? "",
@@ -270,9 +327,16 @@ export const teamsRouter = {
             fullName: m.fullName,
             grade: m.grade,
             className: m.className ?? "",
-            admissionNumber: m.admissionNumber ?? "",
+            birthday: m.birthday ?? "",
+            whatsapp: m.whatsapp ?? "",
+            address: m.address ?? "",
+            guardianName: m.guardianName ?? "",
+            guardianPhone: m.guardianPhone ?? "",
+            minorAgeCategory: m.minorAgeCategory,
           })),
           leaderIndex: leaderIndex === -1 ? 0 : leaderIndex,
+          presenterIndex: presenterIndex === -1 ? 0 : presenterIndex,
+          leaderEmail: teamRow.leaderEmail ?? "",
           teacher: {
             name: teamRow.teacherName ?? "",
             designation: teamRow.teacherDesignation ?? "",
@@ -290,7 +354,12 @@ export const teamsRouter = {
      */
     update: publicProcedure
       .input(registerInputSchema.extend({ editToken: z.string().min(1) }))
-      .output(teamOutputSchema.extend({ schoolName: z.string() }))
+      .output(
+        teamOutputSchema.extend({
+          schoolName: z.string(),
+          referenceCode: z.string().nullable(),
+        })
+      )
       .handler(async ({ context, input }) => {
         assertRegistrationOpen();
         assertValidRoster(input);
@@ -320,12 +389,12 @@ export const teamsRouter = {
           .update(team)
           .set({
             name: input.teamName,
-            idea: input.idea?.trim() || null,
             teacherName: input.teacher.name.trim(),
             teacherDesignation: input.teacher.designation.trim(),
             teacherPhone: input.teacher.phone.trim(),
             teacherEmail: input.teacher.email.trim(),
             principalName: input.principal?.trim() || null,
+            leaderEmail: input.leaderEmail.trim(),
           })
           .where(eq(team.id, existing.id))
           .returning();
@@ -345,7 +414,13 @@ export const teamsRouter = {
             grade: member.grade,
             fullName: member.fullName.trim(),
             className: member.className.trim(),
-            admissionNumber: member.admissionNumber.trim(),
+            birthday: member.birthday.trim(),
+            whatsapp: member.whatsapp.trim(),
+            address: member.address.trim(),
+            guardianName: member.guardianName.trim(),
+            guardianPhone: member.guardianPhone.trim(),
+            minorAgeCategory: member.minorAgeCategory,
+            isPresenter: index === input.presenterIndex,
           }))
         );
 
@@ -682,7 +757,6 @@ export const teamsRouter = {
             schoolName: z.string(),
             minMembers: z.number(),
             maxMembers: z.number(),
-            idea: z.string().nullable(),
             teacherName: z.string().nullable(),
             teacherDesignation: z.string().nullable(),
             teacherPhone: z.string().nullable(),
@@ -703,7 +777,6 @@ export const teamsRouter = {
             memberCount: sql<number>`count(${teamMember.id})`.mapWith(Number),
             minMembers: sql<number>`3`.mapWith(Number),
             maxMembers: sql<number>`5`.mapWith(Number),
-            idea: team.idea,
             teacherName: team.teacherName,
             teacherDesignation: team.teacherDesignation,
             teacherPhone: team.teacherPhone,

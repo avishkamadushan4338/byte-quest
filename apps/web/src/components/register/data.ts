@@ -21,14 +21,19 @@ export interface SchoolDetails {
 export interface TeamDetails {
   name: string;
   size: string;
-  idea: string;
+  leaderEmail: string;
 }
 
 export interface MemberDetails {
   fullName: string;
   grade: string | null;
+  minorAgeCategory: boolean;
   className: string;
-  admissionNumber: string;
+  birthday: string;
+  whatsapp: string;
+  address: string;
+  guardianName: string;
+  guardianPhone: string;
 }
 
 export interface TeacherDetails {
@@ -44,7 +49,6 @@ export interface RegisterState {
   divisions: Division[];
   teams: Record<Division, TeamDetails>;
   students: Record<Division, MemberDetails[]>;
-  leaderIndex: Record<Division, number>;
   teacher: TeacherDetails;
   consent: boolean;
 }
@@ -57,13 +61,18 @@ export interface SchoolErrors {
 
 export interface TeamErrors {
   name?: string;
+  leaderEmail?: string;
 }
 
 export interface StudentErrors {
   fullName?: string;
   grade?: string;
   className?: string;
-  admissionNumber?: string;
+  birthday?: string;
+  whatsapp?: string;
+  address?: string;
+  guardianName?: string;
+  guardianPhone?: string;
 }
 
 export interface TeacherErrors {
@@ -142,19 +151,19 @@ export const registerSteps = {
     label: "Division",
     eyebrow: "02 / DIVISION",
     title: "Choose your division.",
-    body: "Pick one, or both if your school is fielding a Junior and a Senior team. Every member of a team must be in the grades for that division.",
+    body: "Pick the one division your team is competing in. Every member of the team must be in the grades for that division.",
   },
   team: {
     label: "Team",
     eyebrow: "03 / TEAM",
-    title: "Name your team(s).",
+    title: "Name your team.",
     body: "You can refine your project idea later in the programme.",
   },
   students: {
     label: "Students",
     eyebrow: "04 / STUDENTS",
     title: "Add your team members.",
-    body: "Select one member as team leader. Student details are kept private.",
+    body: "Student 1 is the team leader. Fill in each member, then continue.",
   },
   teacher: {
     label: "Teacher contact",
@@ -211,6 +220,8 @@ export const consentCopy =
 
 export const teamSizeHint = "Students per team: minimum 3, maximum 5.";
 
+export const LEADER_INDEX = 0;
+
 export const reviewTitles = {
   school: "SCHOOL",
   division: "DIVISION",
@@ -240,6 +251,7 @@ export const confirmationCopy = {
     { n: "03", text: "Week 1: Opening Ceremony & Team Formation." },
   ],
   journeyLabel: "Explore the journey →",
+  rulesLabel: "Download competition rules (PDF)",
   journeyAriaLabel: "Explore the BYTE QUEST journey",
   resetLabel: "Register another team",
 };
@@ -299,34 +311,41 @@ export const platformsByDivision: Record<Division, string[]> = {
   senior: ["Web", "Mobile", "Python", "AI", "IoT", "Robotics", "Desktop"],
 };
 
-const gradeOptionsByDivision: Record<Division, FieldOption[]> = {
-  junior: divisionGrades.junior.map((grade) => ({
+/** Senior teams may include younger students who opt into the minor age category. */
+export const allowedGradesForMember = (
+  division: Division,
+  minorAgeCategory: boolean
+): string[] =>
+  minorAgeCategory
+    ? [...divisionGrades.junior, ...divisionGrades.senior]
+    : divisionGrades[division];
+
+export const gradeOptionsForMember = (
+  division: Division,
+  minorAgeCategory: boolean
+): FieldOption[] =>
+  allowedGradesForMember(division, minorAgeCategory).map((grade) => ({
     value: grade,
     label: `Grade ${grade}`,
-  })),
-  senior: divisionGrades.senior.map((grade) => ({
-    value: grade,
-    label: `Grade ${grade}`,
-  })),
-};
-
-export const gradeOptionsForDivision = (
-  division: Division | null
-): FieldOption[] => (division === null ? [] : gradeOptionsByDivision[division]);
-
-export const teamSizeOptions: FieldOption[] = ["3", "4", "5"].map((size) => ({
-  value: size,
-  label: size,
-}));
+  }));
 
 export const createEmptyMember = (): MemberDetails => ({
   fullName: "",
   grade: null,
+  minorAgeCategory: false,
   className: "",
-  admissionNumber: "",
+  birthday: "",
+  whatsapp: "",
+  address: "",
+  guardianName: "",
+  guardianPhone: "",
 });
 
-const createEmptyTeam = (): TeamDetails => ({ name: "", size: "3", idea: "" });
+const createEmptyTeam = (): TeamDetails => ({
+  name: "",
+  size: "3",
+  leaderEmail: "",
+});
 
 const createEmptyRoster = (): MemberDetails[] => [
   createEmptyMember(),
@@ -339,7 +358,6 @@ export const initialRegisterState: RegisterState = {
   divisions: [],
   teams: { junior: createEmptyTeam(), senior: createEmptyTeam() },
   students: { junior: createEmptyRoster(), senior: createEmptyRoster() },
-  leaderIndex: { junior: 0, senior: 0 },
   teacher: {
     name: "",
     designation: "",
@@ -369,7 +387,7 @@ export const memberSummary = (member: MemberDetails): string => {
 };
 
 /** Official registration opens at midnight, Sri Lanka time. */
-export const REGISTRATION_OPENS_AT = new Date("2026-11-10T00:00:00+05:30");
+export const REGISTRATION_OPENS_AT = new Date("2026-11-01T00:00:00+05:30"); // TEMP-LOCAL-TEST: revert to 2026-11-10T00:00:00+05:30
 
 export const registrationNotOpen = {
   kicker: "TEAM REGISTRATION",

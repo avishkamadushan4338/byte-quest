@@ -1,3 +1,5 @@
+import { StarIcon } from "@phosphor-icons/react";
+
 import { InputField, SelectField } from "@/components/site/design-fields";
 
 import type {
@@ -9,142 +11,171 @@ import type {
 import {
   divisionLabels,
   divisionOrder,
-  gradeOptionsForDivision,
+  allowedGradesForMember,
+  gradeOptionsForMember,
+  LEADER_INDEX,
   studentLabel,
 } from "./data";
+
+const BADGE_CLASS =
+  "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-mono text-[13px]";
+const CHIP_CLASS = `${BADGE_CLASS} cursor-pointer transition-colors duration-200`;
+const CHIP_ACTIVE_STYLE = {
+  background: "rgba(82,255,61,0.12)",
+  border: "1px solid rgba(82,255,61,0.45)",
+  color: "#52FF3D",
+} as const;
+const CHIP_IDLE_STYLE = {
+  background: "transparent",
+  border: "1px solid rgba(185,245,208,0.15)",
+  color: "#8FA79C",
+} as const;
+
+const memberName = (member: MemberDetails, index: number): string =>
+  member.fullName.trim() || studentLabel(index);
+
+interface MemberCardProps {
+  division: Division;
+  errors: StudentErrors | undefined;
+  index: number;
+  member: MemberDetails;
+  onChange: (patch: Partial<MemberDetails>) => void;
+}
+
+const MemberCard = ({
+  division,
+  errors,
+  index,
+  member,
+  onChange,
+}: MemberCardProps) => {
+  const prefix = `student-${division}-${index}`;
+  const gradeOptions = gradeOptionsForMember(division, member.minorAgeCategory);
+  const isLeader = index === LEADER_INDEX;
+  const handleMinorChange = (checked: boolean) => {
+    const gradeStillAllowed = allowedGradesForMember(
+      division,
+      checked
+    ).includes(member.grade ?? "");
+    onChange({
+      grade: gradeStillAllowed ? member.grade : null,
+      minorAgeCategory: checked,
+    });
+  };
+
+  return (
+    <div className="bg-ink rounded-[16px] border border-[rgba(185,245,208,0.08)] p-4 sm:p-5">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <span className="font-display text-[16px] font-semibold">
+          {memberName(member, index)}
+        </span>
+        {isLeader ? (
+          <span className={BADGE_CLASS} style={CHIP_ACTIVE_STYLE}>
+            <StarIcon size={14} weight="fill" />
+            Team leader
+          </span>
+        ) : null}
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <InputField
+          error={errors?.fullName}
+          id={`${prefix}-full-name`}
+          label="Full name"
+          onValueChange={(value) => onChange({ fullName: value })}
+          placeholder="As in school records"
+          surface="surface"
+          value={member.fullName}
+        />
+        <SelectField
+          error={errors?.grade}
+          id={`${prefix}-grade`}
+          label="Grade"
+          onValueChange={(value) => onChange({ grade: value || null })}
+          options={gradeOptions}
+          surface="surface"
+          value={member.grade ?? ""}
+        />
+        <InputField
+          error={errors?.className}
+          id={`${prefix}-class`}
+          label="Class"
+          onValueChange={(value) => onChange({ className: value })}
+          placeholder="e.g. 10B"
+          surface="surface"
+          value={member.className}
+        />
+        <InputField
+          error={errors?.whatsapp}
+          id={`${prefix}-whatsapp`}
+          label="WhatsApp number"
+          onValueChange={(value) => onChange({ whatsapp: value })}
+          placeholder="07XXXXXXXX"
+          surface="surface"
+          type="tel"
+          value={member.whatsapp}
+        />
+        {division === "senior" ? (
+          <label className="text-muted flex cursor-pointer items-center gap-3 text-[14px] sm:col-span-2">
+            <input
+              checked={member.minorAgeCategory}
+              className="accent-volt size-4 shrink-0"
+              onChange={(event) => handleMinorChange(event.target.checked)}
+              type="checkbox"
+            />
+            Minor age category participating
+          </label>
+        ) : null}
+      </div>
+    </div>
+  );
+};
 
 interface RosterProps {
   division: Division;
   errors: Record<string, StudentErrors> | undefined;
-  onLeaderChange: (index: number) => void;
   onMemberChange: (index: number, patch: Partial<MemberDetails>) => void;
   students: MemberDetails[];
-  leaderIndex: number;
 }
 
 const Roster = ({
   division,
   errors,
-  onLeaderChange,
   onMemberChange,
   students,
-  leaderIndex,
-}: RosterProps) => {
-  const gradeOptions = gradeOptionsForDivision(division);
-
-  return (
-    <div className="grid gap-3">
-      {students.map((member, index) => {
-        const isLeader = index === leaderIndex;
-        const memberErrors = errors?.[String(index)];
-        const prefix = `student-${division}-${index}`;
-
-        return (
-          <div
-            className="bg-ink rounded-[16px] p-[18px]"
-            key={prefix}
-            style={{
-              border: `1px solid ${isLeader ? "rgba(212,175,55,0.3)" : "rgba(185,245,208,0.08)"}`,
-            }}
-          >
-            <div className="mb-3.5 flex items-center justify-between gap-3">
-              <span className="flex items-center gap-2.5">
-                <span className="text-volt flex size-7 items-center justify-center rounded-[8px] border border-[rgba(82,255,61,0.35)] font-mono text-[13px]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="font-display text-[16px] font-semibold">
-                  {studentLabel(index)}
-                </span>
-              </span>
-              <button
-                aria-pressed={isLeader}
-                className="cursor-pointer rounded-full px-3 py-1.5 font-mono text-[12.5px] tracking-[0.1em] whitespace-nowrap"
-                onClick={() => onLeaderChange(index)}
-                style={{
-                  background: isLeader
-                    ? "rgba(212,175,55,0.12)"
-                    : "transparent",
-                  color: isLeader ? "#F0D875" : "#8FA79C",
-                  border: `1px solid ${isLeader ? "rgba(212,175,55,0.45)" : "rgba(185,245,208,0.15)"}`,
-                }}
-                type="button"
-              >
-                {isLeader ? "★ TEAM LEADER" : "MAKE LEADER"}
-              </button>
-            </div>
-            <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-x-3.5 gap-y-3">
-              <InputField
-                error={memberErrors?.fullName}
-                id={`${prefix}-full-name`}
-                label="Full name"
-                onValueChange={(value) =>
-                  onMemberChange(index, { fullName: value })
-                }
-                placeholder="As in school records"
-                surface="surface"
-                value={member.fullName}
-              />
-              <SelectField
-                error={memberErrors?.grade}
-                id={`${prefix}-grade`}
-                label="Grade"
-                onValueChange={(value) =>
-                  onMemberChange(index, { grade: value || null })
-                }
-                options={gradeOptions}
-                surface="surface"
-                value={member.grade ?? ""}
-              />
-              <InputField
-                error={memberErrors?.className}
-                id={`${prefix}-class`}
-                label="Class"
-                onValueChange={(value) =>
-                  onMemberChange(index, { className: value })
-                }
-                placeholder="e.g. 10B"
-                surface="surface"
-                value={member.className}
-              />
-              <InputField
-                error={memberErrors?.admissionNumber}
-                id={`${prefix}-admission-number`}
-                label="Admission number"
-                onValueChange={(value) =>
-                  onMemberChange(index, { admissionNumber: value })
-                }
-                placeholder="e.g. 12345"
-                surface="surface"
-                value={member.admissionNumber}
-              />
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
+}: RosterProps) => (
+  <div className="grid gap-4">
+    {students.map((member, index) => (
+      <MemberCard
+        division={division}
+        errors={errors?.[String(index)]}
+        index={index}
+        key={`${division}-${index}`}
+        member={member}
+        onChange={(patch) => onMemberChange(index, patch)}
+      />
+    ))}
+  </div>
+);
 
 interface StepStudentsProps {
   divisions: Division[];
   errors: RegisterErrors;
-  onLeaderChange: (division: Division, index: number) => void;
+  onApplyClassPreset: (division: Division) => void;
   onMemberChange: (
     division: Division,
     index: number,
     patch: Partial<MemberDetails>
   ) => void;
   students: Record<Division, MemberDetails[]>;
-  leaderIndex: Record<Division, number>;
 }
 
 export const StepStudents = ({
   divisions,
   errors,
-  onLeaderChange,
+  onApplyClassPreset,
   onMemberChange,
   students,
-  leaderIndex,
 }: StepStudentsProps) => {
   const activeDivisions = divisionOrder.filter((division) =>
     divisions.includes(division)
@@ -160,11 +191,22 @@ export const StepStudents = ({
               {divisionLabels[division].toUpperCase()}
             </div>
           ) : null}
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-faint text-[14px]">
+              Same grade and class for the whole team?
+            </span>
+            <button
+              className={CHIP_CLASS}
+              onClick={() => onApplyClassPreset(division)}
+              style={CHIP_IDLE_STYLE}
+              type="button"
+            >
+              Copy Student 1 grade and class to all
+            </button>
+          </div>
           <Roster
             division={division}
             errors={errors.students?.[division]}
-            leaderIndex={leaderIndex[division]}
-            onLeaderChange={(index) => onLeaderChange(division, index)}
             onMemberChange={(index, patch) =>
               onMemberChange(division, index, patch)
             }

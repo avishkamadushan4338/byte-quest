@@ -1,5 +1,6 @@
 import type { Division, RegisterErrors, RegisterState, StepKey } from "./data";
 import {
+  LEADER_INDEX,
   consentCopy,
   divisionLabels,
   divisionOrder,
@@ -51,7 +52,6 @@ const buildSections = (state: RegisterState): ReviewSection[] => {
         label: "Team size",
         value: teamSizeSummary(state.teams[division].size),
       },
-      { label: "Idea", value: state.teams[division].idea },
     ],
   }));
 
@@ -60,10 +60,7 @@ const buildSections = (state: RegisterState): ReviewSection[] => {
     title: `${reviewTitles.students}${suffix(division)}`,
     step: "students",
     rows: state.students[division].map((member, index) => ({
-      label:
-        index === state.leaderIndex[division]
-          ? leaderLabel(index)
-          : studentLabel(index),
+      label: index === LEADER_INDEX ? leaderLabel(index) : studentLabel(index),
       value: memberSummary(member),
     })),
   }));

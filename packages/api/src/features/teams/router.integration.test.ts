@@ -69,7 +69,11 @@ const member = (grade: string, suffix: string) => ({
   fullName: `Student ${suffix}`,
   grade,
   className: `10${suffix}`,
-  admissionNumber: `ADM-${suffix}`,
+  birthday: "2011-03-14",
+  whatsapp: `07100000${suffix}`,
+  address: "12 School Road, Galle",
+  guardianName: `Guardian ${suffix}`,
+  guardianPhone: `07200000${suffix}`,
 });
 
 const basePayload = (overrides: Partial<Record<string, unknown>> = {}) => ({
@@ -82,6 +86,8 @@ const basePayload = (overrides: Partial<Record<string, unknown>> = {}) => ({
   },
   members: [member("6", "A"), member("7", "B"), member("8", "C")],
   leaderIndex: 0,
+  presenterIndex: 0,
+  leaderEmail: "leader@school.lk",
   teacher: {
     name: "Jane MIC",
     designation: "ICT Teacher",
@@ -473,7 +479,6 @@ describe("teams.register (public, no-auth school registration)", () => {
     expect(members.every((m) => m.userId === null)).toBe(true);
     const leader = members.find((m) => m.teamRole === "leader");
     expect(leader?.fullName).toBe("Student A");
-    expect(leader?.admissionNumber).toBe("ADM-A");
   });
 
   test("rejects a member whose grade does not match the division", async () => {
@@ -487,6 +492,32 @@ describe("teams.register (public, no-auth school registration)", () => {
         }),
       })
     ).rejects.toThrow("does not match");
+  });
+
+  test("accepts a grade 6-8 member in a senior team only with the minor flag", async () => {
+    const noAuthContext = makeContext(testDb.db);
+    const seniorPayload = (minorAgeCategory: boolean) =>
+      basePayload({
+        division: "secondary",
+        members: [
+          member("9", "A"),
+          member("10", "B"),
+          { ...member("7", "C"), minorAgeCategory },
+        ],
+      });
+
+    await expect(
+      call(teamsRouter.teams.register, {
+        context: noAuthContext,
+        input: seniorPayload(false),
+      })
+    ).rejects.toThrow("does not match");
+    await expect(
+      call(teamsRouter.teams.register, {
+        context: noAuthContext,
+        input: seniorPayload(true),
+      })
+    ).resolves.toMatchObject({ referenceCode: expect.any(String) });
   });
 
   test("rejects a leaderIndex outside the member list", async () => {
@@ -676,5 +707,39 @@ describe("teams.register editToken + teams.update/getByEditToken", () => {
         }),
       })
     ).rejects.toThrow("division cannot be changed");
+  });
+});
+
+describe("teams.register confirmation email", () => {
+  test("emails the leader the BQ reference code", async () => {
+    const sent: { to: string; body: string }[] = [];
+    const context = makeContext(testDb.db, {
+      mail: async (message) => {
+        sent.push(message);
+      },
+    });
+
+    const result = await call(teamsRouter.teams.register, {
+      context,
+      input: basePayload(),
+    });
+
+    expect(result.referenceCode).toMatch(/^BQ\d{3}$/);
+    expect(sent).toHaveLength(1);
+    expect(sent[0]?.to).toBe("leader@school.lk");
+    expect(sent[0]?.body).toContain(result.referenceCode);
+  });
+
+  test("a failed mail send does not fail the registration", async () => {
+    const context = makeContext(testDb.db, {
+      mail: () => Promise.reject(new Error("smtp down")),
+    });
+
+    const result = await call(teamsRouter.teams.register, {
+      context,
+      input: basePayload(),
+    });
+
+    expect(result.referenceCode).toMatch(/^BQ\d{3}$/);
   });
 });

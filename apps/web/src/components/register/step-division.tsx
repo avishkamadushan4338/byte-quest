@@ -5,13 +5,13 @@ import { divisionOptions, platformsByDivision } from "./data";
 interface StepDivisionProps {
   divisions: Division[];
   errors: RegisterErrors;
-  onToggle: (division: Division) => void;
+  onSelect: (division: Division) => void;
 }
 
 export const StepDivision = ({
   divisions,
   errors,
-  onToggle,
+  onSelect,
 }: StepDivisionProps) => (
   <>
     <fieldset aria-label="Division" className="m-0 border-0 p-0">
@@ -23,8 +23,7 @@ export const StepDivision = ({
             description={option.description}
             key={option.value}
             kicker={option.badge}
-            multiple
-            onSelect={() => onToggle(option.value)}
+            onSelect={() => onSelect(option.value)}
             selected={divisions.includes(option.value)}
             title={option.title}
           >
