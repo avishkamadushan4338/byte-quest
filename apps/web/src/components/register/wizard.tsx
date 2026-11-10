@@ -24,9 +24,6 @@ import type {
 } from "./data";
 import {
   createEmptyMember,
-  COMPETITION_RULES_PDFS,
-  RULES_LANGUAGES,
-  confirmationCopy,
   allowedGradesForMember,
   divisionOrder,
   REGISTRATION_OPENS_AT,
@@ -40,10 +37,10 @@ import {
 } from "./data";
 import { RegistrationNotOpen } from "./not-open";
 import { RegisterStepper } from "./register-stepper";
-import { RulesPreview } from "./rules-preview";
 import { StepConfirmation } from "./step-confirmation";
 import { StepDivision } from "./step-division";
 import { StepReview } from "./step-review";
+import { StepRules } from "./step-rules";
 import { StepSchool } from "./step-school";
 import { StepStudents } from "./step-students";
 import { StepTeacher } from "./step-teacher";
@@ -557,6 +554,9 @@ export const Register = () => {
   })();
 
   const panels: Record<StepKey, ReactNode> = {
+    rules: (
+      <StepRules language={rulesLanguage} onLanguageChange={setRulesLanguage} />
+    ),
     school: (
       <StepSchool
         errors={errors}
@@ -682,42 +682,6 @@ export const Register = () => {
           />
 
           <div className="bg-surface min-w-0 flex-[3_1_560px] rounded-[24px] border border-[rgba(185,245,208,0.09)] p-[clamp(22px,3.5vw,40px)] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
-            {isConfirmation ? null : (
-              <details
-                className="mb-6 rounded-[14px] border border-[rgba(185,245,208,0.14)] bg-[#020807] p-4"
-                open
-              >
-                <summary className="text-volt cursor-pointer font-mono text-[13px] tracking-[0.12em]">
-                  COMPETITION RULES AND REGULATIONS
-                </summary>
-                <fieldset className="mt-4 flex gap-2 border-0 p-0">
-                  <legend className="sr-only">Rules language</legend>
-                  {RULES_LANGUAGES.map((code) => (
-                    <button
-                      aria-pressed={rulesLanguage === code}
-                      className="cursor-pointer rounded-full border border-[rgba(185,245,208,0.2)] px-4 py-1.5 font-sans text-[14px] font-semibold aria-pressed:border-[var(--accent)] aria-pressed:text-[var(--accent)]"
-                      key={code}
-                      onClick={() => setRulesLanguage(code)}
-                      type="button"
-                    >
-                      {COMPETITION_RULES_PDFS[code].label}
-                    </button>
-                  ))}
-                </fieldset>
-                <RulesPreview
-                  src={COMPETITION_RULES_PDFS[rulesLanguage].href}
-                  title="BYTE QUEST 2027 competition rules"
-                />
-                <a
-                  className="text-volt mt-3 inline-block text-[14px] font-semibold"
-                  download
-                  href={COMPETITION_RULES_PDFS[rulesLanguage].href}
-                >
-                  {confirmationCopy.rulesLabel}
-                </a>
-              </details>
-            )}
-
             {isClosed ? (
               <div className="mb-6 rounded-[14px] border border-[rgba(240,216,117,0.3)] bg-[rgba(240,216,117,0.08)] px-4 py-3 text-[14.5px] text-[#F0D875]">
                 Registration closed on 10 January 2027 - this submission is now

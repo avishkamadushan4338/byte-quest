@@ -3,6 +3,7 @@ import type { FieldOption } from "@/components/site/design-fields";
 export type Division = "junior" | "senior";
 
 export type StepKey =
+  | "rules"
   | "school"
   | "division"
   | "team"
@@ -132,51 +133,58 @@ export const registerHero = {
 } satisfies { kicker: string; title: string; pills: HeroPill[] };
 
 export const registerSteps = {
+  rules: {
+    label: "Rules",
+    eyebrow: "01 / COMPETITION RULES AND REGULATIONS",
+    title: "Read the competition rules.",
+    body: "Read the rules and regulations before you register. Choose English or සිංහල to read them in your language.",
+  },
   school: {
     label: "School",
-    eyebrow: "01 / SCHOOL",
+    eyebrow: "02 / SCHOOL",
     title: "Which school are you representing?",
     body: "Teams register through their school.",
   },
   division: {
     label: "Division",
-    eyebrow: "02 / DIVISION",
+    eyebrow: "03 / DIVISION",
     title: "Choose your division.",
     body: "Pick the one division your team is competing in. Every member of the team must be in the grades for that division.",
   },
   team: {
     label: "Team",
-    eyebrow: "03 / TEAM",
+    eyebrow: "04 / TEAM",
     title: "Name your team.",
     body: "You can refine your project idea later in the programme.",
   },
   students: {
     label: "Students",
-    eyebrow: "04 / STUDENTS",
+    eyebrow: "05 / STUDENTS",
     title: "Add your team members.",
     body: "Student 1 is the team leader. Fill in each member, then continue.",
   },
   teacher: {
     label: "Teacher contact",
-    eyebrow: "05 / TEACHER & SCHOOL CONTACT",
+    eyebrow: "06 / TEACHER & SCHOOL CONTACT",
     title: "Who is the teacher in charge?",
     body: "All programme communication goes through the school contact.",
   },
   review: {
     label: "Review",
-    eyebrow: "06 / REVIEW",
+    eyebrow: "07 / REVIEW",
     title: "Check everything before you submit.",
     body: "Use Edit to go back to any section.",
   },
   confirmation: {
     label: "Confirmation",
-    eyebrow: "07 / CONFIRMATION",
+    eyebrow: "08 / CONFIRMATION",
     title: "Registration received.",
     body: "Welcome to the quest, {teamName}. A confirmation will be sent to the teacher in charge.",
   },
 } satisfies Record<StepKey, StepContent>;
 
 export const stepOrder: StepKey[] = [
+  "rules",
   "school",
   "division",
   "team",

@@ -1,6 +1,6 @@
 import type { Division, RegisterState } from "./data";
 
-const STORAGE_KEY = "byte-quest:register-draft:v3";
+const STORAGE_KEY = "byte-quest:register-draft:v4";
 
 export interface RegisterDraft {
   state: RegisterState;
