@@ -1,5 +1,6 @@
 import type { Auth, Session } from "@byte-quest/auth";
 import type { Database, UserProfile } from "@byte-quest/db";
+
 import type { MailDelivery } from "./lib/mail";
 
 export interface Context {
@@ -10,6 +11,8 @@ export interface Context {
   auth: Auth;
   /** Outbound email: registration confirmations, operator alerts. */
   mail: MailDelivery;
+  /** Public origin of the site, used for links and images in emails. */
+  appUrl: string;
 }
 
 /** The authenticated caller's context variant. */

@@ -189,29 +189,148 @@ export const renderNoticeHtml = ({
   return `<div style="font-family:Arial,sans-serif;color:#111"><h2>${escapeHtml(heading)}</h2><p>${escapeHtml(intro)}</p><table>${rows}</table></div>`;
 };
 
-/** Sent to the team leader once a registration is accepted. */
-export const teamRegistrationEmail = ({
-  referenceCode,
-  teamName,
-  schoolName,
-  division,
-}: {
+const EMAIL_COLORS = {
+  ink: "#020807",
+  lime: "#52FF3D",
+  teal: "#00897B",
+  gold: "#D4AF37",
+  text: "#0F1F1B",
+  muted: "#5B6B66",
+  line: "#E3EBE7",
+  wash: "#F3F7F5",
+} as const;
+
+const EMAIL_FONT = "Arial,Helvetica,sans-serif";
+const TRAILING_SLASHES = /\/+$/;
+const PROTOCOL = /^https?:\/\//;
+
+const LABEL_CELL = `padding:9px 16px 9px 0;width:130px;color:${EMAIL_COLORS.muted};font-size:13px;vertical-align:top;border-bottom:1px solid ${EMAIL_COLORS.line}`;
+const VALUE_CELL = `padding:9px 0;color:${EMAIL_COLORS.text};font-size:14px;vertical-align:top;border-bottom:1px solid ${EMAIL_COLORS.line}`;
+
+export interface TeamRegistrationMember {
+  fullName: string;
+  grade: string;
+  isLeader: boolean;
+  isPresenter: boolean;
+}
+
+/** What the leader is sent: only what they submitted, no guardian or contact data for students. */
+export interface TeamRegistrationDetails {
+  /** Public origin of the site; images in the email are served from it. */
+  appUrl: string;
   referenceCode: string;
   teamName: string;
   schoolName: string;
+  address: string;
+  city: string;
+  province: string;
   division: string;
-}): Omit<OutboundMessage, "to"> => ({
-  subject: `BYTE QUEST registration received: ${referenceCode}`,
-  body: `Your team "${teamName}" from ${schoolName} (${division} division) is registered.\n\nReference code: ${referenceCode}\n\nKeep this code. You will need it to follow up with the organising committee.`,
-  html: renderNoticeHtml({
-    heading: "Registration received",
-    intro: `Your team "${teamName}" from ${schoolName} is registered.`,
-    facts: [
-      ["Reference code", referenceCode],
-      ["Division", division],
-    ],
-  }),
-});
+  teacherName: string;
+  teacherPhone: string;
+  members: TeamRegistrationMember[];
+  submittedAt: Date;
+}
+
+const formatSubmittedAt = (date: Date): string =>
+  new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Colombo",
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+
+const detailRow = (label: string, value: string): string =>
+  value
+    ? `<tr><td style="${LABEL_CELL}">${escapeHtml(label)}</td><td style="${VALUE_CELL}">${escapeHtml(value)}</td></tr>`
+    : "";
+
+const roleBadge = (text: string, background: string, color: string): string =>
+  `<span style="display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;background:${background};color:${color};font-size:11px;font-weight:bold">${text}</span>`;
+
+const memberRow = (member: TeamRegistrationMember, index: number): string => {
+  const badges = [
+    member.isLeader
+      ? roleBadge("LEADER", EMAIL_COLORS.gold, EMAIL_COLORS.ink)
+      : "",
+    member.isPresenter
+      ? roleBadge("PRESENTER", EMAIL_COLORS.teal, "#FFFFFF")
+      : "",
+  ].join("");
+  return `<tr><td style="${VALUE_CELL};width:28px;color:${EMAIL_COLORS.muted}">${index + 1}</td><td style="${VALUE_CELL}"><strong>${escapeHtml(member.fullName)}</strong>${badges}</td><td style="${VALUE_CELL}">${escapeHtml(member.grade)}</td></tr>`;
+};
+
+const sectionTitle = (title: string): string =>
+  `<p style="margin:28px 0 6px;color:${EMAIL_COLORS.teal};font-size:12px;letter-spacing:2px;font-weight:bold">${escapeHtml(title.toUpperCase())}</p>`;
+
+const renderRegistrationHtml = (details: TeamRegistrationDetails): string => {
+  const origin = details.appUrl.replace(TRAILING_SLASHES, "");
+  const asset = (file: string): string => `${origin}/assets/email/${file}`;
+  const location = [details.address, details.city, details.province]
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(", ");
+  const memberCount = details.members.length;
+
+  return `<div style="background:${EMAIL_COLORS.wash};padding:24px 12px;font-family:${EMAIL_FONT}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#FFFFFF;border-radius:12px;overflow:hidden">
+<tr><td style="background:${EMAIL_COLORS.ink};padding:28px 32px">
+<img src="${asset("bq-logo.png")}" width="240" alt="BYTE QUEST" style="display:block;width:240px;height:auto;border:0">
+<p style="margin:26px 0 0;color:${EMAIL_COLORS.lime};font-size:12px;letter-spacing:2px;font-weight:bold">REGISTRATION RECEIVED</p>
+<h1 style="margin:6px 0 0;color:#FFFFFF;font-size:26px;line-height:1.25">Your team is registered</h1>
+</td></tr>
+<tr><td style="padding:24px 32px 0">
+<p style="margin:0;color:${EMAIL_COLORS.text};font-size:15px;line-height:1.6">Thank you. <strong>${escapeHtml(details.teamName)}</strong> from <strong>${escapeHtml(details.schoolName)}</strong> is registered in the <strong>${escapeHtml(details.division)}</strong> division. Keep the reference code below; you will need it when you contact the organising committee.</p>
+</td></tr>
+<tr><td style="padding:20px 32px 0">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${EMAIL_COLORS.gold};border-radius:10px"><tr><td style="padding:18px 22px">
+<div style="color:${EMAIL_COLORS.ink};font-size:12px;letter-spacing:2px;font-weight:bold">REFERENCE CODE</div>
+<div style="color:${EMAIL_COLORS.ink};font-size:34px;font-weight:bold;letter-spacing:3px">${escapeHtml(details.referenceCode)}</div>
+</td></tr></table>
+</td></tr>
+<tr><td style="padding:0 32px 8px">
+${sectionTitle("School and team")}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+${detailRow("School", details.schoolName)}
+${detailRow("Location", location)}
+${detailRow("Division", details.division)}
+${detailRow("Teacher", details.teacherName)}
+${detailRow("Teacher phone", details.teacherPhone)}
+${detailRow("Submitted", formatSubmittedAt(details.submittedAt))}
+</table>
+${sectionTitle(`Members (${memberCount})`)}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+${details.members.map(memberRow).join("")}
+</table>
+</td></tr>
+<tr><td style="background:${EMAIL_COLORS.ink};padding:24px 32px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+<td width="72" valign="top"><img src="${asset("crest.png")}" width="60" height="60" alt="St. Aloysius' College crest" style="display:block;width:60px;height:60px;border:0"></td>
+<td valign="top" style="color:#FFFFFF;font-size:13px;line-height:1.6">
+<strong style="font-size:15px">St. Aloysius' College, Galle</strong><br>
+Byte Quest &middot; Inter-School Innovation &amp; Coding Programme<br>
+Templers Road, Kaluwella, Galle, Sri Lanka<br>
++94 91 222 3082 &middot; +94 77 936 8304<br>
+<a href="${origin}" style="color:${EMAIL_COLORS.lime};text-decoration:none">${escapeHtml(origin.replace(PROTOCOL, ""))}</a> &middot; bytequest@aloysiuscollege.lk
+</td>
+<td width="112" align="right" valign="top"><img src="${asset("sacoba-logo.png")}" width="112" alt="SACOBA" style="display:block;width:112px;height:auto;border:0"></td>
+</tr></table>
+</td></tr>
+</table>
+</div>`;
+};
+
+/** Sent to the team leader once a registration is accepted. */
+export const teamRegistrationEmail = (
+  details: TeamRegistrationDetails
+): Omit<OutboundMessage, "to"> => {
+  const memberLines = details.members
+    .map((member) => `  - ${member.fullName} (${member.grade})`)
+    .join("\n");
+  return {
+    subject: `BYTE QUEST registration received: ${details.referenceCode}`,
+    body: `Your team "${details.teamName}" from ${details.schoolName} (${details.division} division) is registered.\n\nReference code: ${details.referenceCode}\nMembers (${details.members.length}):\n${memberLines}\n\nKeep this code. You will need it to follow up with the organising committee.`,
+    html: renderRegistrationHtml(details),
+  };
+};
 
 /**
  * Operator alert on server start, mirroring school-management: fire-and-forget,

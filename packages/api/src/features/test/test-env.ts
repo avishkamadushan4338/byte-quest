@@ -15,6 +15,7 @@ import { createDb } from "@byte-quest/db";
 import type { AnyProcedure, InferSchemaOutput, Procedure } from "@orpc/server";
 import { createProcedureClient } from "@orpc/server";
 import { sql } from "drizzle-orm";
+
 import type { MailDelivery } from "../../lib/mail";
 
 /** Output type a procedure resolves to, read off its output schema. */
@@ -178,6 +179,7 @@ export const makeContext = (db: Database, options?: MakeContextOptions) => {
   return {
     db,
     mail: options?.mail ?? (() => Promise.resolve()),
+    appUrl: "http://localhost:5001",
     session: options?.session ?? null,
     profile: profile
       ? {

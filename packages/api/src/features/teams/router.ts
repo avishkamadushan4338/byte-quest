@@ -249,10 +249,23 @@ export const teamsRouter = {
           await context.mail({
             to: input.leaderEmail.trim(),
             ...teamRegistrationEmail({
+              appUrl: context.appUrl,
               referenceCode,
               teamName: teamNameFor(resolved.name, input.division),
               schoolName: resolved.name,
-              division: input.division === "primary" ? "junior" : "senior",
+              address: input.school.address?.trim() ?? "",
+              city: input.school.city.trim(),
+              province: input.school.province.trim(),
+              division: input.division === "primary" ? "Junior" : "Senior",
+              teacherName: input.teacher.name.trim(),
+              teacherPhone: input.teacher.phone.trim(),
+              members: input.members.map((member, index) => ({
+                fullName: member.fullName.trim(),
+                grade: member.grade,
+                isLeader: index === input.leaderIndex,
+                isPresenter: index === input.presenterIndex,
+              })),
+              submittedAt: new Date(),
             }),
           });
         } catch (error) {

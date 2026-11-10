@@ -2,6 +2,7 @@ import type { Context as ApiContext } from "@byte-quest/api/context";
 import { userProfile } from "@byte-quest/db";
 import { eq } from "drizzle-orm";
 
+import { ENV } from "./env";
 import { auth, db, mail } from "./services";
 
 export const createContext = async ({
@@ -25,6 +26,7 @@ export const createContext = async ({
   return {
     auth,
     mail,
+    appUrl: ENV.BETTER_AUTH_URL,
     db,
     session,
     profile,
