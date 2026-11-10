@@ -99,7 +99,6 @@ const registerInputSchema = z.object({
       z.object({
         fullName: z.string().min(1, "Full name is required"),
         grade: z.string().min(1, "Grade is required"),
-        className: z.string().min(1, "Class is required"),
         birthday: z.string().default(""),
         whatsapp: z.string().min(1, "WhatsApp number is required"),
         address: z.string().default(""),
@@ -115,11 +114,8 @@ const registerInputSchema = z.object({
   leaderEmail: z.email("Enter a valid leader email"),
   teacher: z.object({
     name: z.string().min(1, "Teacher name is required"),
-    designation: z.string().min(1, "Designation is required"),
     phone: z.string().min(1, "Phone is required"),
-    email: z.email("Enter a valid email"),
   }),
-  principal: z.string().optional(),
 });
 
 const assertValidRoster = (input: z.infer<typeof registerInputSchema>) => {
@@ -220,10 +216,7 @@ export const teamsRouter = {
             division: input.division,
             schoolId: resolved.id,
             teacherName: input.teacher.name.trim(),
-            teacherDesignation: input.teacher.designation.trim(),
             teacherPhone: input.teacher.phone.trim(),
-            teacherEmail: input.teacher.email.trim(),
-            principalName: input.principal?.trim() || null,
             editToken,
             referenceCode,
             leaderEmail: input.leaderEmail.trim(),
@@ -241,7 +234,6 @@ export const teamsRouter = {
               | "developer",
             grade: member.grade,
             fullName: member.fullName.trim(),
-            className: member.className.trim(),
             birthday: member.birthday.trim(),
             whatsapp: member.whatsapp.trim(),
             address: member.address.trim(),
@@ -330,7 +322,6 @@ export const teamsRouter = {
           members: members.map((m) => ({
             fullName: m.fullName,
             grade: m.grade,
-            className: m.className ?? "",
             birthday: m.birthday ?? "",
             whatsapp: m.whatsapp ?? "",
             address: m.address ?? "",
@@ -343,11 +334,8 @@ export const teamsRouter = {
           leaderEmail: teamRow.leaderEmail ?? "",
           teacher: {
             name: teamRow.teacherName ?? "",
-            designation: teamRow.teacherDesignation ?? "",
             phone: teamRow.teacherPhone ?? "",
-            email: teamRow.teacherEmail ?? "",
           },
-          principal: teamRow.principalName ?? undefined,
         };
       }),
 
@@ -393,10 +381,7 @@ export const teamsRouter = {
           .update(team)
           .set({
             teacherName: input.teacher.name.trim(),
-            teacherDesignation: input.teacher.designation.trim(),
             teacherPhone: input.teacher.phone.trim(),
-            teacherEmail: input.teacher.email.trim(),
-            principalName: input.principal?.trim() || null,
             leaderEmail: input.leaderEmail.trim(),
           })
           .where(eq(team.id, existing.id))
@@ -416,7 +401,6 @@ export const teamsRouter = {
               | "developer",
             grade: member.grade,
             fullName: member.fullName.trim(),
-            className: member.className.trim(),
             birthday: member.birthday.trim(),
             whatsapp: member.whatsapp.trim(),
             address: member.address.trim(),

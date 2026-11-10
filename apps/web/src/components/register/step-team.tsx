@@ -1,5 +1,3 @@
-import { UserIcon } from "@phosphor-icons/react";
-
 import { fieldGridClass, InputField } from "@/components/site/design-fields";
 
 import type { Division, RegisterErrors, TeamDetails, TeamErrors } from "./data";
@@ -71,20 +69,10 @@ const TeamFields = ({
                 type="radio"
                 value={size}
               />
-              <span className="flex items-center">
-                {Array.from({ length: size }, (_, index) => (
-                  <span
-                    aria-hidden="true"
-                    className={`-ml-2 flex size-9 items-center justify-center rounded-full border-2 border-[#020807] first:ml-0 ${selected ? "bg-[#52FF3D] text-[#020807]" : "bg-[rgba(185,245,208,0.12)]"}`}
-                    key={index}
-                  >
-                    <UserIcon size={18} weight="fill" />
-                  </span>
-                ))}
+              <span className="font-display text-[34px] leading-none font-bold">
+                {size}
               </span>
-              <span className="font-display text-[15px] font-bold">
-                {size} students
-              </span>
+              <span className="text-[15px] font-semibold">students</span>
             </label>
           );
         })}

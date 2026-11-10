@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -22,6 +23,8 @@ import type {
 } from "./data";
 import {
   createEmptyMember,
+  COMPETITION_RULES_HREF,
+  confirmationCopy,
   allowedGradesForMember,
   divisionOrder,
   REGISTRATION_OPENS_AT,
@@ -102,8 +105,8 @@ const validateStudents = (
     if (member.fullName.trim().length === 0) {
       entry.fullName = validationCopy.required;
     }
-    if (member.className.trim().length === 0) {
-      entry.className = validationCopy.required;
+    if (member.birthday.trim().length === 0) {
+      entry.birthday = validationCopy.required;
     }
     if (member.whatsapp.trim().length === 0) {
       entry.whatsapp = validationCopy.required;
@@ -134,18 +137,10 @@ const validateTeacher = (teacher: TeacherDetails): TeacherErrors => {
   if (teacher.name.trim().length === 0) {
     errors.name = validationCopy.required;
   }
-  if (teacher.designation.trim().length === 0) {
-    errors.designation = validationCopy.required;
-  }
   if (teacher.phone.trim().length === 0) {
     errors.phone = validationCopy.required;
   } else if (!isPhone(teacher.phone)) {
     errors.phone = validationCopy.phone;
-  }
-  if (teacher.email.trim().length === 0) {
-    errors.email = validationCopy.required;
-  } else if (!EMAIL_PATTERN.test(teacher.email)) {
-    errors.email = validationCopy.email;
   }
 
   return errors;
@@ -373,7 +368,7 @@ export const Register = () => {
     }));
   };
 
-  const handleApplyClassPreset = (division: Division) => {
+  const handleApplyGradePreset = (division: Division) => {
     setState((current) => {
       const [source] = current.students[division];
       const next = {
@@ -386,7 +381,6 @@ export const Register = () => {
               : {
                   ...member,
                   grade: source.grade,
-                  className: source.className,
                 }
           ),
         },
@@ -436,7 +430,6 @@ export const Register = () => {
             fullName: member.fullName.trim(),
             grade: member.grade ?? "",
             minorAgeCategory: member.minorAgeCategory,
-            className: member.className.trim(),
             birthday: member.birthday.trim(),
             whatsapp: member.whatsapp.trim(),
             address: member.address.trim(),
@@ -448,11 +441,8 @@ export const Register = () => {
           presenterIndex: LEADER_INDEX,
           teacher: {
             name: state.teacher.name.trim(),
-            designation: state.teacher.designation.trim(),
             phone: state.teacher.phone.trim(),
-            email: state.teacher.email.trim(),
           },
-          principal: state.teacher.principal.trim() || undefined,
         };
 
         const result = await orpc.teams.register.call(payload);
@@ -591,7 +581,7 @@ export const Register = () => {
         divisions={state.divisions}
         errors={errors}
         onMemberChange={handleMemberChange}
-        onApplyClassPreset={handleApplyClassPreset}
+        onApplyGradePreset={handleApplyGradePreset}
         students={state.students}
       />
     ),
@@ -661,6 +651,12 @@ export const Register = () => {
                 {pill.label}
               </span>
             ))}
+            <Link
+              className="text-fg hover:border-volt hover:text-volt rounded-full border border-[rgba(185,245,208,0.18)] px-3 py-2 font-mono text-[14.5px] whitespace-nowrap transition-colors duration-200"
+              to="/"
+            >
+              ← Back to home
+            </Link>
           </div>
         }
         className="pt-[clamp(48px,6vw,80px)] pb-[clamp(28px,4vw,44px)] [&_h1]:mt-4 [&_h1]:text-[clamp(40px,5.5vw,76px)]"
@@ -700,6 +696,30 @@ export const Register = () => {
                   {content.body}
                 </p>
               </div>
+            )}
+
+            {isConfirmation ? null : (
+              <details
+                className="mb-6 rounded-[14px] border border-[rgba(185,245,208,0.14)] bg-[#020807] p-4"
+                open
+              >
+                <summary className="text-volt cursor-pointer font-mono text-[13px] tracking-[0.12em]">
+                  COMPETITION RULES AND REGULATIONS
+                </summary>
+                <object
+                  className="mt-4 h-[480px] w-full rounded-[10px]"
+                  data={COMPETITION_RULES_HREF}
+                  title="BYTE QUEST 2027 competition rules"
+                  type="application/pdf"
+                />
+                <a
+                  className="text-volt mt-3 inline-block text-[14px] font-semibold"
+                  download
+                  href={COMPETITION_RULES_HREF}
+                >
+                  {confirmationCopy.rulesLabel}
+                </a>
+              </details>
             )}
 
             {panels[currentKey]}

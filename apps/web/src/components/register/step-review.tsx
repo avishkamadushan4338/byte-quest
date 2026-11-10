@@ -94,9 +94,7 @@ const buildSections = (state: RegisterState): ReviewSection[] => {
       step: "teacher",
       rows: [
         { label: "Teacher", value: state.teacher.name },
-        { label: "Designation", value: state.teacher.designation },
         { label: "Phone", value: state.teacher.phone },
-        { label: "Email", value: state.teacher.email },
       ],
     },
   ];

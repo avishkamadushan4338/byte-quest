@@ -6,14 +6,12 @@ import type { Division, RegisterState } from "./data";
 import {
   LEADER_INDEX,
   confirmationCopy,
+  COMPETITION_RULES_HREF,
   divisionLabels,
   divisionOrder,
   teamDisplayName,
   registerSteps,
 } from "./data";
-
-export const COMPETITION_RULES_HREF =
-  "/downloads/byte-quest-2027-competition-rules.pdf";
 
 interface StepConfirmationProps {
   onReset: () => void;

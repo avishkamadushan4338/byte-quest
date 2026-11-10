@@ -75,10 +75,7 @@ interface ComboboxFieldProps extends ControlProps {
   maxResults?: number;
 }
 
-const requirementLabels = {
-  required: "REQUIRED",
-  optional: "OPTIONAL",
-} satisfies Record<Requirement, string>;
+const optionalLabel = "OPTIONAL";
 
 const surfaceClasses = {
   ink: "bg-ink",
@@ -106,9 +103,17 @@ export const FieldShell = ({
       htmlFor={id}
     >
       {label}
-      {requirement ? (
+      {requirement === "required" ? (
+        <span
+          className="text-[var(--error)] font-mono text-[15px] leading-none font-bold"
+          title="Required"
+        >
+          *
+        </span>
+      ) : null}
+      {requirement === "optional" ? (
         <span className="text-faint-2 font-mono text-[12.5px] font-normal tracking-[0.1em]">
-          {requirementLabels[requirement]}
+          {optionalLabel}
         </span>
       ) : null}
     </label>

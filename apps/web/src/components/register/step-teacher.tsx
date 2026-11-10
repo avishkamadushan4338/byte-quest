@@ -24,15 +24,6 @@ export const StepTeacher = ({
       value={teacher.name}
     />
     <InputField
-      error={errors.teacher?.designation}
-      id="teacher-designation"
-      label="Designation"
-      onValueChange={(value) => onChange({ designation: value })}
-      placeholder="e.g. ICT Teacher"
-      requirement="required"
-      value={teacher.designation}
-    />
-    <InputField
       error={errors.teacher?.phone}
       id="teacher-phone"
       inputMode="tel"
@@ -42,25 +33,6 @@ export const StepTeacher = ({
       requirement="required"
       type="tel"
       value={teacher.phone}
-    />
-    <InputField
-      error={errors.teacher?.email}
-      id="teacher-email"
-      inputMode="email"
-      label="Email"
-      onValueChange={(value) => onChange({ email: value })}
-      placeholder="teacher@school.lk"
-      requirement="required"
-      type="email"
-      value={teacher.email}
-    />
-    <InputField
-      id="teacher-principal"
-      label="Principal name"
-      onValueChange={(value) => onChange({ principal: value })}
-      placeholder="Full name"
-      requirement="optional"
-      value={teacher.principal}
     />
   </div>
 );

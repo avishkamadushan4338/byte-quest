@@ -1,4 +1,6 @@
+import { cn } from "@byte-quest/ui/lib/utils";
 import { StarIcon } from "@phosphor-icons/react";
+import { useState } from "react";
 
 import { InputField, SelectField } from "@/components/site/design-fields";
 
@@ -33,6 +35,13 @@ const CHIP_IDLE_STYLE = {
 
 const memberName = (member: MemberDetails, index: number): string =>
   member.fullName.trim() || studentLabel(index);
+
+const initialsOf = (name: string): string =>
+  name
+    .trim()
+    .split(/\s+/u)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("");
 
 interface MemberCardProps {
   division: Division;
@@ -97,13 +106,13 @@ const MemberCard = ({
           value={member.grade ?? ""}
         />
         <InputField
-          error={errors?.className}
-          id={`${prefix}-class`}
-          label="Class"
-          onValueChange={(value) => onChange({ className: value })}
-          placeholder="e.g. 10B"
+          error={errors?.birthday}
+          id={`${prefix}-birthday`}
+          label="Birthday"
+          onValueChange={(value) => onChange({ birthday: value })}
           surface="surface"
-          value={member.className}
+          type="date"
+          value={member.birthday}
         />
         <InputField
           error={errors?.whatsapp}
@@ -143,25 +152,63 @@ const Roster = ({
   errors,
   onMemberChange,
   students,
-}: RosterProps) => (
-  <div className="grid gap-4">
-    {students.map((member, index) => (
-      <MemberCard
-        division={division}
-        errors={errors?.[String(index)]}
-        index={index}
-        key={`${division}-${index}`}
-        member={member}
-        onChange={(patch) => onMemberChange(index, patch)}
-      />
-    ))}
-  </div>
-);
+}: RosterProps) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeMember = students[activeIndex];
+
+  return (
+    <div className="grid gap-4">
+      <div className="flex flex-wrap gap-2" role="tablist">
+        {students.map((member, index) => {
+          const selected = index === activeIndex;
+          return (
+            <button
+              aria-selected={selected}
+              className={cn(
+                "flex min-w-[120px] flex-1 flex-col items-start gap-0.5 rounded-[14px] border px-3.5 py-2.5 text-left transition-colors duration-200",
+                selected
+                  ? "border-[#52FF3D] bg-[rgba(82,255,61,0.08)] text-[#52FF3D]"
+                  : "border-[rgba(185,245,208,0.14)] bg-[#020807] text-[#B9C9C1]"
+              )}
+              key={`${division}-tab-${index}`}
+              onClick={() => setActiveIndex(index)}
+              role="tab"
+              type="button"
+            >
+              <span className="font-display text-[15px] font-bold">
+                {member.fullName.trim()
+                  ? initialsOf(member.fullName)
+                  : String(index + 1)}
+              </span>
+              <span className="text-muted-2 w-full truncate text-[13px]">
+                {memberName(member, index)}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      <p className="text-muted-2 m-0 text-[13px]">
+        Each tab shows the student&apos;s initials from their full name. Fill in
+        the full name first; the tab updates as you type.
+      </p>
+      {activeMember ? (
+        <MemberCard
+          division={division}
+          errors={errors?.[String(activeIndex)]}
+          index={activeIndex}
+          key={`${division}-${activeIndex}`}
+          member={activeMember}
+          onChange={(patch) => onMemberChange(activeIndex, patch)}
+        />
+      ) : null}
+    </div>
+  );
+};
 
 interface StepStudentsProps {
   divisions: Division[];
   errors: RegisterErrors;
-  onApplyClassPreset: (division: Division) => void;
+  onApplyGradePreset: (division: Division) => void;
   onMemberChange: (
     division: Division,
     index: number,
@@ -173,7 +220,7 @@ interface StepStudentsProps {
 export const StepStudents = ({
   divisions,
   errors,
-  onApplyClassPreset,
+  onApplyGradePreset,
   onMemberChange,
   students,
 }: StepStudentsProps) => {
@@ -193,15 +240,15 @@ export const StepStudents = ({
           ) : null}
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <span className="text-faint text-[14px]">
-              Same grade and class for the whole team?
+              Same grade for the whole team?
             </span>
             <button
               className={CHIP_CLASS}
-              onClick={() => onApplyClassPreset(division)}
+              onClick={() => onApplyGradePreset(division)}
               style={CHIP_IDLE_STYLE}
               type="button"
             >
-              Copy Student 1 grade and class to all
+              Copy Student 1 grade to all
             </button>
           </div>
           <Roster

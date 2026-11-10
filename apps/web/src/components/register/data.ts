@@ -27,7 +27,6 @@ export interface MemberDetails {
   fullName: string;
   grade: string | null;
   minorAgeCategory: boolean;
-  className: string;
   birthday: string;
   whatsapp: string;
   address: string;
@@ -37,10 +36,7 @@ export interface MemberDetails {
 
 export interface TeacherDetails {
   name: string;
-  designation: string;
   phone: string;
-  email: string;
-  principal: string;
 }
 
 export interface RegisterState {
@@ -65,7 +61,6 @@ export interface TeamErrors {
 export interface StudentErrors {
   fullName?: string;
   grade?: string;
-  className?: string;
   birthday?: string;
   whatsapp?: string;
   address?: string;
@@ -75,9 +70,7 @@ export interface StudentErrors {
 
 export interface TeacherErrors {
   name?: string;
-  designation?: string;
   phone?: string;
-  email?: string;
 }
 
 export interface RegisterErrors {
@@ -253,22 +246,8 @@ export const confirmationCopy = {
   resetLabel: "Register another team",
 };
 
-const provinceNames = [
-  "Western",
-  "Southern",
-  "Central",
-  "Northern",
-  "Eastern",
-  "North Western",
-  "North Central",
-  "Uva",
-  "Sabaragamuwa",
-];
-
-export const provinceOptions: FieldOption[] = provinceNames.map((name) => ({
-  value: name,
-  label: name,
-}));
+export const COMPETITION_RULES_HREF =
+  "/downloads/byte-quest-2027-competition-rules.pdf";
 
 export const divisionOptions: DivisionOption[] = [
   {
@@ -336,7 +315,6 @@ export const createEmptyMember = (): MemberDetails => ({
   fullName: "",
   grade: null,
   minorAgeCategory: false,
-  className: "",
   birthday: "",
   whatsapp: "",
   address: "",
@@ -362,10 +340,7 @@ export const initialRegisterState: RegisterState = {
   students: { junior: createEmptyRoster(), senior: createEmptyRoster() },
   teacher: {
     name: "",
-    designation: "",
     phone: "",
-    email: "",
-    principal: "",
   },
   consent: false,
 };
@@ -382,14 +357,14 @@ export const divisionSummary = (division: Division): string =>
 
 export const memberSummary = (member: MemberDetails): string => {
   const grade = member.grade === null ? "" : `Grade ${member.grade}`;
-  const parts = [member.fullName.trim(), grade, member.className.trim()].filter(
+  const parts = [member.fullName.trim(), grade].filter(
     (part) => part.length > 0
   );
   return parts.length > 0 ? parts.join(" · ") : "";
 };
 
 /** Official registration opens at midnight, Sri Lanka time. */
-export const REGISTRATION_OPENS_AT = new Date("2026-11-01T00:00:00+05:30"); // TEMP-LOCAL-TEST: revert to 2026-11-10T00:00:00+05:30
+export const REGISTRATION_OPENS_AT = new Date("2026-11-10T00:00:00+05:30");
 
 export const registrationNotOpen = {
   kicker: "TEAM REGISTRATION",

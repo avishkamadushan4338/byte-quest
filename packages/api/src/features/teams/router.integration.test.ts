@@ -68,7 +68,6 @@ const ctxFor = (userId: string, grade: string) =>
 const member = (grade: string, suffix: string) => ({
   fullName: `Student ${suffix}`,
   grade,
-  className: `10${suffix}`,
   birthday: "2011-03-14",
   whatsapp: `07100000${suffix}`,
   address: "12 School Road, Galle",
@@ -89,9 +88,7 @@ const basePayload = (overrides: Partial<Record<string, unknown>> = {}) => ({
   leaderEmail: "leader@school.lk",
   teacher: {
     name: "Jane MIC",
-    designation: "ICT Teacher",
     phone: "0712345678",
-    email: "jane@school.lk",
   },
   ...overrides,
 });
