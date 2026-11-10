@@ -246,8 +246,22 @@ export const confirmationCopy = {
   resetLabel: "Register another team",
 };
 
-export const COMPETITION_RULES_HREF =
-  "/downloads/byte-quest-2027-competition-rules.pdf";
+export const COMPETITION_RULES_PDFS = {
+  en: {
+    href: "/downloads/byte-quest-2027-competition-rules.pdf",
+    label: "English",
+  },
+  si: {
+    href: "/downloads/byte-quest-2027-competition-rules-si.pdf",
+    label: "සිංහල",
+  },
+} as const;
+
+export type RulesLanguage = keyof typeof COMPETITION_RULES_PDFS;
+
+export const RULES_LANGUAGES = Object.keys(
+  COMPETITION_RULES_PDFS
+) as RulesLanguage[];
 
 export const divisionOptions: DivisionOption[] = [
   {

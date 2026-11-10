@@ -6,7 +6,7 @@ import type { Division, RegisterState } from "./data";
 import {
   LEADER_INDEX,
   confirmationCopy,
-  COMPETITION_RULES_HREF,
+  COMPETITION_RULES_PDFS,
   divisionLabels,
   divisionOrder,
   teamDisplayName,
@@ -50,7 +50,10 @@ export const StepConfirmation = ({
   const facts = [
     ...teamFacts,
     { label: confirmationCopy.schoolLabel, value: state.school.name },
-    { label: confirmationCopy.statusLabel, value: confirmationCopy.statusValue },
+    {
+      label: confirmationCopy.statusLabel,
+      value: confirmationCopy.statusValue,
+    },
   ];
 
   const welcomeNames = activeDivisions
@@ -91,8 +94,8 @@ export const StepConfirmation = ({
         </div>
       ))}
       <p className="text-muted m-0 rounded-[14px] border border-[rgba(240,216,117,0.3)] bg-[rgba(240,216,117,0.08)] px-4 py-3 text-[14.5px] text-[#F0D875]">
-        This registration is submitted and locked. It cannot be edited from
-        this page.
+        This registration is submitted and locked. It cannot be edited from this
+        page.
       </p>
       <div className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))] gap-px overflow-hidden rounded-[16px] border border-[rgba(185,245,208,0.08)] bg-[rgba(185,245,208,0.08)]">
         {facts.map((fact) => (
@@ -126,7 +129,7 @@ export const StepConfirmation = ({
         <a
           className="text-fg hover:border-volt rounded-full border border-[rgba(242,247,244,0.25)] px-[22px] py-3.5 text-[15.5px] font-semibold whitespace-nowrap"
           download
-          href={COMPETITION_RULES_HREF}
+          href={COMPETITION_RULES_PDFS.en.href}
         >
           {confirmationCopy.rulesLabel}
         </a>
