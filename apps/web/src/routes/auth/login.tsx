@@ -16,11 +16,6 @@ const accountTypes = [
   },
   {
     n: "02",
-    title: "Volunteers",
-    detail: "Issued once your volunteer application is approved.",
-  },
-  {
-    n: "03",
     title: "Organising committee",
     detail: "Admin access is granted only after an application is approved.",
   },
@@ -45,9 +40,9 @@ const LoginRoute = () => (
             Sign in with your username.
           </h1>
           <p className="text-muted mt-5 max-w-[460px] text-[17px] leading-[1.65]">
-            BYTE QUEST uses a username and password. Schools and volunteers do
-            not create their own account - the organising committee issues one
-            once a team registration or volunteer application is reviewed.
+            BYTE QUEST uses a username and password. Schools do not create their
+            own account - the organising committee issues one once a team
+            registration is reviewed.
           </p>
 
           <div className="border-line-soft mt-9 grid gap-4 border-y py-7">
@@ -107,10 +102,6 @@ const LoginRoute = () => (
             No account yet? Register your{" "}
             <Link className="text-volt" to="/register/team">
               team
-            </Link>{" "}
-            or apply to{" "}
-            <Link className="text-volt" to="/register/volunteer">
-              volunteer
             </Link>{" "}
             and the organising committee will issue your login once it&apos;s
             reviewed. Committee members apply for admin access.

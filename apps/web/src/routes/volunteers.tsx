@@ -1,9 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { Volunteers } from "@/components/volunteers/volunteers";
-
-const VolunteersRoute = () => <Volunteers />;
+import { VolunteersClosed } from "@/components/volunteers/volunteers-closed";
 
 export const Route = createFileRoute("/volunteers")({
-  component: VolunteersRoute,
+  component: VolunteersClosed,
 });

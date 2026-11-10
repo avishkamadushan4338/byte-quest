@@ -11,18 +11,17 @@ export const primaryNavLinks: NavLink[] = [
   { label: "About", href: "/about" },
 ];
 
-/** Mobile menu mirrors the desktop bar; the Volunteer CTA is a button in the menu footer. */
+/** Mobile menu mirrors the desktop bar. */
 export const menuLinks: NavLink[] = [...primaryNavLinks];
 
 export const footerProgrammeLinks: NavLink[] = [
   { label: "Programme", href: "/programme" },
   { label: "Journey", href: "/journey" },
   { label: "Projects", href: "/projects" },
-  { label: "Register", href: "/register" },
+  { label: "Register", href: "/register/team" },
 ];
 
 export const footerNavLinks: NavLink[] = [
-  { label: "Volunteer", href: "/volunteers" },
   { label: "Mentors", href: "/mentors" },
   { label: "Partners", href: "/partners" },
   { label: "About", href: "/about" },

@@ -62,13 +62,6 @@ export const seoPages: SeoPage[] = [
       "Partner with BYTE QUEST to sponsor prizes, technology access, and career opportunities for young Sri Lankan developers.",
   },
   {
-    path: "/volunteers",
-    indexable: true,
-    title: "Student Volunteers",
-    description:
-      "Join the crew behind BYTE QUEST. Apply as a student volunteer to create, present, design and run Sri Lanka's premier school tech quest.",
-  },
-  {
     path: "/register/team",
     indexable: true,
     title: "Register your school team",
@@ -100,15 +93,6 @@ export const seoPages: SeoPage[] = [
     indexable: true,
     title: "Submission Guidelines",
     description: "What to submit, when, and how it is judged.",
-  },
-  // Duplicate of /volunteers (same content with a back link): canonicalised.
-  {
-    path: "/register/volunteer",
-    canonicalPath: "/volunteers",
-    indexable: true,
-    title: "Student Volunteers",
-    description:
-      "Join the crew behind BYTE QUEST. Apply as a student volunteer to create, present, design and run Sri Lanka's premier school tech quest.",
   },
   // Placeholder pages: no real content yet, so kept out of the index and sitemap.
   {

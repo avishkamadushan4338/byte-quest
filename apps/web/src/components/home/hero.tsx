@@ -2,8 +2,6 @@ import { Container } from "@byte-quest/ui/components/container";
 import { Button } from "@byte-quest/ui/primitives/button";
 import { Link } from "@tanstack/react-router";
 
-import { ArrowLabel } from "@/components/site/arrow-label";
-
 import { HeroDots } from "./hero-dots";
 
 const AVATAR_SRC = "/assets/hero-avatar-1024.webp";
@@ -90,13 +88,6 @@ export const Hero = () => (
         </p>
 
         <div className="mt-8 flex flex-wrap gap-2.5">
-          <Button
-            className="h-auto px-6 py-[15px] text-[14.5px]"
-            nativeButton={false}
-            render={<Link to="/volunteers" />}
-          >
-            <ArrowLabel>Join as Volunteer →</ArrowLabel>
-          </Button>
           <Button
             className="h-auto px-6 py-[15px] text-[14.5px]"
             nativeButton={false}
