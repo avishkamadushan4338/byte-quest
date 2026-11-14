@@ -37,15 +37,15 @@ export const CallToAction = () => (
       </p>
       <div className="text-muted mx-auto mt-8 mb-0 max-w-[460px] text-[15px] leading-[1.6]">
         <p className="m-0">
-          If any of the phone numbers does not work, please contact us
-          immediately.
+          If you need any help, don&apos;t feel hesitant to call{" "}
+          <a
+            className="text-volt hover:text-lime font-mono"
+            href={CONTACT_PHONE_HREF}
+          >
+            {CONTACT_PHONE_DISPLAY}
+          </a>
+          .
         </p>
-        <a
-          className="text-volt hover:text-lime mt-2 inline-block font-mono text-[15px] tracking-[0.04em]"
-          href={CONTACT_PHONE_HREF}
-        >
-          Backup contact: {CONTACT_PHONE_DISPLAY}
-        </a>
       </div>
     </div>
   </section>

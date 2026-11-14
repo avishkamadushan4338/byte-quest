@@ -158,17 +158,14 @@ export const RegistrationNotOpen = ({ onOpen }: RegistrationNotOpenProps) => {
               {registrationNotOpen.closesNote}
             </p>
             <p className="text-muted-2 mt-6 mb-0 text-[14.5px] leading-[1.55]">
-              If any of the phone numbers does not work, please contact us
-              immediately.
-            </p>
-            <p className="text-muted-2 mt-2 mb-0 text-[14.5px] leading-[1.55]">
-              Backup contact:{" "}
+              If you need any help, don&apos;t feel hesitant to call{" "}
               <a
                 className="text-volt hover:text-lime font-mono"
                 href={CONTACT_PHONE_HREF}
               >
                 {CONTACT_PHONE_DISPLAY}
               </a>
+              .
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
