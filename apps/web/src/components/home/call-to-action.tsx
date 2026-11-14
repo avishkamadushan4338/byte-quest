@@ -22,18 +22,18 @@ export const CallToAction = () => (
         Your idea could be next.
       </h2>
       <p className="text-muted mx-auto mt-6 mb-0 max-w-[460px] text-[17px] leading-[1.6]">
-        Team registration is currently closed. You can still read the programme.
+        Team registration is now open. Register your team for BYTE QUEST.
       </p>
       <div className="mt-9 flex flex-wrap justify-center gap-2.5">
         <Link
           className="text-fg hover:border-volt hover:text-fg inline-flex items-center rounded-full border border-[rgba(242,247,244,0.26)] px-[30px] py-[17px] text-[15px] font-semibold whitespace-nowrap"
-          to="/programme"
+          to="/register"
         >
-          Read the programme
+          Register your team
         </Link>
       </div>
       <p className="text-muted-2 mt-6 mb-0 font-mono text-[13px] tracking-[0.1em]">
-        TEAM REGISTRATION CLOSED
+        TEAM REGISTRATION OPEN
       </p>
       <div className="text-muted mx-auto mt-8 mb-0 max-w-[460px] text-[15px] leading-[1.6]">
         <p className="m-0">

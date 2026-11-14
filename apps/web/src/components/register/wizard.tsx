@@ -5,6 +5,10 @@ import { toast } from "sonner";
 
 import { ArrowLabel } from "@/components/site/arrow-label";
 import { SubpageHero } from "@/components/site/subpage-hero";
+import {
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_HREF,
+} from "@/components/site/contact";
 import { orpc } from "@/utils/orpc";
 
 import type {
@@ -632,6 +636,15 @@ export const Register = () => {
               still needs to field a team, contact the organising committee
               directly.
             </p>
+            <p className="text-muted mt-4 mb-0 text-[15px] leading-[1.65]">
+              Backup contact:{" "}
+              <a
+                className="text-volt hover:text-lime font-mono"
+                href={CONTACT_PHONE_HREF}
+              >
+                {CONTACT_PHONE_DISPLAY}
+              </a>
+            </p>
           </div>
         </section>
       </main>
@@ -703,6 +716,16 @@ export const Register = () => {
             )}
 
             {panels[currentKey]}
+
+            <div className="text-muted-2 mt-6 text-[14px] leading-[1.55]">
+              Need help? Contact the organising committee:{" "}
+              <a
+                className="text-volt hover:text-lime font-mono"
+                href={CONTACT_PHONE_HREF}
+              >
+                {CONTACT_PHONE_DISPLAY}
+              </a>
+            </div>
 
             {submitted || isClosed ? null : (
               <div className="mt-7 flex items-center justify-between gap-3 border-t border-[rgba(185,245,208,0.08)] pt-5">

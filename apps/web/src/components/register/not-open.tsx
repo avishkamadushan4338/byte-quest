@@ -4,6 +4,10 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { ArrowLabel } from "@/components/site/arrow-label";
+import {
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_HREF,
+} from "@/components/site/contact";
 import { SubpageHero } from "@/components/site/subpage-hero";
 import {
   statusPrimaryButton,
@@ -153,10 +157,23 @@ export const RegistrationNotOpen = ({ onOpen }: RegistrationNotOpenProps) => {
             <p className="text-muted-2 mt-4 mb-0 text-[14.5px] leading-[1.55]">
               {registrationNotOpen.closesNote}
             </p>
+            <p className="text-muted-2 mt-6 mb-0 text-[14.5px] leading-[1.55]">
+              If any of the phone numbers does not work, please contact us
+              immediately.
+            </p>
+            <p className="text-muted-2 mt-2 mb-0 text-[14.5px] leading-[1.55]">
+              Backup contact:{" "}
+              <a
+                className="text-volt hover:text-lime font-mono"
+                href={CONTACT_PHONE_HREF}
+              >
+                {CONTACT_PHONE_DISPLAY}
+              </a>
+            </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link className={statusPrimaryButton} to="/programme">
-                <ArrowLabel>Explore the programme →</ArrowLabel>
+              <Link className={statusPrimaryButton} to="/register">
+                <ArrowLabel>Register your team →</ArrowLabel>
               </Link>
               <Link className={statusSecondaryButton} to="/journey">
                 See the journey
